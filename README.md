@@ -1,5 +1,5 @@
 # dolibarr-files
-Multiple File Upload module, with revisioning and cagetogory functionality, for Dolibarr ERP 
+Multiple File Upload module, with revisioning and cagetogory functionality for files, for Dolibarr ERP 
 
 # MYMODULE FOR <a href="https://www.dolibarr.org">DOLIBARR ERP CRM</a>
 
