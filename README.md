@@ -1,3 +1,6 @@
+# dolibarr-files
+Multiple File Upload module for Dolibarr ERP
+
 # MYMODULE FOR <a href="https://www.dolibarr.org">DOLIBARR ERP CRM</a>
 
 ## Features
