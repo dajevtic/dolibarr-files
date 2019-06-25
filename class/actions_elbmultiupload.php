@@ -241,10 +241,38 @@ class ActionsElbmultiupload
     }
 
     /* Add here any other hooked methods... */
-
     function completeTabsHead($parameters, &$object, &$action, $hookmanager)
     {
-        die('pozvao');
+        //die('callded tabs head..');
+    }
 
+    function doAjaxActions($parameters, &$object, &$action, $hookmanager)
+    {
+        global $db, $langs, $user;
+
+        $ret = false;
+
+        dol_syslog("CALLING AJAX ELBMULTIUPLOAD ACTION user=" . $user->id . " object=" . (property_exists($object, 'element') ? $object->element : "unknown") . " action=$action params=" . print_r($parameters, true));
+
+        $context = $parameters['currentcontext'];
+        //print_r($parameters['formData']);
+        parse_str($parameters['formData'], $formData);
+
+        //try new action controller
+        $action_controller_class_name = "Elbmultiupload" . ucfirst($context) . "Action";
+        $action_controller = DOL_DOCUMENT_ROOT . "/elbmultiupload/class/action/" . $action_controller_class_name . ".php";
+        $action_controller_class = "ELBClass\\action\\" . $action_controller_class_name;
+        if (file_exists($action_controller) && method_exists($action_controller_class, $action)) {
+            $this->results = $action_controller_class::$action($object, $parameters);
+            return;
+        }
+
+        $action_file = DOL_DOCUMENT_ROOT . "/elbmultiupload/action/ajax/" . $context . "." . $action . ".php";
+        if (file_exists($action_file)) {
+            define("DO_AJAX_ACTION", true);
+            require_once $action_file;
+            $this->results = $ret;
+            return;
+        }
     }
 }

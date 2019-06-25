@@ -91,7 +91,7 @@ class modElbmultiupload extends DolibarrModules
             'barcode' => 0,                                  	// Set this to 1 if module has its own barcode directory (core/modules/barcode)
             'models' => 0,                                   	// Set this to 1 if module has its own models directory (core/modules/xxx)
             'css' => array('/elbmultiupload/css/elbmultiupload.css.php'),	// Set this to relative path of css file if module has its own css file
-            'js' => array('/elbmultiupload/js/elbmultiupload.js.php'),          // Set this to relative path of js file if module must load a js on all pages
+            'js' => array('/elbmultiupload/js/elbmultiupload.js'),          // Set this to relative path of js file if module must load a js on all pages
             'hooks' => array('globalcard'), 	// Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context 'all'
             'moduleforexternal' => 0							// Set this to 1 if feature of module are opened to external users
         );
@@ -124,7 +124,9 @@ class modElbmultiupload extends DolibarrModules
         //                             1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0, 'current', 1)
         // );
         $this->const = array(
-            1=>array('MYMODULE_MYCONSTANT', 'chaine', 'avalue', 'This is a constant to add', 1, 'allentities', 1)
+            1=>array('MYMODULE_MYCONSTANT', 'chaine', 'avalue', 'This is a constant to add', 1, 'allentities', 1),
+            2=>array('ELB_UPLOAD_FILES_BUFFER','chaine','uploadbuffer','Buffer for uploaded files. Files will be removed to the ELB_UPLOAD_FILES_DIRECTORY if everything is OK',1,'current',0),
+            3=>array('ELB_UPLOAD_FILES_DIRECTORY','chaine','uploadedfiles','Subdirectory in DOL_DATA_ROOT where we store uploaded files',1,'current',0)
         );
 
         // Some keys to add into the overwriting translation tables
@@ -169,7 +171,7 @@ class modElbmultiupload extends DolibarrModules
         // 'user'             to add a tab in user view
 
 
-        $this->tabs[] = array('data' => 'propal:+tabname1:AdditionalFiles:elbmultiupload@elbmultiupload:1:/elbmultiupload/card.php?id=__ID__&object_element=propal');
+        $this->tabs[] = array('data' => 'propal:+additionalfiles:AdditionalFiles:elbmultiupload@elbmultiupload:1:/elbmultiupload/card.php?id=__ID__&object_element=propal');
 
 
         // Dictionaries

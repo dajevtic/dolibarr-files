@@ -56,3 +56,25 @@ function elbmultiuploadAdminPrepareHead()
 
     return $head;
 }
+
+function elbmultiupload_renderAjaxPopup()
+{
+    global $langs;
+
+    $loading=$langs->trans("Loading");
+
+    print '	<div id="elb-ajax-dlg" title="" style="display:none">
+				<p>
+					<div id="elb-ajax-dlg-loading">
+						'.$loading.'
+					</div>
+					<div id="elb-ajax-dlg-body"></div>
+				</p>
+			</div>
+	';
+}
+
+function elb_empty($var)
+{
+    return empty($var);
+}

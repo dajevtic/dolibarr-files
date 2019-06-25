@@ -51,3 +51,14 @@ MyPageName = My page name
 #
 MyWidget = My widget
 MyWidgetDescription = My widget description
+
+
+AdditionalFiles=Additional files
+UploadFiles=Upload files
+GroupFilesBy=Group files by
+WithoutRevision=Without revision
+DownloadFile=Download file
+ReallyDeleteFileAndItsVersions=Really delete file and its versions
+Uncategorized=Uncategorized
+FileSuccessfullyUpdated=File has been successfully updated
+RenameFile=Rename file
