@@ -78,3 +78,13 @@ function elb_empty($var)
 {
     return empty($var);
 }
+
+function elb_common_action_result($res)
+{
+    global $langs;
+    if($res) {
+        setEventMessage($langs->trans("ActionSuccess"), 'mesgs');
+    } else {
+        setEventMessage($langs->trans("ActionError"), 'errors');
+    }
+}

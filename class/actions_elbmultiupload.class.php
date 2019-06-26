@@ -246,33 +246,35 @@ class ActionsElbmultiupload
         //die('callded tabs head..');
     }
 
+    /**
+     * Method for ajax actions
+     *
+     * @param $parameters
+     * @param $object
+     * @param $action
+     * @param $hookmanager
+     * @throws Exception
+     */
     function doAjaxActions($parameters, &$object, &$action, $hookmanager)
     {
-        global $db, $langs, $user;
-
-        $ret = false;
+        global $user;
 
         dol_syslog("CALLING AJAX ELBMULTIUPLOAD ACTION user=" . $user->id . " object=" . (property_exists($object, 'element') ? $object->element : "unknown") . " action=$action params=" . print_r($parameters, true));
 
         $context = $parameters['currentcontext'];
-        //print_r($parameters['formData']);
         parse_str($parameters['formData'], $formData);
 
-        //try new action controller
+        // elbmultiupload action controller
         $action_controller_class_name = "Elbmultiupload" . ucfirst($context) . "Action";
         $action_controller = DOL_DOCUMENT_ROOT . "/elbmultiupload/class/action/" . $action_controller_class_name . ".php";
-        $action_controller_class = "ELBClass\\action\\" . $action_controller_class_name;
-        if (file_exists($action_controller) && method_exists($action_controller_class, $action)) {
-            $this->results = $action_controller_class::$action($object, $parameters);
-            return;
-        }
-
-        $action_file = DOL_DOCUMENT_ROOT . "/elbmultiupload/action/ajax/" . $context . "." . $action . ".php";
-        if (file_exists($action_file)) {
-            define("DO_AJAX_ACTION", true);
-            require_once $action_file;
-            $this->results = $ret;
-            return;
+        if (file_exists($action_controller)) {
+            require_once $action_controller;
+            $actionControler = new $action_controller_class_name;
+            if (method_exists($actionControler, $action)) {
+                define("DO_AJAX_ACTION",true);
+                $this->results = $action_controller_class_name::$action($object, $parameters);
+                return;
+            }
         }
     }
 }
