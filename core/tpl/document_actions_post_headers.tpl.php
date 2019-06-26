@@ -89,62 +89,61 @@ print ELbFile::showMultiUploadButton($object->element, $object->id);
 
 //tag - file map
 $tag_map = ELbFileMapping::getObjectTags($object->element, $object->id);
-
 $all_tags=array();
-
 foreach(array_keys($tag_map) as $tag) {
 	$all_tags[$tag]=$tag;
 }
-
 ?>
 
-<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="get">
-	<input type="hidden" name="id" value="<?php echo $object->id ?>"/>
-	<input type="hidden" name="search_object_element" value="<?php echo $object->element ?>"/>
-	<table class="border" width="100%">
-		<tr class="liste_titre">
-			<th colspan="6"><?php echo $langs->trans("Search") ?></th>
-		</tr>
-		<tr>
-			<td>
-				<?php echo $langs->trans("Name") ?>
-			</td>
-			<td>
-				<input type="text" name="search_name" value="<?php echo $search_name ?>"/>
-			</td>
-			<td>
-				<?php echo $langs->trans("Content") ?>
-			</td>
-			<td>
-				<input type="text" name="search_content" value="<?php echo $search_content ?>"/>
-			</td>
-			<td>
-				<?php echo $langs->trans("Revision") ?>:
-			</td>
-			<td>
-				<input type="text" name="search_rev" value="<?php echo $search_rev ?>" size="3"/>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<?php echo $langs->trans("Tag") ?>
-			</td>
-			<td colspan="5">
-				<?php 
-//				$form=new Form($db);
-//				$all_tags = Categorie::getFileTags();
-//				print $form->multiselectarray('search_tags', $all_tags, $search_tags, '', 0, '', 0, '100%','','',true);
-				?>
-			</td>
-		</tr>
-		<tr>
-			<td colspan="6">
-				<input class="button" type="submit" name="Search" value="<?php echo $langs->trans("Search") ?>"/>
-				<a href="<?php echo $_SERVER['PHP_SELF'] ?>?id=<?php echo $object->id ?>" class="button elbbtn"><?php echo $langs->trans("Cancel") ?></a>
-			</td>
-		</tr>
-	</table>
-</form>
+<?php if (!empty($conf->global->ELB_ADD_FILES_TO_SOLR)) { ?>
+    <form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="get">
+        <input type="hidden" name="id" value="<?php echo $object->id ?>"/>
+        <input type="hidden" name="search_object_element" value="<?php echo $object->element ?>"/>
+        <table class="border" width="100%">
+            <tr class="liste_titre">
+                <th colspan="6"><?php echo $langs->trans("Search") ?></th>
+            </tr>
+            <tr>
+                <td>
+                    <?php echo $langs->trans("Name") ?>
+                </td>
+                <td>
+                    <input type="text" name="search_name" value="<?php echo $search_name ?>"/>
+                </td>
+                <td>
+                    <?php echo $langs->trans("Content") ?>
+                </td>
+                <td>
+                    <input type="text" name="search_content" value="<?php echo $search_content ?>"/>
+                </td>
+                <td>
+                    <?php echo $langs->trans("Revision") ?>:
+                </td>
+                <td>
+                    <input type="text" name="search_rev" value="<?php echo $search_rev ?>" size="3"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <?php echo $langs->trans("Tag") ?>
+                </td>
+                <td colspan="5">
+                    <?php
+    //				$form=new Form($db);
+    //				$all_tags = Categorie::getFileTags();
+    //				print $form->multiselectarray('search_tags', $all_tags, $search_tags, '', 0, '', 0, '100%','','',true);
+                    ?>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="6">
+                    <input class="button" type="submit" name="Search" value="<?php echo $langs->trans("Search") ?>"/>
+                    <a href="<?php echo $_SERVER['PHP_SELF'] ?>?id=<?php echo $object->id ?>" class="button elbbtn"><?php echo $langs->trans("Cancel") ?></a>
+                </td>
+            </tr>
+        </table>
+    </form>
+<?php } ?>
 
 <style>
 	.select2-container .select2-selection--multiple {
