@@ -68,3 +68,4 @@ UploadNewVersion=Upload new version
 FileVersion(s)=File versions
 ReallyActivate=Really activate
 MakeAsCurrentVersion=Mark as current version
+FileSuccessfullyUploaded=File successfully uploaded

@@ -265,5 +265,7 @@ else header('Cache-Control: no-cache');
     background: url("<?php echo DOL_URL_ROOT.'/theme/eldy/img/uparrow.png'; ?>") no-repeat 0 0;
     overflow: hidden;
 }
-
+.pushright {
+    float: right;
+}
 

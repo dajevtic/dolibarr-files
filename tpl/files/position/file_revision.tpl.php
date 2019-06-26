@@ -22,7 +22,7 @@
 				$href_download = DOL_URL_ROOT . '/document.php?modulepart=elbmultiupload&attachment=true&amp;file='.urlencode($file_relpath).'&amp;fmapid='.$obj->fmrowid;
 				echo '<span class="pushright">
 						<a href="'.$href_download.'">'.
-							 img_picto($langs->trans('DownloadFile'), 'elb-download-14x14.png@elb') .'
+							 img_picto($langs->trans('DownloadFile'), 'elb-download-14x14.png@elbmultiupload') .'
 						</a>
 					 </span>';
 			}
@@ -33,11 +33,9 @@
 		    	if(empty($obj->fmpath)) {
 					echo $obj->fname;
 				} else {
-					//echo $obj->fmpath;
 					echo '<input type="text" name="path" value="'.$obj->fmpath.'" />';
 				}
 		     ?>
-			<?php /*<input type="text" name="fname" value="<?php echo $obj->fname; ?>" />*/ ?>
 		<?php } else { ?>
 			<?php 
 				if(empty($obj->fmpath)) {
