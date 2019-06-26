@@ -1,12 +1,9 @@
 <?php
 
-
-//die('CALLED page/tab ');
-
 /**
- *    \file       htdocs/commande/document.php
- *    \ingroup    order
- *    \brief      Management page of documents attached to an order
+ *    \file       htdocs/elbmultiupload/card.php
+ *    \ingroup    elbmultiupload
+ *    \brief      Management page of object additional files
  */
 
 //ELB change version of select2 to newer

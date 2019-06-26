@@ -23,14 +23,14 @@
  *	\brief      Contains methods for uploading/versioning files
  */
  
-class ELbFile {
-	
-	var $id;
-	var $name;
-	var $type;
-	var $md5;
-	
-	var $tbl_name='elb_file';
+class ELbFile
+{
+	public $id;
+    public $name;
+    public $type;
+    public $md5;
+
+    public $tbl_name='elb_file';
 	static $_tbl_name='elb_file';
 	
 	/**
@@ -46,8 +46,7 @@ class ELbFile {
 		dol_syslog(get_class($this)."::fetch id=".$id);
 	
 		// Check parameters
-		if ( empty($id) || !is_numeric($id))
-		{
+		if ( empty($id) || !is_numeric($id)) {
 			$this->error='ErrorWrongParameters';
 			dol_print_error(get_class($this)."::fetch ".$this->error, LOG_ERR);
 			return -1;
@@ -61,10 +60,9 @@ class ELbFile {
 	
 		$resql = $db->query($sql);
 	
-		if ( $resql )
-		{
-			if ($db->num_rows($resql) > 0)
-			{
+		if ($resql)	{
+			if ($db->num_rows($resql) > 0) {
+
 				$obj = $db->fetch_object($resql);
 				
 				// set properties
@@ -76,11 +74,9 @@ class ELbFile {
 				return 1;
 			}
 		}
-		else
-		{
-			dol_syslog(get_class($this)."::fetch ERROR sql=".$sql);
-			return -1;
-		}
+
+        dol_syslog(get_class($this)."::fetch ERROR sql=".$sql);
+        return -1;
 	}
 	
 	/**
@@ -88,47 +84,44 @@ class ELbFile {
 	 *
 	 *	@return int		id of a row if OK or if error < 0
 	 */
-	function create() {
-		
-		global $db;
-		
-		$db->begin();
-	
-		$error = 0;
-	
-		dol_syslog(get_class($this)."::create", LOG_DEBUG);
-		
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->tbl_name." (";
-		$sql.= "name";
-		$sql.= ", type";
-		$sql.= ", md5";
-		$sql.= ") VALUES (";
-		$sql.= "'".$db->escape($this->name)."'";		
-		$sql.= ", '".$db->escape($this->type)."'";
-		$sql.= ", ".($this->md5==null ? 'null' : "'".$db->escape($this->md5)."'");
-		$sql.= ")";
-	
-		dol_syslog(get_class($this)."::create sql=".$sql);
-	
-		$result = $db->query($sql);
-			
-		if ($result)
-		{
-			$this->id = $db->last_insert_id(MAIN_DB_PREFIX.$this->tbl_name);
-			$db->commit();
-			dol_syslog(get_class($this)."::create done id=".$this->id);
-			return $this->id;
-		}
-		else
-		{
-			$db->rollback();
-			dol_syslog(get_class($this)."::create Error id=".$this->id);
-			return -1;
-		}
-	}
-	
-	function update() {
-		
+	function create()
+    {
+        global $db;
+
+        $db->begin();
+
+        $error = 0;
+
+        dol_syslog(get_class($this) . "::create", LOG_DEBUG);
+
+        $sql = "INSERT INTO " . MAIN_DB_PREFIX . $this->tbl_name . " (";
+        $sql .= "name";
+        $sql .= ", type";
+        $sql .= ", md5";
+        $sql .= ") VALUES (";
+        $sql .= "'" . $db->escape($this->name) . "'";
+        $sql .= ", '" . $db->escape($this->type) . "'";
+        $sql .= ", " . ($this->md5 == null ? 'null' : "'" . $db->escape($this->md5) . "'");
+        $sql .= ")";
+
+        dol_syslog(get_class($this) . "::create sql=" . $sql);
+
+        $result = $db->query($sql);
+
+        if ($result) {
+            $this->id = $db->last_insert_id(MAIN_DB_PREFIX . $this->tbl_name);
+            $db->commit();
+            dol_syslog(get_class($this) . "::create done id=" . $this->id);
+            return $this->id;
+        }
+
+        $db->rollback();
+        dol_syslog(get_class($this) . "::create Error id=" . $this->id);
+        return -1;
+    }
+
+    function update()
+    {
 		global $db;
 	
 		$db->begin();
@@ -157,7 +150,8 @@ class ELbFile {
 		}
 	}
 
-	function fetchFileVersions($fileid) {
+	function fetchFileVersions($fileid)
+    {
 		global $db;
 		$sql = "SELECT f.rowid as frowid, f.name as fname, f.type as ftype, f.md5 as fmd5,";
 		$sql.= " fm.rowid as fmrowid, fm.fk_fileid as fmfk_fileid, fm.object_type as fmobject_type,";
@@ -174,8 +168,8 @@ class ELbFile {
 		return ElbCommonManager::queryList($sql);
 	}
 
-	function printFileVersions($files, $toolbox) {
-
+	function printFileVersions($files, $toolbox)
+    {
 		global $langs,$conf,$db,$user;
 		global $bc;
 
@@ -217,8 +211,8 @@ class ELbFile {
 		print '</tr>';
 	}
 	
-	function getFileVersions($fileid, $toolbox, $restictDelete=false) {
-	
+	function getFileVersions($fileid, $toolbox, $restictDelete=false)
+    {
 		global $langs,$conf,$db,$user;
 		global $bc;
 		
@@ -283,8 +277,8 @@ class ELbFile {
 		}
 	}
 
-	function fetchUploadedFiles($object_type=null,$object_id=null, $search_files=null) {
-
+	function fetchUploadedFiles($object_type=null,$object_id=null, $search_files=null)
+    {
 		global $db;
 
 		$sql = "SELECT f.rowid as frowid, f.name as fname, f.type as ftype, f.md5 as fmd5,";
@@ -325,11 +319,10 @@ class ELbFile {
 		$fetch_files = $this->fetchUploadedFiles($object_type,$object_id, $search_files);
 
 		$this->printUploadedFiles($fetch_files, $tag_map, $toolbox);
-
 	}
 
-	function printUploadedFiles($fetch_files, $tag_map=false, $toolbox=1, $restictDeleteFile=false) {
-
+	function printUploadedFiles($fetch_files, $tag_map=false, $toolbox=1, $restictDeleteFile=false)
+    {
 		global $bc, $langs, $conf, $db, $user;
 
 		$action2 = GETPOST('action2');
@@ -506,13 +499,7 @@ class ELbFile {
 							</table>';
 				}
 			}
-
-			//var_dump($tag_assigned_fmap);
-			//print 'IMAMO TAG MAP!';
-		}
-		else
-		{
-
+		} else {
 
 			print '<table class="border listofdocumentstable" summary="listofdocumentstable" width="100%">';
 			print '<thead>';
@@ -558,7 +545,6 @@ class ELbFile {
 		}
 	}
 
-	
 	function getUploadedFilesbyRev($object_type=null, $object_id=null, $toolbox=1, $tag_map=false, $search_files=null)
 	{
 		global $bc, $langs, $conf, $db, $user;
@@ -590,16 +576,13 @@ class ELbFile {
 
 		$fetch_all_files = ElbCommonManager::queryList($sql);
 
-        if ($fetch_all_files !==false)
-        {
-
+        if ($fetch_all_files !==false) {
         	self::renderFilesByRevision($fetch_all_files, $toolbox);
-
         }
 	}
 
-	function renderFilesByRevision($fetch_all_files,$toolbox=1,$restictDeleteFile=false) {
-
+	function renderFilesByRevision($fetch_all_files,$toolbox=1,$restictDeleteFile=false)
+    {
 		global $bc, $langs, $conf, $db, $user;
 
 		$action2 = GETPOST('action2');
@@ -794,8 +777,8 @@ class ELbFile {
 	/**
 	 *  Update file attached in the position
 	 */
-	function actionPositionUpdateFile($linemode=true)	{
-	
+	function actionPositionUpdateFile($linemode=true)
+    {
 		global $langs, $conf, $db, $user;
 	
 		$elbfilemap = new ELbFileMapping($db);
@@ -843,39 +826,7 @@ class ELbFile {
 			if ($result > 0) {
 				$db->commit();
 				setEventMessage($langs->trans("FileSuccessfullyUpdated"), 'mesgs');
-				
-				// update product - MV-127
-				if (($elbfilemap->object_type=="commandedet" 
-					 ||$elbfilemap->object_type=="propaldet")
-					 && !empty($elbfilemap->clone_of_fmap_id)) 
-				{
-					$fetch_clone = new ELbFileMapping($db);
-					$res = $fetch_clone->fetch($elbfilemap->clone_of_fmap_id);
-					if ($res > 0) 
-					{
-						if ($fetch_clone->object_type=='product')
-						{
-							$db->begin();
-							$fetch_clone->path = $elbfilemap->path;
-							$fetch_clone->description = $elbfilemap->description;
-							$fetch_clone->revision = $elbfilemap->revision;
-							$fetch_clone->user = $user->id;
-							$fetch_clone->created_date = dol_now();
-							$res2 = $fetch_clone->update();
-							if ($res2 > 0) {
-								$db->commit();
-								setEventMessage($langs->trans("LinkedProductFileUpdated"), 'mesgs');
-							} else {
-								$db->rollback();
-								setEventMessage($langs->trans("FileNotUpdated"), 'errors');
-								unset($_SESSION['dol_events']['mesgs']);
-								self::headerLocationAfterOperation($linemode, $id, $lineid, $filemapid, $facid, $socid);
-								exit;
-							}
-						}
-					}
-				}
-				
+
 				//check and store tags
 				$tags_list=array();
 //				if(count($tags)>0) {
@@ -888,12 +839,12 @@ class ELbFile {
 //					}
 //				}
 				
-				if(!empty($conf->global->ELB_ADD_FILES_TO_SOLR)) {
-					//update file in Solr
-					$elbfile = new ELbFile();
-					$elbfile->fetch($elbfilemap->fk_fileid);
-					ElbSolrUtil::add_to_search_index($elbfile, $elbfilemap, $tags);
-				}
+//				if(!empty($conf->global->ELB_ADD_FILES_TO_SOLR)) {
+//					//update file in Solr
+//					$elbfile = new ELbFile();
+//					$elbfile->fetch($elbfilemap->fk_fileid);
+//					ElbSolrUtil::add_to_search_index($elbfile, $elbfilemap, $tags);
+//				}
 
 			} else {
 				$db->rollback();
@@ -917,8 +868,8 @@ class ELbFile {
 	/**
 	 *  Upload new version for file in the position
 	 */
-	function actionPositionUploadFileNewVersion($linemode=true) {
-	
+	function actionPositionUploadFileNewVersion($linemode=true)
+    {
 		global $db, $langs, $user, $conf;
 	
 		$id = GETPOST('id');
@@ -930,14 +881,10 @@ class ELbFile {
 		$description = GETPOST('description', 'alpha');
 		$fsubrev = $this->sanitizeText(GETPOST('fsubrev'));
 			
-		/*if (strlen($fsubrev) == 0 || is_null($fsubrev)) {
-			setEventMessage($langs->trans("FileVersionMissing"), 'errors');
-		}
-		else */if (empty($_FILES[$ufmnvfile]["name"])) {
+        if (empty($_FILES[$ufmnvfile]["name"])) {
 			setEventMessage($langs->trans("FileMissing"), 'errors');
-		}
-		else if(isset($_FILES[$ufmnvfile]))
-		{		
+		} elseif (isset($_FILES[$ufmnvfile]))	{
+
 			$db->begin();
 				
 			$fileName = $_FILES[$ufmnvfile]["name"];
@@ -972,59 +919,7 @@ class ELbFile {
 						
 					$elbfilemap = new ELbFileMapping($db);
 					$elbfilemap_fetch = $elbfilemap->fetch($ufmid);
-					
-					// mv-127
-					if ($elbfilemap->object_type=="propaldet"   ||
-						$elbfilemap->object_type=="commandedet" ||
-						$elbfilemap->object_type=="product"	) 
-					{
-						($elbfilemap->object_type=="product") ? $product_type_change=true : $product_type_change=false;
-						
-						$res = ELbFileMapping::actionForNewVersionOnSomeObjects($newfileid, $elbfilemap, $description, $fsubrev, $product_type_change);
-						
-						if ($res > 0) {
-							$move_res = dol_move($output_buffer, $output_dir.$newfileid.'.'.$ext);
-							$db->commit();
-						} else {
-							$db->rollback();
-						}
-						
-						self::headerLocationAfterOperation($linemode, $id, $lineid, $ufmid, $facid, $socid);
-						exit;
-					}
-					// end mv-127
-					
-					// mv-228
-					if ($elbfilemap->object_type=="elb_stock_mouvement")
-					{
-						$res = ELbFileMapping::actionForNewVersionOnStockMovementLinkedSuppOrder($newfileid, $elbfilemap, $description, $fsubrev);
-						
-						if ($res > 0) {
-							$move_res = dol_move($output_buffer, $output_dir.$newfileid.'.'.$ext);
-							$db->commit();
-						} else {
-							$db->rollback();
-						}
-					
-						self::headerLocationAfterOperation($linemode, $id, $lineid, $ufmid, $facid, $socid);
-						exit;
-					}
-					if ($elbfilemap->object_type=="order_supplier" && !empty($elbfilemap->clone_of_fmap_id))
-					{		
-						$res = ELbFileMapping::actionForNewVersionOnSuppOrderLinkedStockMovement($newfileid, $elbfilemap, $description, $fsubrev);
-						
-						if ($res > 0) {
-							$move_res = dol_move($output_buffer, $output_dir.$newfileid.'.'.$ext);
-							$db->commit();
-						} else {
-							$db->rollback();
-						}
-							
-						self::headerLocationAfterOperation($linemode, $id, $lineid, $ufmid, $facid, $socid);
-						exit;
-					}					
-					// end mv-228					
-					
+
 					if ($elbfilemap_fetch > 0) {
 						
 						// get old file map properties
@@ -1187,15 +1082,16 @@ class ELbFile {
 		print $out;
 	}
 	
-	function sanitizeText($text) {
+	function sanitizeText($text)
+    {
 		$text = trim($text);
 		$text = trim($text, '.');
 		$ret = preg_replace('/[^A-Za-z0-9 _ .-]/', '', $text);
 		return $ret;
 	}
 	
-	function fetchFileVersionByParentFile($parent_file) {
-		
+	function fetchFileVersionByParentFile($parent_file)
+    {
 		global $langs, $conf, $db;
 				
 		// Check parameters
@@ -1227,8 +1123,8 @@ class ELbFile {
 		}
 	}
 	
-	function activateRevision($fileid) {
-		
+	function activateRevision($fileid)
+    {
 		global $db, $user;
 	
 		$db->begin();
@@ -1236,51 +1132,7 @@ class ELbFile {
 		$fm_toactivate = new ELbFileMapping($db);
 		$fm_toactivate_fetch = $fm_toactivate->fetch($fileid);
 		
-		if ($fm_toactivate_fetch > 0) { 
-			
-			// mv-127
-			if ( $fm_toactivate->object_type=="propaldet"   ||
-				 $fm_toactivate->object_type=="commandedet" ||
-				 $fm_toactivate->object_type=="product"	)
-			{
-				($fm_toactivate->object_type=="product") ? $product_type_change=true : $product_type_change=false;
-			
-				$res = ELbFileMapping::actionForActivateRevisionOnSomeObjects($fm_toactivate, $product_type_change);
-			
-				if ($res > 0) {
-					$db->commit();
-					return 1;
-				} else {
-					$db->rollback();
-					return -1;
-				}
-			}
-			// end mv-127
-
-			// mv-228
-			if ($fm_toactivate->object_type=="elb_stock_mouvement")
-			{
-				$res = ELbFileMapping::actionForActivateRevisionOnStockMovementLinkedSuppOrder($fm_toactivate);
-				if ($res > 0) {
-					$db->commit();
-					return 1;
-				} else {
-					$db->rollback();
-					return -1;
-				}
-			}
-			if ($fm_toactivate->object_type=="order_supplier" && !empty($fm_toactivate->clone_of_fmap_id))
-			{
-				$res = ELbFileMapping::actionForActivateRevisionOnSuppOrderLinkedStockMovement($fm_toactivate);
-				if ($res > 0) {
-					$db->commit();
-					return 1;
-				} else {
-					$db->rollback();
-					return -1;
-				}
-			}			
-			// end mv-228			
+		if ($fm_toactivate_fetch > 0) {
 		
 			$fm_toactivate_pf = $fm_toactivate->parent_file;
 			$fm_toactivate->parent_file = null;
@@ -1342,10 +1194,10 @@ class ELbFile {
 	}
 	
 	/**
-	 * Activate revision to be active file
+	 * Activate revision (set revision as current/active version)
 	 */
-	function actionPositionActivateFile($linemode=true) {
-	
+	function actionPositionActivateFile($linemode=true)
+    {
 		global $langs;
 		
 		$fileid = GETPOST('fileid', 'int');
@@ -1368,10 +1220,10 @@ class ELbFile {
 	}
 	
 	/**
-	 *  Remove/delete file from position and it's revisions (if revisions exist)
+	 *  Remove/delete file and it's revisions (if file revisions exist)
 	 */
-	function actionPositionRemoveFile($linemode=true) {
-	
+	function actionPositionRemoveFile($linemode=true)
+    {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		
 		global $langs;
@@ -1410,11 +1262,9 @@ class ELbFile {
 		exit;
 	}
 	
-	function deleteLinked($filemapid, $activate_trigger=true) {
-	
+	function deleteLinked($filemapid, $activate_trigger=true)
+    {
 		global $conf, $db, $langs;
-	
-		dol_syslog(get_class($this)."::deleteLinked id=".$filemapid, LOG_DEBUG);
 	
 		$sql = "SELECT rowid, parent_file";
 		$sql.= " FROM ".MAIN_DB_PREFIX.ELbFileMapping::$_tbl_name;
@@ -1422,73 +1272,65 @@ class ELbFile {
 		$sql.= " OR parent_file = ".$filemapid;
 		
 		dol_syslog(get_class($this)."::deleteLinked sql=".$sql, LOG_DEBUG);
+
+        $error = 0;
+
+        $db->begin();
 	
 		$resql = $db->query($sql);
 	
 		if ($resql) {
 				
 			$num = $db->num_rows($resql);
-	
 			$i = 0;
-			$error = 0;
 			$fm = new ELbFileMapping($db);
 			
-			while ($i < $num)
-			{
-				$db->begin();
-	
+			while ($i < $num) {
+
 				$obj = $db->fetch_object($resql);
 				
 				// fetch file map
 				$fm->fetch($obj->rowid);
 				$fk_fileid = $fm->fk_fileid;
 				
-				// MV-127
-				if (($fm->object_type=='propaldet' 
-					|| $fm->object_type=='commandedet')
-					&& !empty($fm->clone_of_fmap_id))
-				{
-					$fetch_clone = new ELbFileMapping($db);
-					$fetch_clone->fetch($fm->clone_of_fmap_id);
-					/*if ($fetch_clone->object_type=='product' && $activate_trigger) {
-						$res = $fetch_clone->delete();
-						if ($res > 0) {
-							setEventMessage($langs->trans('LinkedProductFileDeleted'), 'mesgs');
-						}
-					}*/
-				}
-				// end MV-127
-				
-				// fetch file
-				if(!empty($fk_fileid)) {
-					$this->fetch($fk_fileid);
-					$count_lf = $fm->countLinkedFilesByFkFileID($fk_fileid);
-				} else {
-					$count_lf = 0;
-				}
-				
 				// delete file map
 				$del_fm = $fm->delete();
 				
 				if ($del_fm < 0) {
-					
-					$db->rollback();
-					return -1;
-					
-				} else {
-					$db->commit();
+				    $error++;
+				    break;
 				}
+
+                if(!empty($fk_fileid)) {
+                    $count_lf = $fm->countLinkedFilesByFkFileID($fk_fileid);
+                    if ($count_lf === 0) {
+                        $res = $this->deleteFile($fk_fileid);
+                        if (!$res) {
+                            $error++;
+                            break;
+                        }
+                    }
+                }
+
 				$i++;
 			}
-			return 1;
+
+		} else {
+			$error++;
 		}
-		else {
-			return -1;
-		}
+
+		if ($error) {
+		    $db->rollback();
+		    return -1;
+        }
+
+        $db->commit();
+        return 1;
+
 	}
 	
-	function delete() {
-	
+	function delete()
+    {
 		global $db,$conf;
 	
 		$db->begin();
@@ -1514,7 +1356,8 @@ class ELbFile {
 		}
 	}	
 	
-	function getRealPath($path) {
+	function getRealPath($path)
+    {
 		$path="file://".urldecode($path);
 		return $path;
 	}
@@ -1679,33 +1522,42 @@ class ELbFile {
 		}
 		return $filename;
 	}
-	
-	static function processFileActions() {
+
+    /**
+     * Method handles actions for object's additional files (new file(s), update, delete, new version, activate file as new revision)
+     */
+	static function processFileActions()
+    {
 		global $db;
-		if(GETPOST('update_file')) {
+
+		// update file action
+		if (GETPOST('update_file')) {
 			$elbfile = new ELbFile($db);
 			$elbfile->actionPositionUpdateFile();
 		}
-		
-		//$ufnvfile = $_FILES['ufnvfile'.GETPOST('ufid', 'int')];
-		$ufnvfile = $_FILES['ufmnvfile'.GETPOST('ufmid', 'int')];
-		$fsubrev = GETPOST('fsubrev');
-		//if (GETPOST("actionufnv") && (!empty($ufnvfile) || !empty($fsubrev))) {
-		if (GETPOST("actionufnv") && !empty($ufnvfile)) {
-			$elbfile = new ELbFile($db);
-			$elbfile->actionPositionUploadFileNewVersion();
+
+		// upload file new version
+		if (GETPOST("actionufnv")){
+            $ufnvfile = $_FILES['ufmnvfile'.GETPOST('ufmid', 'int')];
+            if (!empty($ufnvfile)) {
+                $elbfile = new ELbFile($db);
+                $elbfile->actionPositionUploadFileNewVersion();
+            }
 		}
-		
+
+		// delete file
 		if (GETPOST('action2') == 'remove_line_file') {
 			$elbfile = new ELbFile($db);
 			$elbfile->actionPositionRemoveFile();
 		}
-		
+
+		// activate file (set file as current version)
 		if (GETPOST('action2') == 'activate_file') {
 			$elbfile = new ELbFile($db);
 			$elbfile->actionPositionActivateFile();
 		}
-		
+
+		// link file (@TODO - check and remove linking functionality!)
 		if (!elb_empty(GETPOST('link'))) {
 			ElbFile::linkFile();
 		}
@@ -2064,6 +1916,40 @@ class ELbFile {
 		
 		return $elbfilemapid;
 	}
+
+    /**
+     * Delete file from the database and from the server
+     *
+     * @param $fileID
+     */
+	function deleteFile($fileID)
+    {
+        $elbFile = new $this();
+        $elbFile->fetch($fileID);
+        $res = $elbFile->delete();
+        if (!($res > 0)) {
+            return false;
+        }
+
+        // get full path to the file on the server
+        $fullPath = $this->getFullServerPathForFile($elbFile);
+
+        // delete file from file system
+        $this->removeFileFromFileSystem($fullPath);
+
+        return true;
+    }
+
+    public function  getFullServerPathForFile($elbFile)
+    {
+        global $conf;
+        return DOL_DATA_ROOT.'/elbmultiupload/'.$conf->global->ELB_UPLOAD_FILES_DIRECTORY.'/'.$elbFile->id.'.'.$elbFile->type;
+    }
+
+    public function removeFileFromFileSystem($fileFullPath)
+    {
+        unlink($fileFullPath);
+    }
 
 	
 }
