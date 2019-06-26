@@ -1918,7 +1918,7 @@ class ELbFile
 	}
 
     /**
-     * Delete file from the database and from the server
+     * Delete file from the database and from the file system
      *
      * @param $fileID
      */
@@ -1940,12 +1940,23 @@ class ELbFile
         return true;
     }
 
-    public function  getFullServerPathForFile($elbFile)
+    /**
+     * Return full system path to the file
+     *
+     * @param $elbFile
+     * @return string
+     */
+    public function getFullServerPathForFile($elbFile)
     {
         global $conf;
         return DOL_DATA_ROOT.'/elbmultiupload/'.$conf->global->ELB_UPLOAD_FILES_DIRECTORY.'/'.$elbFile->id.'.'.$elbFile->type;
     }
 
+    /**
+     * Delete file from the file system
+     *
+     * @param $fileFullPath
+     */
     public function removeFileFromFileSystem($fileFullPath)
     {
         unlink($fileFullPath);

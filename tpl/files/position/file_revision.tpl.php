@@ -4,10 +4,7 @@
 	<?php
 		$file_relpath = '';
 		if (empty($obj->fmpath)) {
-			//$remove_module = explode('/', ELB_UPLOAD_FILES_DIRECTORY);
-			//$updir = $remove_module[1];
-			//$file_relpath = $updir.'/'.$obj->frowid.'.'.$obj->ftype;
-			$file_relpath = ELB_UPLOAD_FILES_DIRECTORY.'/'.$obj->frowid.'.'.$obj->ftype;
+			$file_relpath = $conf->global->ELB_UPLOAD_FILES_DIRECTORY.'/'.$obj->frowid.'.'.$obj->ftype;
 		} else {		
 			$file_relpath .= $obj->fmpath;
 		}
@@ -22,7 +19,7 @@
 
 		<?php 
 			if(empty($obj->fmpath)) {
-				$href_download = DOL_URL_ROOT . '/document.php?modulepart=elb&attachment=true&amp;file='.urlencode($file_relpath).'&amp;fmapid='.$obj->fmrowid;
+				$href_download = DOL_URL_ROOT . '/document.php?modulepart=elbmultiupload&attachment=true&amp;file='.urlencode($file_relpath).'&amp;fmapid='.$obj->fmrowid;
 				echo '<span class="pushright">
 						<a href="'.$href_download.'">'.
 							 img_picto($langs->trans('DownloadFile'), 'elb-download-14x14.png@elb') .'
@@ -44,7 +41,7 @@
 		<?php } else { ?>
 			<?php 
 				if(empty($obj->fmpath)) {
-					$href=DOL_URL_ROOT . '/document.php?modulepart=elb&amp;file='.urlencode($file_relpath).'&amp;fmapid='.$obj->fmrowid;
+					$href=DOL_URL_ROOT . '/document.php?modulepart=elbmultiupload&amp;file='.urlencode($file_relpath).'&amp;fmapid='.$obj->fmrowid;
 				} else {
 					$href=$obj->fmpath;
 				}
@@ -81,14 +78,11 @@
 		// Show file size
 		if(empty($obj->fmpath)) {
 			$module = $remove_module[0];
-			$filepath=DOL_DATA_ROOT.'/elb/'.ELB_UPLOAD_FILES_DIRECTORY.'/'.$obj->frowid.'.'.$obj->ftype;
+			$filepath=DOL_DATA_ROOT.'/elbmultiupload/'.$conf->global->ELB_UPLOAD_FILES_DIRECTORY.'/'.$obj->frowid.'.'.$obj->ftype;
 			if (file_exists($filepath)) {
 				$size= dol_filesize($filepath);
 				$size= dol_print_size($size,1,1);
 			}
-		} else {
-			//$size= dol_filesize($obj->fpath);
-			//$size= dol_print_size($size,1,1);
 		}
 	?>
 	<td align="left" class="td-file-size nowrap"><?php echo $size; ?></td>
@@ -104,7 +98,6 @@
 		<?php
 			if (!empty($mdate)) { 
 				echo $mdate;
-				//echo " ".img_picto($langs->trans("Created").': '.$cdate, 'help.png');
 			} 
 		?>
 	</td>

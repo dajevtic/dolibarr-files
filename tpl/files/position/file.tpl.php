@@ -138,7 +138,6 @@ $canDeleteFile = (($restictDeleteFile && ($obj->fmuser == $user->id || $user->ad
 		<?php
 			if (!empty($mdate)) { 
 				echo $cdate;
-				//echo " ".img_picto($langs->trans("Created").': '.$cdate, 'help.png');
 			} 
 		?>
 	</td>

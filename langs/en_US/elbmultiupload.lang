@@ -64,3 +64,7 @@ FileSuccessfullyUpdated=File has been successfully updated
 RenameFile=Rename file
 ActionSuccess=Your action has been successfully processed
 ActionError=An error occurred during processing your action
+UploadNewVersion=Upload new version
+FileVersion(s)=File versions
+ReallyActivate=Really activate
+MakeAsCurrentVersion=Mark as current version
