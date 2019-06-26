@@ -41,6 +41,8 @@ if ($user->societe_id) {
     $action = '';
     $socid = $user->societe_id;
 }
+
+// @TODO - recheck restrict access
 $result = restrictedArea($user, 'commande', $id, '');
 
 // Get parameters
@@ -56,86 +58,64 @@ $pagenext = $page + 1;
 if (!$sortorder) $sortorder = "ASC";
 if (!$sortfield) $sortfield = "name";
 
+// @TODO - fetch object depending of object's tab..
 $object = new Propal($db);
 
-//ELB -added process actions
+// check up and process actions on object's additional files
 ELbFile::processFileActions();
-//ELB end
 
-/*
+/**
  * Actions
  */
-if ($object->fetch($id)) {
-    $object->fetch_thirdparty();
-    $upload_dir = $conf->commande->dir_output . "/" . dol_sanitizeFileName($object->ref);
-}
 
-/*
+
+/**
  * View
  */
-
-llxHeader('', $langs->trans('Order'), 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
+llxHeader('', $langs->trans('AdditionalFiles'), '');
 
 $form = new Form($db);
 
 if ($id > 0 || !empty($ref)) {
     if ($object->fetch($id, $ref)) {
+
         $object->fetch_thirdparty();
 
-        $upload_dir = $conf->commande->dir_output . '/' . dol_sanitizeFileName($object->ref);
-
-        //$head = commande_prepare_head($object);
         $head = propal_prepare_head($object);
 
-        dol_fiche_head($head, 'additionalfiles', $langs->trans('CustomerOrder'), 0, 'order');
-
-
-        // Construit liste des fichiers
-        $filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
-        $totalsize = 0;
-        foreach ($filearray as $key => $file) {
-            $totalsize += $file['size'];
-        }
-
+        dol_fiche_head($head, 'additionalfiles', $langs->trans('AdditionalFiles'), 0, 'order');
 
         print '<table class="border" width="100%">';
 
         $linkback = '';
 
-        // Ref
+        // Ref of object
         print '<tr><td width="30%">' . $langs->trans('Ref') . '</td><td colspan="3">';
         print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
         print '</td></tr>';
 
         print '<tr><td>' . $langs->trans('Company') . '</td><td colspan="3">' . $object->thirdparty->getNomUrl(1) . '</td></tr>';
-        // ELB change
-        if (!empty($conf->elb->enabled)) {
-            $totalnr = ELbFileMapping::countLinkedFilesByObjectType($object->element, $object->id);
-            $totalsize = ELbFileMapping::getAttachedFilesSize($object->element, $object->id);
-            print '<tr><td>' . $langs->trans("NbOfAttachedFiles") . '</td><td colspan="3">' . $totalnr . '</td></tr>';
-            print '<tr><td>' . $langs->trans("TotalSizeOfAttachedFiles") . '</td><td colspan="3">' . dol_print_size($totalsize, 1, 1) . '</td></tr>';
-        } else {
-            print '<tr><td>' . $langs->trans("NbOfAttachedFiles") . '</td><td colspan="3">' . count($filearray) . '</td></tr>';
-            print '<tr><td>' . $langs->trans("TotalSizeOfAttachedFiles") . '</td><td colspan="3">' . $totalsize . ' ' . $langs->trans("bytes") . '</td></tr>';
-        }
-        // end ELB change
+        $totalnr = ELbFileMapping::countLinkedFilesByObjectType($object->element, $object->id);
+        $totalsize = ELbFileMapping::getAttachedFilesSize($object->element, $object->id);
+        print '<tr><td>' . $langs->trans("NbOfAttachedFiles") . '</td><td colspan="3">' . $totalnr . '</td></tr>';
+        print '<tr><td>' . $langs->trans("TotalSizeOfAttachedFiles") . '</td><td colspan="3">' . dol_print_size($totalsize, 1, 1) . '</td></tr>';
+
         print "</table>\n";
         print "</div>\n";
 
         $modulepart = 'commande';
         $permission = $user->rights->commande->creer;
         $param = '&id=' . $object->id;
-        //ELB changed inlude file
+
         include_once DOL_DOCUMENT_ROOT . '/elbmultiupload/core/tpl/document_actions_post_headers.tpl.php';
-        //ELB end
+
     } else {
         dol_print_error($db);
     }
 } else {
     header('Location: index.php');
+    exit;
 }
 
-
 llxFooter();
-
 $db->close();

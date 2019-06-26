@@ -1,8 +1,7 @@
 <?php
 //use ELBClass\solr\ElbSolrUtil;
 
-/* Copyright (C)    2013      Cédric Salvador     <csalvador@gpcsolutions.fr>
- * Copyright (C)    2013-2014 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C)    2019      Milos Petkovic     <milos.petkovic@livemediagroup.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
