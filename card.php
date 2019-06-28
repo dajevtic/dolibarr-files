@@ -35,6 +35,8 @@ require_once DOL_DOCUMENT_ROOT . '/elbmultiupload/class/elb.common.manager.class
 
 $langs->load('companies');
 $langs->load('other');
+$langs->load("propal");
+$langs->load("orders");
 
 $action = GETPOST('action');
 $confirm = GETPOST('confirm');
@@ -74,7 +76,7 @@ if ($id == '' && $ref == '') {
 if ($object_element=='commande') {
     $typeOfObject = 'Commande';
     $tabName = 'CustomerOrder';
-    $tabIcon =' order';
+    $tabIcon = 'order';
 } elseif ($object_element=='propal'){
     $typeOfObject = 'Propal';
     $tabName = 'Proposal';
