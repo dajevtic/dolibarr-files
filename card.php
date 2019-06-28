@@ -64,6 +64,10 @@ require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 
+// price request needed files
+require_once DOL_DOCUMENT_ROOT . '/core/lib/supplier_proposal.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/supplier_proposal/class/supplier_proposal.class.php';
+
 // categories needed files
 require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
@@ -82,6 +86,7 @@ $langs->load("orders");
 $langs->load("contracts");
 $langs->load("interventions");
 $langs->load("bills");
+$langs->load("supplier_proposal");
 
 $action = GETPOST('action');
 $confirm = GETPOST('confirm');
@@ -214,6 +219,14 @@ elseif ($object_element=='order_supplier') {
     $tabIcon = 'order';
     $objectTabsMethodPrefix = 'ordersupplier';
 }
+// supplier_proposal module (price request)
+elseif ($object_element=='supplier_proposal') {
+    $typeOfObject = 'SupplierProposal';
+    $tabName = 'CommRequest';
+    $tabIcon = 'supplier_proposal';
+    $objectTabsMethodPrefix = 'supplier_proposal';
+}
+
 
 // fetch object
 $object = new $typeOfObject($db);
