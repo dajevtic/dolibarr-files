@@ -20,6 +20,9 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
+// user group needed files
+require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
+
 // proposal needed files
 require_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/propal.lib.php';
@@ -78,6 +81,9 @@ if ($id == '' && $ref == '') {
     exit;
 }
 
+// prefix of method for tab of current object
+$objectTabsMethodPrefix = $object_element;
+
 // set up object, object's name and icon depending of current object element/type
 if ($object_element=='commande') {
     $typeOfObject = 'Commande';
@@ -91,10 +97,14 @@ if ($object_element=='commande') {
     $typeOfObject = 'User';
     $tabName = 'User';
     $tabIcon = 'user';
+} elseif ($object_element=='usergroup'){
+    $typeOfObject = 'UserGroup';
+    $tabName = 'UserGroup';
+    $tabIcon = 'group';
+    $objectTabsMethodPrefix = 'group';
 }
 
 // fetch object
-//$objectClassname = ucfirst($object_element);
 $object = new $typeOfObject($db);
 $resFetchObject = $object->fetch($id, $ref);
 if (!($resFetchObject > 0)) {
@@ -124,7 +134,7 @@ $form = new Form($db);
 $object->fetch_thirdparty();
 
 // get tabs method of current object
-$objectTabsMethod = $object_element.'_prepare_head';
+$objectTabsMethod = $objectTabsMethodPrefix.'_prepare_head';
 $head = $objectTabsMethod($object);
 
 dol_fiche_head($head, 'additionalfiles', $langs->trans('AdditionalFiles'), 0, $tabIcon);
@@ -149,6 +159,7 @@ print '<tr><td>' . $langs->trans("TotalSizeOfAttachedFiles") . '</td><td colspan
 print "</table>\n";
 print "</div>\n";
 
+// @TODO set this part!!!
 $modulepart = 'commande';
 $permission = $user->rights->commande->creer;
 $param = '&id=' . $object->id;
