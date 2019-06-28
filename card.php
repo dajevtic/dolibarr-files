@@ -10,23 +10,28 @@
 define("JQUERY_MULTISELECT_V4", 1);
 
 require_once '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/order.lib.php';
+
+require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 
-require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
+// proposal needed files
 require_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
-
 require_once DOL_DOCUMENT_ROOT . '/core/lib/propal.lib.php';
 
-require_once DOL_DOCUMENT_ROOT . '/elbmultiupload/lib/elbmultiupload.lib.php';
+// customer order needed files
+require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/order.lib.php';
 
+// categories needed files
+require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+
+// elbmultiupload module needed files
+require_once DOL_DOCUMENT_ROOT . '/elbmultiupload/lib/elbmultiupload.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/elbmultiupload/class/elb.file.class.php';
 require_once DOL_DOCUMENT_ROOT . '/elbmultiupload/class/elb.file_mapping.class.php';
 require_once DOL_DOCUMENT_ROOT . '/elbmultiupload/class/elb.common.manager.class.php';
-require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-
 
 $langs->load('companies');
 $langs->load('other');
@@ -35,15 +40,14 @@ $action = GETPOST('action');
 $confirm = GETPOST('confirm');
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref');
+$object_element = GETPOST('object_element');
 
-// Security check
-if ($user->societe_id) {
-    $action = '';
-    $socid = $user->societe_id;
+if (empty($object_element)) {
+    // type of object is needed
+    $result = restrictedArea($user, 'noexistingobjectelement', $id, '');
+} else {
+    $result = restrictedArea($user, $object_element, $id, '');
 }
-
-// @TODO - recheck restrict access
-$result = restrictedArea($user, 'commande', $id, '');
 
 // Get parameters
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -58,8 +62,36 @@ $pagenext = $page + 1;
 if (!$sortorder) $sortorder = "ASC";
 if (!$sortfield) $sortfield = "name";
 
-// @TODO - fetch object depending of object's tab..
-$object = new Propal($db);
+
+// object must be fetched by id or reference
+if ($id == '' && $ref == '') {
+    setEventMessage($langs->trans('MissingObjectIDorRef'), 'errors');
+    dol_print_error('','Bad parameter');
+    header('Location: index.php');
+    exit;
+}
+
+if ($object_element=='commande') {
+    $typeOfObject = 'Commande';
+    $tabName = 'CustomerOrder';
+    $tabIcon =' order';
+} elseif ($object_element=='propal'){
+    $typeOfObject = 'Propal';
+    $tabName = 'Proposal';
+    $tabIcon = 'propal';
+}
+
+// fetch object
+//$objectClassname = ucfirst($object_element);
+$object = new $typeOfObject($db);
+$resFetchObject = $object->fetch($id, $ref);
+if (!($resFetchObject > 0)) {
+    $errFetching = $langs->trans('ErrorFetchingObject');
+    setEventMessage($errFetching, 'errors');
+    dol_print_error('','Bad parameter');
+    header('Location: index.php');
+    exit;
+}
 
 // check up and process actions on object's additional files
 ELbFile::processFileActions();
@@ -72,50 +104,44 @@ ELbFile::processFileActions();
 /**
  * View
  */
-llxHeader('', $langs->trans('AdditionalFiles'), '');
+llxHeader('', $langs->trans($tabName).' - '.$langs->trans('AdditionalFiles'), '');
 
 $form = new Form($db);
 
-if ($id > 0 || !empty($ref)) {
-    if ($object->fetch($id, $ref)) {
+// fetch object's third party
+$object->fetch_thirdparty();
 
-        $object->fetch_thirdparty();
+// get tabs method of current object
+$objectTabsMethod = $object_element.'_prepare_head';
+$head = $objectTabsMethod($object);
 
-        $head = propal_prepare_head($object);
+dol_fiche_head($head, 'additionalfiles', $langs->trans('AdditionalFiles'), 0, $tabIcon);
 
-        dol_fiche_head($head, 'additionalfiles', $langs->trans('AdditionalFiles'), 0, 'order');
+print '<table class="border" width="100%">';
 
-        print '<table class="border" width="100%">';
+$linkback = '';
 
-        $linkback = '';
+// Ref of object
+print '<tr><td width="30%">' . $langs->trans('Ref') . '</td><td colspan="3">';
+print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
+print '</td></tr>';
 
-        // Ref of object
-        print '<tr><td width="30%">' . $langs->trans('Ref') . '</td><td colspan="3">';
-        print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
-        print '</td></tr>';
+print '<tr><td>' . $langs->trans('Company') . '</td><td colspan="3">' . $object->thirdparty->getNomUrl(1) . '</td></tr>';
+$totalnr = ELbFileMapping::countLinkedFilesByObjectType($object->element, $object->id);
+$totalsize = ELbFileMapping::getAttachedFilesSize($object->element, $object->id);
+print '<tr><td>' . $langs->trans("NbOfAttachedFiles") . '</td><td colspan="3">' . $totalnr . '</td></tr>';
+print '<tr><td>' . $langs->trans("TotalSizeOfAttachedFiles") . '</td><td colspan="3">' . dol_print_size($totalsize, 1, 1) . '</td></tr>';
 
-        print '<tr><td>' . $langs->trans('Company') . '</td><td colspan="3">' . $object->thirdparty->getNomUrl(1) . '</td></tr>';
-        $totalnr = ELbFileMapping::countLinkedFilesByObjectType($object->element, $object->id);
-        $totalsize = ELbFileMapping::getAttachedFilesSize($object->element, $object->id);
-        print '<tr><td>' . $langs->trans("NbOfAttachedFiles") . '</td><td colspan="3">' . $totalnr . '</td></tr>';
-        print '<tr><td>' . $langs->trans("TotalSizeOfAttachedFiles") . '</td><td colspan="3">' . dol_print_size($totalsize, 1, 1) . '</td></tr>';
+print "</table>\n";
+print "</div>\n";
 
-        print "</table>\n";
-        print "</div>\n";
+$modulepart = 'commande';
+$permission = $user->rights->commande->creer;
+$param = '&id=' . $object->id;
 
-        $modulepart = 'commande';
-        $permission = $user->rights->commande->creer;
-        $param = '&id=' . $object->id;
+include_once DOL_DOCUMENT_ROOT . '/elbmultiupload/core/tpl/document_actions_post_headers.tpl.php';
 
-        include_once DOL_DOCUMENT_ROOT . '/elbmultiupload/core/tpl/document_actions_post_headers.tpl.php';
 
-    } else {
-        dol_print_error($db);
-    }
-} else {
-    header('Location: index.php');
-    exit;
-}
 
 llxFooter();
 $db->close();
