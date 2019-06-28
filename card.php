@@ -23,6 +23,10 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 // user group needed files
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 
+// holiday needed files
+require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+
 // proposal needed files
 require_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/propal.lib.php';
@@ -46,6 +50,7 @@ $langs->load('other');
 $langs->load("users");
 $langs->load("propal");
 $langs->load("orders");
+$langs->load("holiday");
 
 $action = GETPOST('action');
 $confirm = GETPOST('confirm');
@@ -102,6 +107,11 @@ if ($object_element=='commande') {
     $tabName = 'UserGroup';
     $tabIcon = 'group';
     $objectTabsMethodPrefix = 'group';
+} elseif ($object_element=='holiday'){
+    $typeOfObject = 'Holiday';
+    $tabName = 'CPTitreMenu';
+    $tabIcon = 'holiday';
+    $objectTabsMethodPrefix = 'holiday';
 }
 
 // fetch object
