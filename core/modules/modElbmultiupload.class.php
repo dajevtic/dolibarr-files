@@ -170,8 +170,11 @@ class modElbmultiupload extends DolibarrModules
         // 'thirdparty'       to add a tab in third party view
         // 'user'             to add a tab in user view
 
-
+        // user
+        $this->tabs[] = array('data' => 'user:+additionalfiles:AdditionalFiles:elbmultiupload@elbmultiupload:1:/elbmultiupload/card.php?id=__ID__&object_element=user');
+        // proposal
         $this->tabs[] = array('data' => 'propal:+additionalfiles:AdditionalFiles:elbmultiupload@elbmultiupload:1:/elbmultiupload/card.php?id=__ID__&object_element=propal');
+        // customer order
         $this->tabs[] = array('data' => 'order:+additionalfiles:AdditionalFiles:elbmultiupload@elbmultiupload:1:/elbmultiupload/card.php?id=__ID__&object_element=commande');
 
 

@@ -16,6 +16,10 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 
+// user needed files
+require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+
 // proposal needed files
 require_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/propal.lib.php';
@@ -35,6 +39,8 @@ require_once DOL_DOCUMENT_ROOT . '/elbmultiupload/class/elb.common.manager.class
 
 $langs->load('companies');
 $langs->load('other');
+
+$langs->load("users");
 $langs->load("propal");
 $langs->load("orders");
 
@@ -64,7 +70,6 @@ $pagenext = $page + 1;
 if (!$sortorder) $sortorder = "ASC";
 if (!$sortfield) $sortfield = "name";
 
-
 // object must be fetched by id or reference
 if ($id == '' && $ref == '') {
     setEventMessage($langs->trans('MissingObjectIDorRef'), 'errors');
@@ -73,6 +78,7 @@ if ($id == '' && $ref == '') {
     exit;
 }
 
+// set up object, object's name and icon depending of current object element/type
 if ($object_element=='commande') {
     $typeOfObject = 'Commande';
     $tabName = 'CustomerOrder';
@@ -81,6 +87,10 @@ if ($object_element=='commande') {
     $typeOfObject = 'Propal';
     $tabName = 'Proposal';
     $tabIcon = 'propal';
+} elseif ($object_element=='user'){
+    $typeOfObject = 'User';
+    $tabName = 'User';
+    $tabIcon = 'user';
 }
 
 // fetch object
@@ -128,7 +138,9 @@ print '<tr><td width="30%">' . $langs->trans('Ref') . '</td><td colspan="3">';
 print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
 print '</td></tr>';
 
-print '<tr><td>' . $langs->trans('Company') . '</td><td colspan="3">' . $object->thirdparty->getNomUrl(1) . '</td></tr>';
+if (is_object($object->thirdparty)) {
+    print '<tr><td>' . $langs->trans('Company') . '</td><td colspan="3">' . $object->thirdparty->getNomUrl(1) . '</td></tr>';
+}
 $totalnr = ELbFileMapping::countLinkedFilesByObjectType($object->element, $object->id);
 $totalsize = ELbFileMapping::getAttachedFilesSize($object->element, $object->id);
 print '<tr><td>' . $langs->trans("NbOfAttachedFiles") . '</td><td colspan="3">' . $totalnr . '</td></tr>';
@@ -142,8 +154,6 @@ $permission = $user->rights->commande->creer;
 $param = '&id=' . $object->id;
 
 include_once DOL_DOCUMENT_ROOT . '/elbmultiupload/core/tpl/document_actions_post_headers.tpl.php';
-
-
 
 llxFooter();
 $db->close();
