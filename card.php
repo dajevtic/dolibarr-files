@@ -48,6 +48,10 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/propal.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/order.lib.php';
 
+// contract needed files
+require_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+
 // categories needed files
 require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
@@ -59,11 +63,11 @@ require_once DOL_DOCUMENT_ROOT . '/elbmultiupload/class/elb.common.manager.class
 
 $langs->load('companies');
 $langs->load('other');
-
 $langs->load("users");
 $langs->load("propal");
-$langs->load("orders");
 $langs->load("holiday");
+$langs->load("orders");
+$langs->load("contracts");
 
 $action = GETPOST('action');
 $confirm = GETPOST('confirm');
@@ -146,6 +150,11 @@ if ($object_element=='commande') {
     $tabName = 'ThirdParty';
     $tabIcon = 'company';
     $objectTabsMethodPrefix = 'societe';
+} elseif ($object_element=='contrat'){
+    $typeOfObject = 'Contrat';
+    $tabName = 'Contract';
+    $tabIcon = 'contract';
+    $objectTabsMethodPrefix = 'contract';
 }
 
 // fetch object
