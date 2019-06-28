@@ -56,6 +56,10 @@ require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
+// intervention needed files
+require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+
 // categories needed files
 require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
@@ -72,6 +76,8 @@ $langs->load("propal");
 $langs->load("holiday");
 $langs->load("orders");
 $langs->load("contracts");
+$langs->load("interventions");
+$langs->load("bills");
 
 $action = GETPOST('action');
 $confirm = GETPOST('confirm');
@@ -85,6 +91,8 @@ if ($object_element=='member') {
     $checkUpAccessForObject = 'adherent';
 } elseif ($object_element=='shipping') {
     $checkUpAccessForObject = 'expedition';
+} elseif ($object_element=='fichinter') {
+    $checkUpAccessForObject = 'ficheinter';
 }
 
 if (empty($checkUpAccessForObject)) {
@@ -118,54 +126,80 @@ if ($id == '' && $ref == '') {
 // prefix of method for tab of current object
 $objectTabsMethodPrefix = $object_element;
 
-// set up object, object's name and icon depending of current object element/type
+/* set up object, object's name and icon depending of current object element/type */
+// customer order module
 if ($object_element=='commande') {
     $typeOfObject = 'Commande';
     $tabName = 'CustomerOrder';
     $tabIcon = 'order';
-} elseif ($object_element=='propal') {
+}
+// proposal module
+elseif ($object_element=='propal') {
     $typeOfObject = 'Propal';
     $tabName = 'Proposal';
     $tabIcon = 'propal';
-} elseif ($object_element=='user') {
+}
+// user module
+elseif ($object_element=='user') {
     $typeOfObject = 'User';
     $tabName = 'User';
     $tabIcon = 'user';
-} elseif ($object_element=='usergroup') {
+}
+// user group module
+elseif ($object_element=='usergroup') {
     $typeOfObject = 'UserGroup';
     $tabName = 'UserGroup';
     $tabIcon = 'group';
     $objectTabsMethodPrefix = 'group';
-} elseif ($object_element=='holiday') {
+}
+// holiday/leaves module
+elseif ($object_element=='holiday') {
     $typeOfObject = 'Holiday';
     $tabName = 'CPTitreMenu';
     $tabIcon = 'holiday';
     $objectTabsMethodPrefix = 'holiday';
-} elseif ($object_element=='expensereport') {
+}
+// expense module
+elseif ($object_element=='expensereport') {
     $typeOfObject = 'ExpenseReport';
     $tabName = 'ExpenseReport';
     $tabIcon = 'trip';
     $objectTabsMethodPrefix = 'expensereport';
-} elseif ($object_element=='member') {
+}
+// members module
+elseif ($object_element=='member') {
     $typeOfObject = 'Adherent';
     $tabName = 'Member';
     $tabIcon = 'user';
     $objectTabsMethodPrefix = 'member';
-} elseif ($object_element=='societe') {
+}
+// third party module
+elseif ($object_element=='societe') {
     $typeOfObject = 'Societe';
     $tabName = 'ThirdParty';
     $tabIcon = 'company';
     $objectTabsMethodPrefix = 'societe';
-} elseif ($object_element=='contrat') {
+}
+// contract module
+elseif ($object_element=='contrat') {
     $typeOfObject = 'Contrat';
     $tabName = 'Contract';
     $tabIcon = 'contract';
     $objectTabsMethodPrefix = 'contract';
-} elseif ($object_element=='shipping') {
+}
+// shipment module
+elseif ($object_element=='shipping') {
     $typeOfObject = 'Expedition';
     $tabName = 'Shipment';
     $tabIcon = 'sending';
     $objectTabsMethodPrefix = 'shipping';
+}
+// intervention module
+elseif ($object_element=='fichinter') {
+    $typeOfObject = 'Fichinter';
+    $tabName = 'InterventionCard';
+    $tabIcon = 'intervention';
+    $objectTabsMethodPrefix = 'fichinter';
 }
 
 // fetch object
