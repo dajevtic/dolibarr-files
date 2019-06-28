@@ -36,6 +36,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
+// third party needed files
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+
 // proposal needed files
 require_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/propal.lib.php';
@@ -137,6 +141,11 @@ if ($object_element=='commande') {
     $tabName = 'Member';
     $tabIcon = 'user';
     $objectTabsMethodPrefix = 'member';
+} elseif ($object_element=='societe'){
+    $typeOfObject = 'Societe';
+    $tabName = 'ThirdParty';
+    $tabIcon = 'company';
+    $objectTabsMethodPrefix = 'societe';
 }
 
 // fetch object
