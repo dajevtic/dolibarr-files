@@ -192,6 +192,8 @@ class modElbmultiupload extends DolibarrModules
         $this->tabs[] = array('data' => 'delivery:+additionalfiles:AdditionalFiles:elbmultiupload@elbmultiupload:1:/elbmultiupload/card.php?id=__ID__&object_element=shipping');
         // intervention
         $this->tabs[] = array('data' => 'intervention:+additionalfiles:AdditionalFiles:elbmultiupload@elbmultiupload:1:/elbmultiupload/card.php?id=__ID__&object_element=fichinter');
+        // supplier order
+        $this->tabs[] = array('data' => 'supplier_order:+additionalfiles:AdditionalFiles:elbmultiupload@elbmultiupload:1:/elbmultiupload/card.php?id=__ID__&object_element=order_supplier');
 
 
         // Dictionaries

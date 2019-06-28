@@ -60,6 +60,10 @@ require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 
+// supply order needed files
+require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+
 // categories needed files
 require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
@@ -93,6 +97,8 @@ if ($object_element=='member') {
     $checkUpAccessForObject = 'expedition';
 } elseif ($object_element=='fichinter') {
     $checkUpAccessForObject = 'ficheinter';
+} elseif ($object_element=='order_supplier') {
+    $checkUpAccessForObject = 'fournisseur';
 }
 
 if (empty($checkUpAccessForObject)) {
@@ -200,6 +206,13 @@ elseif ($object_element=='fichinter') {
     $tabName = 'InterventionCard';
     $tabIcon = 'intervention';
     $objectTabsMethodPrefix = 'fichinter';
+}
+// supply order module
+elseif ($object_element=='order_supplier') {
+    $typeOfObject = 'CommandeFournisseur';
+    $tabName = 'OrderCard';
+    $tabIcon = 'order';
+    $objectTabsMethodPrefix = 'ordersupplier';
 }
 
 // fetch object
