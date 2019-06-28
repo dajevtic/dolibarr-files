@@ -27,6 +27,10 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 
+// expense needed files
+require_once DOL_DOCUMENT_ROOT . '/core/lib/expensereport.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
+
 // proposal needed files
 require_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/propal.lib.php';
@@ -112,6 +116,11 @@ if ($object_element=='commande') {
     $tabName = 'CPTitreMenu';
     $tabIcon = 'holiday';
     $objectTabsMethodPrefix = 'holiday';
+} elseif ($object_element=='expensereport'){
+    $typeOfObject = 'ExpenseReport';
+    $tabName = 'ExpenseReport';
+    $tabIcon = 'trip';
+    $objectTabsMethodPrefix = 'expensereport';
 }
 
 // fetch object
