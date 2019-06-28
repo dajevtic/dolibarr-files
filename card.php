@@ -52,6 +52,10 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/order.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 
+// shipment needed files
+require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+
 // categories needed files
 require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
@@ -79,6 +83,8 @@ $object_element = GETPOST('object_element');
 $checkUpAccessForObject = $object_element;
 if ($object_element=='member') {
     $checkUpAccessForObject = 'adherent';
+} elseif ($object_element=='shipping') {
+    $checkUpAccessForObject = 'expedition';
 }
 
 if (empty($checkUpAccessForObject)) {
@@ -117,44 +123,49 @@ if ($object_element=='commande') {
     $typeOfObject = 'Commande';
     $tabName = 'CustomerOrder';
     $tabIcon = 'order';
-} elseif ($object_element=='propal'){
+} elseif ($object_element=='propal') {
     $typeOfObject = 'Propal';
     $tabName = 'Proposal';
     $tabIcon = 'propal';
-} elseif ($object_element=='user'){
+} elseif ($object_element=='user') {
     $typeOfObject = 'User';
     $tabName = 'User';
     $tabIcon = 'user';
-} elseif ($object_element=='usergroup'){
+} elseif ($object_element=='usergroup') {
     $typeOfObject = 'UserGroup';
     $tabName = 'UserGroup';
     $tabIcon = 'group';
     $objectTabsMethodPrefix = 'group';
-} elseif ($object_element=='holiday'){
+} elseif ($object_element=='holiday') {
     $typeOfObject = 'Holiday';
     $tabName = 'CPTitreMenu';
     $tabIcon = 'holiday';
     $objectTabsMethodPrefix = 'holiday';
-} elseif ($object_element=='expensereport'){
+} elseif ($object_element=='expensereport') {
     $typeOfObject = 'ExpenseReport';
     $tabName = 'ExpenseReport';
     $tabIcon = 'trip';
     $objectTabsMethodPrefix = 'expensereport';
-} elseif ($object_element=='member'){
+} elseif ($object_element=='member') {
     $typeOfObject = 'Adherent';
     $tabName = 'Member';
     $tabIcon = 'user';
     $objectTabsMethodPrefix = 'member';
-} elseif ($object_element=='societe'){
+} elseif ($object_element=='societe') {
     $typeOfObject = 'Societe';
     $tabName = 'ThirdParty';
     $tabIcon = 'company';
     $objectTabsMethodPrefix = 'societe';
-} elseif ($object_element=='contrat'){
+} elseif ($object_element=='contrat') {
     $typeOfObject = 'Contrat';
     $tabName = 'Contract';
     $tabIcon = 'contract';
     $objectTabsMethodPrefix = 'contract';
+} elseif ($object_element=='shipping') {
+    $typeOfObject = 'Expedition';
+    $tabName = 'Shipment';
+    $tabIcon = 'sending';
+    $objectTabsMethodPrefix = 'shipping';
 }
 
 // fetch object
