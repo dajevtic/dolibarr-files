@@ -31,6 +31,11 @@ require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/expensereport.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
 
+// member needed files
+require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
+
 // proposal needed files
 require_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/propal.lib.php';
@@ -62,11 +67,17 @@ $id = GETPOST('id', 'int');
 $ref = GETPOST('ref');
 $object_element = GETPOST('object_element');
 
-if (empty($object_element)) {
+// access per object can differ from the object's element/type
+$checkUpAccessForObject = $object_element;
+if ($object_element=='member') {
+    $checkUpAccessForObject = 'adherent';
+}
+
+if (empty($checkUpAccessForObject)) {
     // type of object is needed
     $result = restrictedArea($user, 'noexistingobjectelement', $id, '');
 } else {
-    $result = restrictedArea($user, $object_element, $id, '');
+    $result = restrictedArea($user, $checkUpAccessForObject, $id, '');
 }
 
 // Get parameters
@@ -121,6 +132,11 @@ if ($object_element=='commande') {
     $tabName = 'ExpenseReport';
     $tabIcon = 'trip';
     $objectTabsMethodPrefix = 'expensereport';
+} elseif ($object_element=='member'){
+    $typeOfObject = 'Adherent';
+    $tabName = 'Member';
+    $tabIcon = 'user';
+    $objectTabsMethodPrefix = 'member';
 }
 
 // fetch object

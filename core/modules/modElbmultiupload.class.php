@@ -178,6 +178,8 @@ class modElbmultiupload extends DolibarrModules
         $this->tabs[] = array('data' => 'holiday:+additionalfiles:AdditionalFiles:elbmultiupload@elbmultiupload:1:/elbmultiupload/card.php?id=__ID__&object_element=holiday');
         // expense
         $this->tabs[] = array('data' => 'expensereport:+additionalfiles:AdditionalFiles:elbmultiupload@elbmultiupload:1:/elbmultiupload/card.php?id=__ID__&object_element=expensereport');
+        // member
+        $this->tabs[] = array('data' => 'member:+additionalfiles:AdditionalFiles:elbmultiupload@elbmultiupload:1:/elbmultiupload/card.php?id=__ID__&object_element=member');
         // proposal
         $this->tabs[] = array('data' => 'propal:+additionalfiles:AdditionalFiles:elbmultiupload@elbmultiupload:1:/elbmultiupload/card.php?id=__ID__&object_element=propal');
         // customer order
