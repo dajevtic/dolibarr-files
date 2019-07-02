@@ -222,6 +222,9 @@ class modElbmultiupload extends DolibarrModules
         $this->tabs[] = array('data' => 'stock:+additionalfiles:AdditionalFiles:elbmultiupload@elbmultiupload:1:/elbmultiupload/card.php?id=__ID__&object_element=stock');
         // project
         $this->tabs[] = array('data' => 'project:+additionalfiles:AdditionalFiles:elbmultiupload@elbmultiupload:1:/elbmultiupload/card.php?id=__ID__&object_element=project');
+        // agenda (calendar)
+        // NOT available because calendar events are missiong ids in lists
+        //$this->tabs[] = array('data' => 'agenda:+additionalfiles:AdditionalFiles:elbmultiupload@elbmultiupload:1:/elbmultiupload/card.php?id=__ID__&object_element=action');
 
 
         // Dictionaries

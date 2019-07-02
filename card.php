@@ -120,6 +120,10 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
+// agenda/calender needed files
+require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+
 // categories needed files
 require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
@@ -147,6 +151,7 @@ $langs->load("loan");
 $langs->load("banks");
 $langs->load("stocks");
 $langs->load("projects");
+$langs->load("agenda");
 
 $action = GETPOST('action');
 $confirm = GETPOST('confirm');
@@ -194,6 +199,9 @@ if ($object_element=='member') {
 } elseif ($object_element=='project') {
     $checkUpAccessForObject = 'projet';
     $tableandshare = 'projet&project';
+} elseif ($object_element=='action') {
+    $checkUpAccessForObject = 'agenda';
+    $feature2 = 'myactions';
 }
 
 // check access per object
