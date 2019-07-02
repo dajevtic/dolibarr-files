@@ -72,6 +72,10 @@ require_once DOL_DOCUMENT_ROOT . '/supplier_proposal/class/supplier_proposal.cla
 require_once DOL_DOCUMENT_ROOT . '/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
+// sales tax payment needed files
+require_once DOL_DOCUMENT_ROOT.'/core/lib/vat.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
+
 // categories needed files
 require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
@@ -81,6 +85,7 @@ require_once DOL_DOCUMENT_ROOT . '/elbmultiupload/class/elb.file.class.php';
 require_once DOL_DOCUMENT_ROOT . '/elbmultiupload/class/elb.file_mapping.class.php';
 require_once DOL_DOCUMENT_ROOT . '/elbmultiupload/class/elb.common.manager.class.php';
 
+$langs->load('compta');
 $langs->load('companies');
 $langs->load('other');
 $langs->load("users");
@@ -89,8 +94,8 @@ $langs->load("holiday");
 $langs->load("orders");
 $langs->load("contracts");
 $langs->load("interventions");
-$langs->load("bills");
 $langs->load("supplier_proposal");
+$langs->load("bills");
 
 $action = GETPOST('action');
 $confirm = GETPOST('confirm');
@@ -98,7 +103,10 @@ $id = GETPOST('id', 'int');
 $ref = GETPOST('ref');
 $object_element = GETPOST('object_element');
 
-// access per object can differ from the object's element/type
+$tableandshare = '';
+$feature2 = '';
+
+// checking access per object can differ from the object's element/type
 $checkUpAccessForObject = $object_element;
 if ($object_element=='member') {
     $checkUpAccessForObject = 'adherent';
@@ -108,13 +116,16 @@ if ($object_element=='member') {
     $checkUpAccessForObject = 'ficheinter';
 } elseif ($object_element=='order_supplier') {
     $checkUpAccessForObject = 'fournisseur';
+} elseif ($object_element=='tva') {
+    $checkUpAccessForObject = 'tax';
+    $feature2 = 'charges';
 }
 
 if (empty($checkUpAccessForObject)) {
     // type of object is needed
-    $result = restrictedArea($user, 'noexistingobjectelement', $id, '');
+    $result = restrictedArea($user, 'dolnoexistingobjectelement', $id, '');
 } else {
-    $result = restrictedArea($user, $checkUpAccessForObject, $id, '');
+    $result = restrictedArea($user, $checkUpAccessForObject, $id, $tableandshare, $feature2);
 }
 
 // Get parameters
@@ -236,6 +247,13 @@ elseif ($object_element=='facture') {
     $tabName = 'InvoiceCustomer';
     $tabIcon = 'bill';
     $objectTabsMethodPrefix = 'facture';
+}
+// sales tax payment
+elseif ($object_element=='tva') {
+    $typeOfObject = 'Tva';
+    $tabName = 'VATPayment';
+    $tabIcon = 'payment';
+    $objectTabsMethodPrefix = 'vat';
 }
 
 
