@@ -112,6 +112,10 @@ require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
+// warehouse needed files
+require_once DOL_DOCUMENT_ROOT.'/core/lib/stock.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+
 // categories needed files
 require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
@@ -137,6 +141,7 @@ $langs->load("salaries");
 $langs->load("hrm");
 $langs->load("loan");
 $langs->load("banks");
+$langs->load("stocks");
 
 $action = GETPOST('action');
 $confirm = GETPOST('confirm');
@@ -379,6 +384,12 @@ elseif ($object_element=='product') {
     $typeOfObject = 'Product';
     $tabName = 'Product';
     $tabIcon = 'product';
+}
+// warehouse
+elseif ($object_element=='stock') {
+    $typeOfObject = 'Entrepot';
+    $tabName = 'Warehouse';
+    $tabIcon = 'stock';
 }
 
 // fetch object
