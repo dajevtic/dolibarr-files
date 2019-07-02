@@ -96,6 +96,10 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/salaries.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 
+// loan needed files
+require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
+
 // categories needed files
 require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
@@ -119,6 +123,7 @@ $langs->load("supplier_proposal");
 $langs->load("bills");
 $langs->load("salaries");
 $langs->load("hrm");
+$langs->load("loan");
 
 $action = GETPOST('action');
 $confirm = GETPOST('confirm');
@@ -329,6 +334,13 @@ elseif ($object_element=='payment_salary') {
     $tabName = 'SalaryPayment';
     $tabIcon = 'payment';
     $objectTabsMethodPrefix = 'salaries';
+}
+// loan
+elseif ($object_element=='loan') {
+    $typeOfObject = 'Loan';
+    $tabName = 'Loan';
+    $tabIcon = 'bill';
+    $objectTabsMethodPrefix = 'loan';
 }
 
 // fetch object
