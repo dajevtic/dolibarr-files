@@ -72,6 +72,10 @@ require_once DOL_DOCUMENT_ROOT . '/supplier_proposal/class/supplier_proposal.cla
 require_once DOL_DOCUMENT_ROOT . '/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
+// invoice payments needed files
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
+
 // sales tax payment needed files
 require_once DOL_DOCUMENT_ROOT.'/core/lib/vat.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
@@ -127,8 +131,11 @@ if ($object_element=='member') {
     $checkUpAccessForObject = 'tax';
     $tableandshare = $object_element;
     $feature2 = 'charges';
+} elseif ($object_element=='payment') {
+    $checkUpAccessForObject = 'facture';
 }
 
+// check access per object
 if (empty($checkUpAccessForObject)) {
     // type of object is needed
     $result = restrictedArea($user, 'dolnoexistingobjectelement', $id, '');
@@ -256,6 +263,13 @@ elseif ($object_element=='facture') {
     $tabIcon = 'bill';
     $objectTabsMethodPrefix = 'facture';
 }
+// invoice payment
+elseif ($object_element=='payment') {
+    $typeOfObject = 'Paiement';
+    $tabName = 'PaymentCustomerInvoice';
+    $tabIcon = 'payment';
+    $objectTabsMethodPrefix = 'payment';
+}
 // sales tax payment
 elseif ($object_element=='tva') {
     $typeOfObject = 'Tva';
@@ -271,7 +285,6 @@ elseif ($object_element=='chargesociales') {
     $objectTabsMethodPrefix = 'tax';
 }
 
-
 // fetch object
 $object = new $typeOfObject($db);
 $resFetchObject = $object->fetch($id, $ref);
@@ -283,13 +296,11 @@ if (!($resFetchObject > 0)) {
     exit;
 }
 
-// check up and process actions on object's additional files
-ELbFile::processFileActions();
-
 /**
  * Actions
  */
-
+// check up and process actions on object's additional files
+ELbFile::processFileActions();
 
 /**
  * View
