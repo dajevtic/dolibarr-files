@@ -68,6 +68,10 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/supplier_proposal.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/supplier_proposal/class/supplier_proposal.class.php';
 
+// invoice needed files
+require_once DOL_DOCUMENT_ROOT . '/core/lib/invoice.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+
 // categories needed files
 require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
@@ -225,6 +229,13 @@ elseif ($object_element=='supplier_proposal') {
     $tabName = 'CommRequest';
     $tabIcon = 'supplier_proposal';
     $objectTabsMethodPrefix = 'supplier_proposal';
+}
+// invoice module
+elseif ($object_element=='facture') {
+    $typeOfObject = 'Facture';
+    $tabName = 'InvoiceCustomer';
+    $tabIcon = 'bill';
+    $objectTabsMethodPrefix = 'facture';
 }
 
 
