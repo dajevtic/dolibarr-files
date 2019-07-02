@@ -40,7 +40,7 @@ $canDeleteFile = (($restictDeleteFile && ($obj->fmuser == $user->id || $user->ad
 		<!-- Rename file link-->
 		<span class="pushright">
 			<?php
-				$url = DOL_URL_ROOT . '/elbmultiupload/ajax/rename_file.php?file_id=' . $obj->frowid;
+				$url = DOL_URL_ROOT . '/elbmultiupload/ajax/rename_file.php?file_id=' . $obj->frowid.'&object_element='.$object_element;
 				$trans = $langs->trans('RenameFile');
 				$icon = img_edit($langs->trans('RenameFile'));
 				print '<a href="#" onclick="elb_ajax_dialog(\''. $url .'\',\''. $trans .'\',\'400\'); return false;">'. $icon .'</a>&nbsp;&nbsp;';
@@ -163,6 +163,7 @@ $canDeleteFile = (($restictDeleteFile && ($obj->fmuser == $user->id || $user->ad
 				<input type="hidden" name="socid" value="<?php echo $socid ?>" />
 				<input type="hidden" name="lineid" value="<?php echo $lineid ?>" />		
 				<input type="hidden" name="filemapid" value="<?php echo $obj->fmrowid; ?>" />
+                <input type="hidden" name="object_element" value="<?php echo $object_element ?>" />
 				<input type="submit" name="update_file" class="button" value="<?php echo $langs->trans("Update") ?>" />	
 				<?php
 					if (!empty($id)) {
@@ -173,10 +174,13 @@ $canDeleteFile = (($restictDeleteFile && ($obj->fmuser == $user->id || $user->ad
 						$cancel_url=$_SERVER["PHP_SELF"].'?socid='.$socid;
 					}
 					
-					if (GETPOST('action'))
-						$cancel_url.='&action='.GETPOST('action');
-					if (GETPOST('lineid'))
-						$cancel_url.='&lineid='.$lineid;
+					if (GETPOST('action')) {
+                        $cancel_url .= '&action=' . GETPOST('action');
+                    }
+					if (GETPOST('lineid')) {
+                        $cancel_url .= '&lineid=' . $lineid;
+                    }
+                    $cancel_url.='&object_element='.$object_element;
 					$cancel_url.='#mvfid'.$obj->fmrowid;
 				?>
 				<a class="button elbbtn" href="<?php echo $cancel_url ?>">
@@ -196,6 +200,7 @@ $canDeleteFile = (($restictDeleteFile && ($obj->fmuser == $user->id || $user->ad
 					if (GETPOST('lineid')) $edit_href.='&lineid='.$lineid;					
 					$edit_href.='&action2=editfile';
 					$edit_href.='&rowid='.$obj->fmrowid;
+					$edit_href.='&object_element='.$object_element;
 					$edit_href.='#mvfid'.$obj->fmrowid;
 					
 					if (!empty($id)) {
@@ -209,6 +214,7 @@ $canDeleteFile = (($restictDeleteFile && ($obj->fmuser == $user->id || $user->ad
 					if (GETPOST('lineid')) $delete_href.='&lineid='.$lineid;
 					$delete_href.='&action2=remove_line_file';
 					$delete_href.='&fileid='.$obj->fmrowid;
+                    $delete_href.='&object_element='.$object_element;
 					$delete_href.='#mvfid'.$obj->fmrowid;					
 				?>
 				<a href="<?php echo $edit_href;?>">
@@ -224,7 +230,7 @@ $canDeleteFile = (($restictDeleteFile && ($obj->fmuser == $user->id || $user->ad
 					<div class="<?php echo $trigger;?> ufpuptr" title="<?php echo $langs->trans("UploadNewVersion");?>">
 						<div class="<?php echo $popup;?>" title="<?php echo $langs->trans("UploadNewVersion");?>">
 							<label for="fsubrev-<?php echo $obj->fmrowid;?>">
-								<?php echo $langs->trans("Revision");?>: *<br/>
+								<?php echo $langs->trans("Revision");?>:<br/>
 								<input type="text" size="10" id="fsubrev-<?php echo $obj->fmrowid;?>" name="fsubrev" />
 							</label>
 							
@@ -241,8 +247,9 @@ $canDeleteFile = (($restictDeleteFile && ($obj->fmuser == $user->id || $user->ad
 							<input type="hidden" name="id" value="<?php echo $id ?>" />
 							<input type="hidden" name="socid" value="<?php echo $socid ?>" />
 							<input type="hidden" name="facid" value="<?php echo $facid ?>" />
-							<input type="hidden" name="lineid" value="<?php echo $lineid ?>" />	
-							<br/><br/>										
+							<input type="hidden" name="lineid" value="<?php echo $lineid ?>" />
+                            <input type="hidden" name="object_element" value="<?php echo $object_element ?>" />
+                            <br/><br/>
 							<input class="button" type="submit" name="actionufnv" value="<?php echo $langs->trans("Send");?>" />
 						</div>				
 					</div>

@@ -175,6 +175,7 @@ class ELbFile
 
 		$action2 = GETPOST('action2');
 		$fileid = GETPOST('rowid');
+        $object_element = GETPOST('object_element');
 
 		print '<tr>';
 		print '<td></td>';
@@ -237,6 +238,7 @@ class ELbFile
 				
 			$action2 = GETPOST('action2');
 			$fileid = GETPOST('rowid');
+            $object_element = GETPOST('object_element');
 				
 			print '<tr>';
 			print '<td></td>';
@@ -327,6 +329,7 @@ class ELbFile
 
 		$action2 = GETPOST('action2');
 		$fileid = GETPOST('rowid');
+		$object_element = GETPOST('object_element');
 
 		if (is_array($tag_map)) {
 
@@ -587,6 +590,7 @@ class ELbFile
 
 		$action2 = GETPOST('action2');
 		$fileid = GETPOST('rowid');
+        $object_element = GETPOST('object_element');
 
 		// array with revision
 		$file_with_rev = array();
@@ -794,6 +798,7 @@ class ELbFile
 		$rev = $this->sanitizeText(GETPOST('frev'));
 		$filemapid = GETPOST('filemapid', 'int');
 		$tags = GETPOST('tags');
+        $object_element = GETPOST('object_element');
 		
 		$db->begin();
 		
@@ -806,7 +811,7 @@ class ELbFile
 			if (!empty($elbfilemap->path) && empty($path)) {
 				$db->rollback();
 				setEventMessage($langs->trans("FileNotUpdated"), 'errors');
-				self::headerLocationAfterOperation($linemode, $id, $lineid, $filemapid, $facid, $socid);
+				self::headerLocationAfterOperation($linemode, $id, $lineid, $filemapid, $facid, $socid, $object_element);
 				exit;
 			}
 				
@@ -850,18 +855,18 @@ class ELbFile
 				$db->rollback();
 				setEventMessage($langs->trans("FileNotUpdated"), 'errors');
 				unset($_SESSION['dol_events']['mesgs']);
-				self::headerLocationAfterOperation($linemode, $id, $lineid, $filemapid, $facid, $socid);
+				self::headerLocationAfterOperation($linemode, $id, $lineid, $filemapid, $facid, $socid, $object_element);
 				exit;
 			}
 		} else {
 			$db->rollback();
 			setEventMessage($langs->trans("FileNotUpdated"), 'errors');
 			unset($_SESSION['dol_events']['mesgs']);
-			self::headerLocationAfterOperation($linemode, $id, $lineid, $filemapid, $facid, $socid);
+			self::headerLocationAfterOperation($linemode, $id, $lineid, $filemapid, $facid, $socid, $object_element);
 			exit;
 		}
 	
-		self::headerLocationAfterOperation($linemode, $id, $lineid, $filemapid, $facid, $socid);
+		self::headerLocationAfterOperation($linemode, $id, $lineid, $filemapid, $facid, $socid, $object_element);
 		exit;
 	}
 	
@@ -880,6 +885,7 @@ class ELbFile
 		$ufmnvfile = 'ufmnvfile'.$ufmid;
 		$description = GETPOST('description', 'alpha');
 		$fsubrev = $this->sanitizeText(GETPOST('fsubrev'));
+        $object_element = GETPOST('object_element');
 			
         if (empty($_FILES[$ufmnvfile]["name"])) {
 			setEventMessage($langs->trans("FileMissing"), 'errors');
@@ -889,7 +895,7 @@ class ELbFile
 				
 			$fileName = $_FILES[$ufmnvfile]["name"];
 			$output_buffer_dir = DOL_DATA_ROOT.'/'.$conf->global->ELB_UPLOAD_FILES_BUFFER.'/';
-			$output_buffer = DOL_DATA_ROOT.'/'.$conf->global->ELB_UPLOAD_FILES_BUFFER.'/'.$fileName;
+			$output_buffer = $output_buffer_dir.$fileName;
 			$output_dir = DOL_DATA_ROOT.'/elbmultiupload/'.$conf->global->ELB_UPLOAD_FILES_DIRECTORY.'/';
 			
 			// delete files from buffer
@@ -1006,7 +1012,7 @@ class ELbFile
 			}
 		}
 		
-		self::headerLocationAfterOperation($linemode, $id, $lineid, $ufmid, $facid, $socid);
+		self::headerLocationAfterOperation($linemode, $id, $lineid, $ufmid, $facid, $socid, $object_element);
 		exit;
 	}
 	
@@ -1204,8 +1210,10 @@ class ELbFile
 		$id = GETPOST('id', 'int');
 		$facid = GETPOST('facid', 'int');
 		$socid = GETPOST('socid', 'int');
-		if ($linemode)
-			$lineid = GETPOST('lineid', 'int');
+		if ($linemode) {
+            $lineid = GETPOST('lineid', 'int');
+        }
+        $object_element = GETPOST('object_element');
 		
 		$res = $this->activateRevision($fileid);
 		
@@ -1215,7 +1223,7 @@ class ELbFile
 			setEventMessage($langs->trans("RevisionNotActivated"), 'errors');
 		}
 		
-		self::headerLocationAfterOperation($linemode, $id, $lineid, $fileid, $facid, $socid);
+		self::headerLocationAfterOperation($linemode, $id, $lineid, $fileid, $facid, $socid, $object_element);
 		exit;
 	}
 	
@@ -1234,6 +1242,7 @@ class ELbFile
 		if ($linemode) {
 			$lineid = GETPOST('lineid', 'int');
 		}
+        $object_element = GETPOST('object_element');
 		
 		$delresp = $this->deleteLinked(GETPOST('fileid', 'int'));
 		if ($delresp > 0) {
@@ -1244,19 +1253,19 @@ class ELbFile
 		
 		if ($linemode) {
 			if(!empty($id)) {
-				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id.'&action=editline&lineid='.$lineid.'#line_'.$lineid);
+				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id.'&action=editline&lineid='.$lineid.'&object_element='.$object_element.'#line_'.$lineid);
 			} elseif (!empty($facid)) {
-				header("Location: ".$_SERVER['PHP_SELF'].'?facid='.$facid.'&action=editline&lineid='.$lineid.'#line_'.$lineid);
+				header("Location: ".$_SERVER['PHP_SELF'].'?facid='.$facid.'&action=editline&lineid='.$lineid.'&object_element='.$object_element.'#line_'.$lineid);
 			} elseif (!empty($socid)) {
-				header("Location: ".$_SERVER['PHP_SELF'].'?socid='.$socid.'&action=editline&lineid='.$lineid.'#line_'.$lineid);
+				header("Location: ".$_SERVER['PHP_SELF'].'?socid='.$socid.'&action=editline&lineid='.$lineid.'&object_element='.$object_element.'#line_'.$lineid);
 			}
 		} else {
 			if (!empty($id)) {
-				header('Location: ' .$_SERVER['PHP_SELF'].'?id='.$id);
+				header('Location: ' .$_SERVER['PHP_SELF'].'?id='.$id.'&object_element='.$object_element);
 			} elseif (!empty($facid)) {
-				header('Location: ' .$_SERVER['PHP_SELF'].'?facid='.$facid);
+				header('Location: ' .$_SERVER['PHP_SELF'].'?facid='.$facid.'&object_element='.$object_element);
 			} elseif (!empty($socid)) {
-				header('Location: ' .$_SERVER['PHP_SELF'].'?socid='.$socid);
+				header('Location: ' .$_SERVER['PHP_SELF'].'?socid='.$socid.'&object_element='.$object_element);
 			}
 		}
 		exit;
@@ -1484,23 +1493,23 @@ class ELbFile
 		}
 	}
 	
-	static function headerLocationAfterOperation($linemode=false, $id=false, $lineid=false, $filemapid=false, $facid=false, $socid=false) 
+	static function headerLocationAfterOperation($linemode=false, $id=false, $lineid=false, $filemapid=false, $facid=false, $socid=false, $object_element=false)
 	{	
 		if ($linemode) {
 			if(!empty($id)) {
-				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id.'&action=editline&lineid='.$lineid.'&rowid='.$filemapid.'#mvfid'.$filemapid);
+				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id.'&action=editline&lineid='.$lineid.'&rowid='.$filemapid.'&object_element='.$object_element.'#mvfid'.$filemapid);
 			} elseif (!empty($facid)) {
-				header("Location: ".$_SERVER['PHP_SELF'].'?facid='.$facid.'&action=editline&lineid='.$lineid.'&rowid='.$filemapid.'#mvfid'.$filemapid);
+				header("Location: ".$_SERVER['PHP_SELF'].'?facid='.$facid.'&action=editline&lineid='.$lineid.'&rowid='.$filemapid.'&object_element='.$object_element.'#mvfid'.$filemapid);
 			} elseif (!empty($socid)) {
-				header("Location: ".$_SERVER['PHP_SELF'].'?socid='.$socid.'&action=editline&lineid='.$lineid.'&rowid='.$filemapid.'#mvfid'.$filemapid);
+				header("Location: ".$_SERVER['PHP_SELF'].'?socid='.$socid.'&action=editline&lineid='.$lineid.'&rowid='.$filemapid.'&object_element='.$object_element.'#mvfid'.$filemapid);
 			}
 		} else {
 			if (!empty($id)) {
-				header('Location: ' .$_SERVER['PHP_SELF'].'?id='.$id.'#mvfid'.$filemapid);
+				header('Location: ' .$_SERVER['PHP_SELF'].'?id='.$id.'&object_element='.$object_element.'#mvfid'.$filemapid);
 			} elseif (!empty($facid)) {
-				header('Location: ' .$_SERVER['PHP_SELF'].'?facid='.$facid.'#mvfid'.$filemapid);
+				header('Location: ' .$_SERVER['PHP_SELF'].'?facid='.$facid.'&object_element='.$object_element.'#mvfid'.$filemapid);
 			} elseif (!empty($socid)) {
-				header('Location: ' .$_SERVER['PHP_SELF'].'?socid='.$socid.'#mvfid'.$filemapid);
+				header('Location: ' .$_SERVER['PHP_SELF'].'?socid='.$socid.'&object_element='.$object_element.'#mvfid'.$filemapid);
 			}
 		}
 		return;

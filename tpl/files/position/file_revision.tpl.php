@@ -121,7 +121,8 @@
 				<input type="hidden" name="socid" value="<?php echo $socid ?>" />
 				<input type="hidden" name="lineid" value="<?php echo $lineid ?>" />		
 				<input type="hidden" name="filemapid" value="<?php echo $obj->fmrowid; ?>" />
-				<input type="submit" name="update_file" class="button" value="<?php echo $langs->trans("Update") ?>" />	
+				<input type="submit" name="update_file" class="button" value="<?php echo $langs->trans("Update") ?>" />
+                <input type="hidden" name="object_element" value="<?php echo $object_element ?>" />
 				
 				<?php
 					if (!empty($id)) {
@@ -131,10 +132,13 @@
 					} elseif (!empty($socid)) {
 						$cancel_url=$_SERVER["PHP_SELF"].'?socid='.$socid;
 					}
-					if (GETPOST('action'))
-						$cancel_url.='&action='.GETPOST('action');
-					if (GETPOST('lineid'))
-						$cancel_url.='&lineid='.$lineid;
+					if (GETPOST('action')) {
+                        $cancel_url .= '&action=' . GETPOST('action');
+                    }
+					if (GETPOST('lineid')) {
+                        $cancel_url .= '&lineid=' . $lineid;
+                    }
+                    $cancel_url.='&object_element='.$object_element;
 					$cancel_url.='#mvfid'.$obj->fmrowid;
 				?>
 				<a class="button elbbtn" href="<?php echo $cancel_url ?>">
@@ -155,6 +159,7 @@
 					if (GETPOST('lineid')) $edit_href.='&lineid='.$lineid;					
 					$edit_href.='&action2=editfile';
 					$edit_href.='&rowid='.$obj->fmrowid;
+                    $edit_href.='&object_element='.$object_element;
 					$edit_href.='#mvfid'.$obj->fmrowid;
 					
 					if (!empty($id)) {
@@ -168,6 +173,7 @@
 					if (GETPOST('lineid')) $activate_href.='&lineid='.$lineid;
 					$activate_href.='&action2=activate_file';
 					$activate_href.='&fileid='.$obj->fmrowid;
+                    $activate_href.='&object_element='.$object_element;
 					$activate_href.='#mvfid'.$obj->fmrowid;
 					
 					if (!empty($id)) {
@@ -181,6 +187,7 @@
 					if (GETPOST('lineid')) $delete_href.='&lineid='.$lineid;
 					$delete_href.='&action2=remove_line_file';
 					$delete_href.='&fileid='.$obj->fmrowid;
+                    $delete_href.='&object_element='.$object_element;
 					$delete_href.='#mvfid'.$obj->fmrowid;
 				?>	
 					
