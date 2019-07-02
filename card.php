@@ -116,6 +116,10 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/stock.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
+// project needed files
+require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+
 // categories needed files
 require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
@@ -142,6 +146,7 @@ $langs->load("hrm");
 $langs->load("loan");
 $langs->load("banks");
 $langs->load("stocks");
+$langs->load("projects");
 
 $action = GETPOST('action');
 $confirm = GETPOST('confirm');
@@ -186,6 +191,9 @@ if ($object_element=='member') {
 } elseif ($object_element=='product') {
     $checkUpAccessForObject = 'produit|service';
     $tableandshare = 'product&product';
+} elseif ($object_element=='project') {
+    $checkUpAccessForObject = 'projet';
+    $tableandshare = 'projet&project';
 }
 
 // check access per object
@@ -390,6 +398,12 @@ elseif ($object_element=='stock') {
     $typeOfObject = 'Entrepot';
     $tabName = 'Warehouse';
     $tabIcon = 'stock';
+}
+// project
+elseif ($object_element=='project') {
+    $typeOfObject = 'Project';
+    $tabName = 'Project';
+    $tabIcon = 'project';
 }
 
 // fetch object
