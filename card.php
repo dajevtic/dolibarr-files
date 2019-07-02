@@ -104,6 +104,10 @@ require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/donation.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/don/class/don.class.php';
 
+// bank account needed files
+require_once DOL_DOCUMENT_ROOT . '/core/lib/bank.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
+
 // categories needed files
 require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
@@ -128,6 +132,7 @@ $langs->load("bills");
 $langs->load("salaries");
 $langs->load("hrm");
 $langs->load("loan");
+$langs->load("banks");
 
 $action = GETPOST('action');
 $confirm = GETPOST('confirm');
@@ -135,10 +140,9 @@ $id = GETPOST('id', 'int');
 $ref = GETPOST('ref');
 $object_element = GETPOST('object_element');
 
+// checking access per object can differ from the object's element/type
 $tableandshare = '';
 $feature2 = '';
-
-// checking access per object can differ from the object's element/type
 $checkUpAccessForObject = $object_element;
 if ($object_element=='member') {
     $checkUpAccessForObject = 'adherent';
@@ -167,6 +171,9 @@ if ($object_element=='member') {
     $feature2 = 'facture';
 } elseif ($object_element=='payment_salary') {
     $checkUpAccessForObject = 'salaries';
+} elseif ($object_element=='bank_account') {
+    $checkUpAccessForObject = 'banque';
+    $tableandshare = 'bank_account&bank_account';
 }
 
 // check access per object
@@ -352,6 +359,13 @@ elseif ($object_element=='don') {
     $tabName = 'Donation';
     $tabIcon = 'generic';
     $objectTabsMethodPrefix = 'donation';
+}
+// bank account
+elseif ($object_element=='bank_account') {
+    $typeOfObject = 'Account';
+    $tabName = 'FinancialAccount';
+    $tabIcon = 'account';
+    $objectTabsMethodPrefix = 'bank';
 }
 
 // fetch object
