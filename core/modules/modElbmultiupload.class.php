@@ -208,6 +208,8 @@ class modElbmultiupload extends DolibarrModules
         $this->tabs[] = array('data' => 'supplier_invoice:+additionalfiles:AdditionalFiles:elbmultiupload@elbmultiupload:1:/elbmultiupload/card.php?id=__ID__&object_element=invoice_supplier');
         // supplier invoice payments
         $this->tabs[] = array('data' => 'payment_supplier:+additionalfiles:AdditionalFiles:elbmultiupload@elbmultiupload:1:/elbmultiupload/card.php?id=__ID__&object_element=payment_supplier');
+        // salary payments
+        $this->tabs[] = array('data' => 'salaries:+additionalfiles:AdditionalFiles:elbmultiupload@elbmultiupload:1:/elbmultiupload/card.php?id=__ID__&object_element=payment_salary');
 
 
         // Dictionaries

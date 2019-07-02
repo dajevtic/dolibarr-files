@@ -92,6 +92,10 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 
+// salary payment needed files
+require_once DOL_DOCUMENT_ROOT.'/core/lib/salaries.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
+
 // categories needed files
 require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
@@ -101,6 +105,7 @@ require_once DOL_DOCUMENT_ROOT . '/elbmultiupload/class/elb.file.class.php';
 require_once DOL_DOCUMENT_ROOT . '/elbmultiupload/class/elb.file_mapping.class.php';
 require_once DOL_DOCUMENT_ROOT . '/elbmultiupload/class/elb.common.manager.class.php';
 
+// load language files for modules
 $langs->load('compta');
 $langs->load('companies');
 $langs->load('other');
@@ -112,6 +117,8 @@ $langs->load("contracts");
 $langs->load("interventions");
 $langs->load("supplier_proposal");
 $langs->load("bills");
+$langs->load("salaries");
+$langs->load("hrm");
 
 $action = GETPOST('action');
 $confirm = GETPOST('confirm');
@@ -149,8 +156,9 @@ if ($object_element=='member') {
     $checkUpAccessForObject = 'fournisseur';
     $tableandshare = 'facture_fourn';
     $feature2 = 'facture';
+} elseif ($object_element=='payment_salary') {
+    $checkUpAccessForObject = 'salaries';
 }
-
 
 // check access per object
 if (empty($checkUpAccessForObject)) {
@@ -314,6 +322,13 @@ elseif ($object_element=='payment_supplier') {
     $tabName = 'SupplierPayment';
     $tabIcon = 'payment';
     $objectTabsMethodPrefix = 'payment_supplier';
+}
+// payment salary
+elseif ($object_element=='payment_salary') {
+    $typeOfObject = 'PaymentSalary';
+    $tabName = 'SalaryPayment';
+    $tabIcon = 'payment';
+    $objectTabsMethodPrefix = 'salaries';
 }
 
 // fetch object
