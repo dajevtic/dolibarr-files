@@ -124,8 +124,9 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
-// categories needed files
-require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+// category needed files
+//require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
+//require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 // elbmultiupload module needed files
 require_once DOL_DOCUMENT_ROOT . '/elbmultiupload/lib/elbmultiupload.lib.php';
@@ -207,6 +208,7 @@ if ($object_element=='member') {
 // check access per object
 if (empty($checkUpAccessForObject)) {
     // type of object is needed
+    setEventMessage($langs->trans('MissingObjectElementForCurrentObject'), 'errors');
     $result = restrictedArea($user, 'dolnoexistingobjectelement', $id, '');
 } else {
     $result = restrictedArea($user, $checkUpAccessForObject, $id, $tableandshare, $feature2);

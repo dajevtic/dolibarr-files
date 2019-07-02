@@ -70,3 +70,4 @@ ReallyActivate=Really activate
 MakeAsCurrentVersion=Mark as current version
 FileSuccessfullyUploaded=File successfully uploaded
 MissingObjectIDorRef=Missing object id or reference
+MissingObjectElementForCurrentObject=Missing object element for current object
