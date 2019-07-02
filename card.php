@@ -88,6 +88,10 @@ require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php'
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 
+// supplier invoice payment needed files
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
+
 // categories needed files
 require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
@@ -141,7 +145,12 @@ if ($object_element=='member') {
     $checkUpAccessForObject = 'fournisseur';
     $tableandshare = 'facture_fourn';
     $feature2 = 'facture';
+} elseif ($object_element=='payment_supplier') {
+    $checkUpAccessForObject = 'fournisseur';
+    $tableandshare = 'facture_fourn';
+    $feature2 = 'facture';
 }
+
 
 // check access per object
 if (empty($checkUpAccessForObject)) {
@@ -298,6 +307,13 @@ elseif ($object_element=='invoice_supplier') {
     $tabName = 'SupplierInvoice';
     $tabIcon = 'bill';
     $objectTabsMethodPrefix = 'facturefourn';
+}
+// supplier invoice payment
+elseif ($object_element=='payment_supplier') {
+    $typeOfObject = 'PaiementFourn';
+    $tabName = 'SupplierPayment';
+    $tabIcon = 'payment';
+    $objectTabsMethodPrefix = 'payment_supplier';
 }
 
 // fetch object
