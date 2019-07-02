@@ -84,6 +84,10 @@ require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 
+// supplier invoice needed files
+require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+
 // categories needed files
 require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
@@ -133,6 +137,10 @@ if ($object_element=='member') {
     $feature2 = 'charges';
 } elseif ($object_element=='payment') {
     $checkUpAccessForObject = 'facture';
+} elseif ($object_element=='invoice_supplier') {
+    $checkUpAccessForObject = 'fournisseur';
+    $tableandshare = 'facture_fourn';
+    $feature2 = 'facture';
 }
 
 // check access per object
@@ -283,6 +291,13 @@ elseif ($object_element=='chargesociales') {
     $tabName = 'SocialContribution';
     $tabIcon = 'bill';
     $objectTabsMethodPrefix = 'tax';
+}
+// supplier invoice
+elseif ($object_element=='invoice_supplier') {
+    $typeOfObject = 'FactureFournisseur';
+    $tabName = 'SupplierInvoice';
+    $tabIcon = 'bill';
+    $objectTabsMethodPrefix = 'facturefourn';
 }
 
 // fetch object
