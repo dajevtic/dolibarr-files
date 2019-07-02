@@ -100,6 +100,10 @@ require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 
+// donation needed files
+require_once DOL_DOCUMENT_ROOT . '/core/lib/donation.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/don/class/don.class.php';
+
 // categories needed files
 require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
@@ -341,6 +345,13 @@ elseif ($object_element=='loan') {
     $tabName = 'Loan';
     $tabIcon = 'bill';
     $objectTabsMethodPrefix = 'loan';
+}
+// donation
+elseif ($object_element=='don') {
+    $typeOfObject = 'Don';
+    $tabName = 'Donation';
+    $tabIcon = 'generic';
+    $objectTabsMethodPrefix = 'donation';
 }
 
 // fetch object

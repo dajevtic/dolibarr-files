@@ -212,6 +212,8 @@ class modElbmultiupload extends DolibarrModules
         $this->tabs[] = array('data' => 'salaries:+additionalfiles:AdditionalFiles:elbmultiupload@elbmultiupload:1:/elbmultiupload/card.php?id=__ID__&object_element=payment_salary');
         // loan
         $this->tabs[] = array('data' => 'loan:+additionalfiles:AdditionalFiles:elbmultiupload@elbmultiupload:1:/elbmultiupload/card.php?id=__ID__&object_element=loan');
+        // donation
+        $this->tabs[] = array('data' => 'donation:+additionalfiles:AdditionalFiles:elbmultiupload@elbmultiupload:1:/elbmultiupload/card.php?id=__ID__&object_element=don');
 
 
         // Dictionaries
