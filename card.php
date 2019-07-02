@@ -108,6 +108,10 @@ require_once DOL_DOCUMENT_ROOT . '/don/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
 
+// product needed files
+require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+
 // categories needed files
 require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
@@ -174,6 +178,9 @@ if ($object_element=='member') {
 } elseif ($object_element=='bank_account') {
     $checkUpAccessForObject = 'banque';
     $tableandshare = 'bank_account&bank_account';
+} elseif ($object_element=='product') {
+    $checkUpAccessForObject = 'produit|service';
+    $tableandshare = 'product&product';
 }
 
 // check access per object
@@ -366,6 +373,12 @@ elseif ($object_element=='bank_account') {
     $tabName = 'FinancialAccount';
     $tabIcon = 'account';
     $objectTabsMethodPrefix = 'bank';
+}
+// product
+elseif ($object_element=='product') {
+    $typeOfObject = 'Product';
+    $tabName = 'Product';
+    $tabIcon = 'product';
 }
 
 // fetch object
