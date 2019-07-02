@@ -200,6 +200,8 @@ class modElbmultiupload extends DolibarrModules
         $this->tabs[] = array('data' => 'invoice:+additionalfiles:AdditionalFiles:elbmultiupload@elbmultiupload:1:/elbmultiupload/card.php?id=__ID__&object_element=facture');
         // sales tax payment
         $this->tabs[] = array('data' => 'vat:+additionalfiles:AdditionalFiles:elbmultiupload@elbmultiupload:1:/elbmultiupload/card.php?id=__ID__&object_element=tva');
+        // social or fiscal tax
+        $this->tabs[] = array('data' => 'tax:+additionalfiles:AdditionalFiles:elbmultiupload@elbmultiupload:1:/elbmultiupload/card.php?id=__ID__&object_element=chargesociales');
 
 
         // Dictionaries

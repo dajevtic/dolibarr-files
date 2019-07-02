@@ -76,6 +76,10 @@ require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/vat.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 
+// social or fiscal tax needed files
+require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
+
 // categories needed files
 require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
@@ -118,6 +122,10 @@ if ($object_element=='member') {
     $checkUpAccessForObject = 'fournisseur';
 } elseif ($object_element=='tva') {
     $checkUpAccessForObject = 'tax';
+    $feature2 = 'charges';
+} elseif ($object_element=='chargesociales') {
+    $checkUpAccessForObject = 'tax';
+    $tableandshare = $object_element;
     $feature2 = 'charges';
 }
 
@@ -254,6 +262,13 @@ elseif ($object_element=='tva') {
     $tabName = 'VATPayment';
     $tabIcon = 'payment';
     $objectTabsMethodPrefix = 'vat';
+}
+// social or fiscal tax
+elseif ($object_element=='chargesociales') {
+    $typeOfObject = 'ChargeSociales';
+    $tabName = 'SocialContribution';
+    $tabIcon = 'bill';
+    $objectTabsMethodPrefix = 'tax';
 }
 
 
