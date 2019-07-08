@@ -1,7 +1,7 @@
 <?php
 //use ELBClass\solr\ElbSolrUtil;
 
-/* Copyright (C)    2019      Milos Petkovic     <milos.petkovic@livemediagroup.de>
+/* Copyright (C) 2019-... LiveMediaGroup - Milos Petkovic <milos.petkovic@livemediagroup.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

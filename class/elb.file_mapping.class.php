@@ -1,7 +1,7 @@
 <?php
 //use ELBClass\solr\ElbSolrUtil;
 
-/* Copyright (C)
+/* Copyright (C) 2019-... LiveMediaGroup - Milos Petkovic <milos.petkovic@livemediagroup.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,14 +18,13 @@
  */
 
 /**
- *	\file       htdocs/elbmultiupload/class/elb.file.class.php
+ *	\file       htdocs/elbmultiupload/class/elb.file_mapping.class.php
  *	\ingroup    elbmultiupload
  *	\brief      Contains methods for uploading/versioning files
  */
  
 class ELbFileMapping extends CommonObject
 {
-	
 	const FILE_REVISION = 0;
 	const FILE_ACTIVE = 1;
 	
@@ -37,36 +36,34 @@ class ELbFileMapping extends CommonObject
 	const ACTION_NEW_VERSION = 5;
 	const ACTION_ACTIVATE	 = 6;
 	
-	var $id;
-	var $fk_fileid;
-	var $object_type;
-	var $object_id;
-	var $created_date;
-	var $user;
-	var $description;
-	var $path;
-	var $parent_file;
-	var $revision;
-	var $active;
-	var $clone_of_fmap_id;
+	public $id;
+    public $fk_fileid;
+    public $object_type;
+    public $object_id;
+    public $created_date;
+    public $user;
+    public $description;
+    public $path;
+    public $parent_file;
+    public $revision;
+    public $active;
+    public $clone_of_fmap_id;
 	// holds and action type
-	var $action;
-	var $tags;
-	
-	var $tbl_name='elb_file_mapping';
+    public $action;
+    public $tags;
+
+    public $tbl_name='elb_file_mapping';
 	static $_tbl_name='elb_file_mapping';
-	
-	
+
 	function __construct($db)
 	{
 		$this->db = $db;
 		return 1;
 	}
 
-	
 	function fetch($id='')
 	{
-		global $langs, $conf, $db;
+		global $db;
 	
 		dol_syslog(get_class($this)."::fetch id=".$id);
 	
@@ -121,7 +118,7 @@ class ELbFileMapping extends CommonObject
 
 	function fetchByFileID($fileid='')
 	{
-		global $langs, $conf, $db;
+		global $db;
 	
 		dol_syslog(get_class($this)."::fetchByFileID id=".$fileid);
 	
@@ -233,8 +230,8 @@ class ELbFileMapping extends CommonObject
 		}
 	}
 	
-	function update($activate_trigger=true) {
-	
+	function update($activate_trigger=true)
+    {
 		global $db, $user;
 	
 		$db->begin();
@@ -265,12 +262,7 @@ class ELbFileMapping extends CommonObject
 		$resql=$db->query($sql);
 	
 		if($resql) {
-			
-			//if (!empty($this->action)) {
-			if (in_array($this->object_type, self::arrayWithObjectTypesForActivatingTrigger()) && $activate_trigger) {
-				$this->action = self::ACTION_UPDATE;
-			}			
-							
+
 			// Trigger
 			if ($activate_trigger) {
 				$result = $this->call_trigger('ELB_FILE_ACTION', $user);
@@ -284,9 +276,9 @@ class ELbFileMapping extends CommonObject
 		}
 	}
 
-	function delete($activate_trigger=true) {
-	
-		global $db, $user, $conf;
+	function delete($activate_trigger=true)
+    {
+		global $db, $user;
 	
 		$db->begin();
 	
@@ -298,11 +290,7 @@ class ELbFileMapping extends CommonObject
 		$resql=$db->query($sql);
 	
 		if ($resql) {
-			//if (!empty($this->action)) {
-			if (in_array($this->object_type, self::arrayWithObjectTypesForActivatingTrigger()) && $this->action !== self::ACTION_NONE && $activate_trigger) {
-				$this->action = self::ACTION_DELETE;
-			}			
-			
+
 			// Trigger
 			if ($activate_trigger) {
 				$result = $this->call_trigger('ELB_FILE_ACTION', $user);
@@ -314,10 +302,6 @@ class ELbFileMapping extends CommonObject
 			$db->rollback();
 			return -1;
 		}
-	}
-	
-	static function arrayWithObjectTypesForActivatingTrigger() {
-		return array('product', 'elb_stock_mouvement', 'order_supplier','tech_procedure');
 	}
 
     /**
@@ -335,8 +319,7 @@ class ELbFileMapping extends CommonObject
 			
 		dol_syslog(get_class($this).'::countLinkedFilesByFkFileID sql='.$sql, LOG_DEBUG);
 			
-		if ($resql=$db->query($sql))
-		{
+		if ($resql=$db->query($sql)) {
 			$obj = $this->db->fetch_object($resql);
 			$count=$obj->cnt;
 			if($count>0) {
@@ -344,9 +327,7 @@ class ELbFileMapping extends CommonObject
 			} else {
 				return 0;
 			}
-		}
-		else
-		{
+		} else {
 			dol_syslog(get_class($this).'::countLinkedFilesByFkFileID ERROR sql='.$sql, LOG_DEBUG);
 			return 0;
 		}
@@ -366,8 +347,7 @@ class ELbFileMapping extends CommonObject
 			
 		dol_syslog(get_called_class().'::countLinkedFilesByObjectType sql='.$sql, LOG_DEBUG);
 			
-		if ($resql=$db->query($sql))
-		{
+		if ($resql=$db->query($sql)) {
 			$obj = $db->fetch_object($resql);
 			$count=$obj->cnt;
 			if($count>0) {
@@ -375,9 +355,7 @@ class ELbFileMapping extends CommonObject
 			} else {
 				return;
 			}
-		}
-		else
-		{
+		} else {
 			dol_syslog(get_called_class().'::countLinkedFilesByObjectType ERROR sql='.$sql, LOG_DEBUG);
 			return;
 		}
@@ -390,7 +368,8 @@ class ELbFileMapping extends CommonObject
 	 * @param int 		$map_type (0 -> all, 1 - only active, 2 - only revisions)
 	 * @return array of objects
 	 */
-	static function sqlSelectFilesAndFileMappings($object_type, $object_id, $map_type=0) {
+	static function sqlSelectFilesAndFileMappings($object_type, $object_id, $map_type=0)
+    {
 		global $db;
 		$sql = "SELECT f.rowid as frowid, f.name as fname, f.type as ftype, f.md5 as fmd5,";
 		$sql.= " fm.rowid as fmrowid, fm.fk_fileid as fmfk_fileid, fm.object_type as fmobject_type,";
@@ -408,7 +387,8 @@ class ELbFileMapping extends CommonObject
 		return $sql;
 	}
 
-	static function getFilesAndFileMappingsForObjectList($object_type, $object_ids, $map_type=0) {
+	static function getFilesAndFileMappingsForObjectList($object_type, $object_ids, $map_type=0)
+    {
 		global $db;
 		$sql = "SELECT f.rowid as frowid, f.name as fname, f.type as ftype, f.md5 as fmd5,";
 		$sql.= " fm.rowid as fmrowid, fm.fk_fileid as fmfk_fileid, fm.object_type as fmobject_type,";
@@ -457,8 +437,8 @@ class ELbFileMapping extends CommonObject
 		return;
 	}
 	
-	static function fetchLinkedFileMapsForObject($object_type, $object_id) {
-	
+	static function fetchLinkedFileMapsForObject($object_type, $object_id)
+    {
 		global $db;
 		
 		$fetch = false;
@@ -473,8 +453,7 @@ class ELbFileMapping extends CommonObject
 			
 		dol_syslog(get_called_class().'::fetchLinkedFileMapsForObject sql='.$sql, LOG_DEBUG);
 			
-		if ($resql=$db->query($sql))
-		{	
+		if ($resql=$db->query($sql)) {
 			$i = 0;
 			$num = $db->num_rows($resql);
 			while ($i < $num) {
@@ -482,14 +461,11 @@ class ELbFileMapping extends CommonObject
 				$fetch[$i] = $obj;
 				$i++;
 			}
-		}
-		else
-		{
+		} else {
 			dol_syslog(get_called_class().'::fetchLinkedFileMapsForObject ERROR sql='.$sql, LOG_DEBUG);
 		}
 		return $fetch;
 	}
-	
 
 	static function deleteLinkedFileMapsForObject($object_type, $object_id)
     {
@@ -508,17 +484,9 @@ class ELbFileMapping extends CommonObject
 		}
 		return true;
 	}
-	
 
-	static function findClones($fmap_id) {
-		global $db;
-		$sql = " SELECT rowid, clone_of_fmap_id";
-		$sql.= " FROM ".MAIN_DB_PREFIX.self::$_tbl_name;
-		$sql.= " WHERE clone_of_fmap_id=".$db->escape($fmap_id);
-		return ElbCommonManager::queryList($sql);
-	}
-	
-	function deleteFileMapsById($fmap_id) {
+	function deleteFileMapsById($fmap_id)
+    {
 		global $db;
 		$elbfile = new Elbfile($db);
 		$elbfile_map = new self($db);
@@ -586,7 +554,10 @@ class ELbFileMapping extends CommonObject
 		return 1;
 	}
 	
-	static function returnAttachedFilesAsHyperLinks($object_type, $object_id, $map_type, $filter_by_name=false, $filter_by_rev=false, $separator=', ', $attachment=true, $short_fname=true, $fileData=null) {
+	static function returnAttachedFilesAsHyperLinks($object_type, $object_id, $map_type, $filter_by_name=false, $filter_by_rev=false, $separator=', ', $attachment=true, $short_fname=true, $fileData=null)
+    {
+        global $conf;
+
 		$out = '';
 		if($fileData==null) {
 			$res = ElbCommonManager::queryList(self::sqlSelectFilesAndFileMappings($object_type, $object_id, $map_type));
@@ -603,7 +574,7 @@ class ELbFileMapping extends CommonObject
                             ($short_fname) ? $out.=dol_trunc($obj->fmpath, 30) : $out.=$obj->fmpath;
                             $out .='</a>'. $separator;
 						} else {
-							$file_relpath = ELB_UPLOAD_FILES_DIRECTORY.'/'.$obj->frowid.'.'.$obj->ftype;
+							$file_relpath = $conf->elbmultiupload->ELB_UPLOAD_FILES_DIRECTORY.'/'.$obj->frowid.'.'.$obj->ftype;
                             ($attachment) ? $link_as_attachment='&amp;attachment=true' : $link_as_attachment='';
 							$href_download = DOL_URL_ROOT . '/document.php?modulepart=elb'.$link_as_attachment.'&amp;file='.urlencode($file_relpath).'&amp;fmapid='.$obj->fmrowid;
 							$out .= '<a href="'.$href_download.'">';
@@ -616,83 +587,6 @@ class ELbFileMapping extends CommonObject
 		}
 		if ($separator==', ') $out = trim($out, $separator);
 		return $out;
-	}
-	
-	static function moveSupplyingFilesFromBufferToLinkedObject($buffer_object_type, $buffer_object_id, $link_with_object_type, $link_with_object_id) {
-		
-		global $db, $conf, $user, $langs;
-		
-		$output_buffer = DOL_DATA_ROOT.'/'.$conf->global->ELB_UPLOAD_FILES_BUFFER.'/'.$buffer_object_type.'/'.$buffer_object_id.'/';
-		$output_dir = DOL_DATA_ROOT.'/elbmultiupload/'.$conf->global->ELB_UPLOAD_FILES_DIRECTORY.'/';
-		
-		$files_in_buffer = dol_dir_list($output_buffer, 'files');
-		if (is_array($files_in_buffer) && count($files_in_buffer) > 0) {
-			
-			$elbfile = new ELbFile($db);
-			$elbfilemap = new ELbFileMapping($db);
-			
-			$now = dol_now();
-			$error = 0;
-			
-			$db->begin();
-			
-			foreach ($files_in_buffer as $file_bf) {
-				
-				// set file properties
-				$elbfile->name = $file_bf['name'];
-				$ext  = (new SplFileInfo($elbfile->name))->getExtension();
-				$elbfile->type = $ext;
-				$elbfile->md5 =  md5_file($output_buffer.$elbfile->name);
-				$fileid = $elbfile->create();
-				
-				if ($fileid > 0) 
-				{	 
-					// set file mapping properties for stock movement
-					$elbfilemap->fk_fileid=$fileid;
-					$elbfilemap->object_type=$link_with_object_type;
-					$elbfilemap->object_id=$link_with_object_id;
-					$elbfilemap->created_date=$now;
-					$elbfilemap->user=$user->id;
-					$elbfilemap->active=ELbFileMapping::FILE_ACTIVE;
-					$fmid = $elbfilemap->create();
-					
-					if ($fmid > 0) 
-					{	
-						// move file from buffer to files storage directory
-						$move_res = dol_move($output_buffer.$elbfile->name, $output_dir.$fileid.'.'.$ext);
-						
-						// set file mapping for supplier order
-						$elbfilemap_supp_ord = new ELbFileMapping($db);
-						$elbCommandeSupplier = new CommandeFournisseur($db);
-						$get_supporder_id = ElbCommandeSupplierDelivery::returnSupplierOrderIdForDeliveryId($buffer_object_id);
-						$check_if_file_is_linked = self::checkIfFileWithMD5ExistsForObject($get_supporder_id, 'order_supplier', $elbfile->md5);
-						if (!$check_if_file_is_linked) { // MV-232
-							$elbfilemap_supp_ord->fk_fileid=$fileid;
-							$elbfilemap_supp_ord->object_type= $elbCommandeSupplier->element;
-							$elbfilemap_supp_ord->object_id = $get_supporder_id;
-							$elbfilemap_supp_ord->created_date = $now;
-							$elbfilemap_supp_ord->user=$user->id;
-							$elbfilemap_supp_ord->active=ELbFileMapping::FILE_ACTIVE;
-							$elbfilemap_supp_ord->clone_of_fmap_id = $fmid;
-							$fmid_supp_ord = $elbfilemap_supp_ord->create();
-						}
-					} else {
-						$error++;
-						break;
-					}
-				} else {
-					$error++;
-					break;
-				}			
-			}
-			if ($error==0) {
-				$db->commit();
-			} else {
-				$db->rollback();
-				setEventMessage($langs->trans('ErrorMovingFilesToLinkedStockMovement'), 'errors');
-			}
-		}
-		return 1;
 	}
 
 	static function deleteFilesFromStorageFolder($path)
@@ -739,7 +633,6 @@ class ELbFileMapping extends CommonObject
 		}
 		return $data;
 	}
-	
 
 	function getNomUrl()
     {
