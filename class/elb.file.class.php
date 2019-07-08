@@ -1,7 +1,7 @@
 <?php
 //use ELBClass\solr\ElbSolrUtil;
 
-/* Copyright (C) 2014 ELB Solutions
+/* Copyright (C) 2019-... LiveMediaGroup - Milos Petkovic <milos.petkovic@livemediagroup.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@ class ELbFile
     public $name;
     public $type;
     public $md5;
+    public $error;
 
     public $tbl_name='elb_file';
 	static $_tbl_name='elb_file';
@@ -41,7 +42,7 @@ class ELbFile
 	 */
 	function fetch($id='')
 	{
-		global $langs, $conf, $db;
+		global $db;
 	
 		dol_syslog(get_class($this)."::fetch id=".$id);
 	
@@ -119,36 +120,6 @@ class ELbFile
         dol_syslog(get_class($this) . "::create Error id=" . $this->id);
         return -1;
     }
-
-    function update()
-    {
-		global $db;
-	
-		$db->begin();
-	
-		$sql="UPDATE ".MAIN_DB_PREFIX.$this->tbl_name;
-		$sql.=" SET name = '".$db->escape($this->name)."', ";
-		$sql.=" type = ".($this->type==null ? "null" : "'".$db->escape($this->type)."'").", ";
-		$sql.=" description = ".($this->description==null ? "null" : "'".$db->escape($this->description)."'").", ";
-		$sql.=" path = ".($this->path==null ? "null" : "'".$db->escape($this->path)."'").", ";
-		$sql.=" md5 = '".$db->escape($this->md5)."', ";
-		$sql.=" parent_file = ".($this->parent_file==null ? "null" : $db->escape($this->parent_file)).", ";
-		$sql.=" revision = ".($this->revision==null ? "null" : "'".$db->escape($this->revision)."'").", ";
-		$sql.=" active = ".($this->active==null ? "null" : $db->escape($this->active));
-		$sql.=" WHERE rowid=".$db->escape($this->id);
-		
-		dol_syslog(get_class($this)."::update id=".$this->id, LOG_DEBUG);
-	
-		$resql=$db->query($sql);
-	
-		if($resql) {
-			$db->commit();
-			return 1;
-		} else {
-			$db->rollback();
-			return -1;
-		}
-	}
 
 	function fetchFileVersions($fileid)
     {
@@ -311,13 +282,10 @@ class ELbFile
 		$fetch_files = ElbCommonManager::queryList($sql);
 
 		return $fetch_files;
-
-	}
+    }
 	
 	function getUploadedFiles($object_type=null,$object_id=null, $toolbox=1, $tag_map=false, $search_files=null, $restictDeleteFile=false)
 	{
-		global $bc, $langs, $conf, $db, $user;
-
 		$fetch_files = $this->fetchUploadedFiles($object_type,$object_id, $search_files);
 
 		$this->printUploadedFiles($fetch_files, $tag_map, $toolbox);
@@ -433,12 +401,9 @@ class ELbFile
 				}
 			}
 
-
 			if (count($tag_uncategorized_fmap) > 0) {
 
 				foreach ($tag_uncategorized_fmap as $tagname => $my_arr) {
-
-					//print $tagname;
 
 					print '<table class="border" width="100%">
 						<tr class="position-subtable">
@@ -485,12 +450,10 @@ class ELbFile
 						include dol_buildpath('/elbmultiupload/tpl/files/position/file.tpl.php');
 
 						$this->getFileVersions($obj->fmrowid, $toolbox);
-
 					}
 
 					print '</tbody>';
 					print "</table>\n";
-
 
 					print '
 								</td>
@@ -1032,8 +995,6 @@ class ELbFile
 		global $langs, $db, $user;
 	
 		$out = '';
-		//$protocol = ($_SERVER['REQUEST_SCHEME'] == 'https') ? 'https' : 'http';
-		//$protocol =  'https';
 		(strpos('https', strtolower($_SERVER["SERVER_PROTOCOL"]) !== false)) ? $protocol='https' : $protocol='http';
 		$upload_handler = DOL_URL_ROOT. '/elbmultiupload/elbupload.php';
 
@@ -1371,8 +1332,8 @@ class ELbFile
 		return $path;
 	}
 	
-	static function countLinkedFiles($object) {
-		
+	static function countLinkedFiles($object)
+    {
 		global $db;
 		
 		$sql="SELECT COUNT(*) AS cnt ";
@@ -1398,8 +1359,8 @@ class ELbFile
 		}
 	}
 	
-	static function linkFile() {
-		
+	static function linkFile()
+    {
 		global $db, $langs, $user;
 	
 		$return_url = GETPOST('return_url_link');
@@ -1467,8 +1428,8 @@ class ELbFile
 		exit;
 	}
 	
-	static function searchPositionAttachedFiles($object_type, $object_id, $search_filename) {
-		
+	static function searchPositionAttachedFiles($object_type, $object_id, $search_filename)
+    {
 		global $db;
 		
 		$sql = "SELECT f.rowid as frowid, f.name as fname, f.type as ftype, f.md5 as fmd5,";
@@ -1515,7 +1476,8 @@ class ELbFile
 		return;
 	}	
 	
-	static function getDocumentFilename($original_file) {
+	static function getDocumentFilename($original_file)
+    {
 		global $db;
 		if($_GET['modulepart'] == 'elb' && !empty($_GET['fmapid'])) {
 			$elb_fmap = new ELbFileMapping($db);
@@ -1571,189 +1533,9 @@ class ELbFile
 			ElbFile::linkFile();
 		}
 	}
-	
-	function uploadExtrafield($object, $key, $prev_val) {
-		
-		global $user, $db, $conf;
-		
-		if(isset($_GET['del_value'])) {
-			//deleting files
-			$old_value=$object->array_options["options_".$key];
-			$del_value=$_GET['del_value'];
-			$error=false;
-			$db->begin();
-			
-			$elbfilemap = new ELbFileMapping($db);
-			if($elbfilemap->fetch($del_value)>0){
-				$elbfile=new ELbFile();
-				if($elbfile->fetch($elbfilemap->fk_fileid)>0) {
-					if($elbfile->delete()) {
-						$output_dir = DOL_DATA_ROOT.'/elbmultiupload/'.$conf->global->ELB_UPLOAD_FILES_DIRECTORY.'/';
-						$file=$output_dir.$elbfile->id.'.'.$elbfile->type;
-						unlink($file);
-					} else {
-						$error=true;
-					}
-				} else {
-					$error=true;
-				}
-			} else {
-				$error=true;
-			}
-			elb_common_action_result(!$error);
-			if(!$error) {
-				$db->commit();
-				$old_value_arr=explode(",", $old_value);
-				if(($key = array_search($del_value, $old_value_arr)) !== false) {
-					unset($old_value_arr[$key]);
-				}
-				return implode(",",$old_value_arr);
-			} else {
-				$db->rollback();
-				return -1;
-			}
-		}
-		
-		if(!isset($_FILES["options_".$key])) {
-			return;
-		}
-		
-		$file=$_FILES["options_".$key];
-		
-		if($file['error']!=0) {
-			return null;
-		}
-		
-		$error=false;
-		$db->begin();
-		
-		$fileName = $file["name"];
-		$output_buffer_dir = DOL_DATA_ROOT.'/'.$conf->global->ELB_UPLOAD_FILES_BUFFER.'/';
-		$output_buffer = DOL_DATA_ROOT.'/'.$conf->global->ELB_UPLOAD_FILES_BUFFER.'/'.$fileName;
-		$output_dir = DOL_DATA_ROOT.'/elbmultiupload/'.$conf->global->ELB_UPLOAD_FILES_DIRECTORY.'/';
-		
-		// delete files from buffer
-		if (file_exists($output_buffer_dir)) {
-			dol_delete_dir_recursive($output_buffer_dir);
-		}
-		
-		// create buffer directory
-		if (!file_exists($output_buffer_dir)) {
-			mkdir($output_buffer_dir, 0775, true);
-		}
-		
-		// move file to buffer
-		$res = dol_move_uploaded_file($file["tmp_name"],$output_buffer, 1);
-		
-		if ($res>0) {
-			$this->name = $fileName;
-			$ext  = (new SplFileInfo($fileName))->getExtension();
-			$this->type = $ext;
-			$this->md5 = md5_file($output_buffer);
-			
-			$newfileid = $this->create();
-			
-			if ($newfileid > 0) {
-				$elbfilemap = new ELbFileMapping($db);
-				$elbfilemap->fk_fileid=$newfileid;
-				$elbfilemap->object_type=$object->element."_extrafield";
-				$elbfilemap->object_id=$object->id;
-				$elbfilemap->user=$user->id;
-				$elbfilemap->created_date=dol_now();
-				$elbfilemap->active=1;
-				$elbfilemapid=$elbfilemap->create();
-				
-				if($elbfilemapid>0) {
-					$move_res = dol_move($output_buffer, $output_dir.$newfileid.'.'.$ext);
-				} else {
-					$error=true;
-				}
-			} else {
-				$error=true;
-			}
-		} else {
-			$error=true;
-		}
-		elb_common_action_result(!$error);
-		if(!$error) {
-			$db->commit();
-			if(!empty($prev_val)) {
-				$prev_val_arr=explode(",",$prev_val);
-				$prev_val_arr[]=$elbfilemapid;
-				$new_val=implode(",", $prev_val_arr);
-			} else {
-				$new_val = $elbfilemapid;
-			}
-			return $new_val;
-		} else {
-			$db->rollback();
-			return -1;
-		}
-		
-	}
-	
-	static function showExtraField($value, $key=null, $edit=false) {
-		global $object, $db, $langs, $conf;
-		$s='';
-		if(empty($value)) {
-			$value_arr=array();
-		} else {
-			$value_arr=explode(",", $value);
-		}
-		if($edit) {
-			$s.='<table class="border">';
-		}
-		foreach($value_arr as $value) {
-			if($edit) {
-				$s.='<tr>';
-			}
-			$elbfilemap = new ELbFileMapping($db);
-			$ret = $elbfilemap->fetch($value);
-			if($ret <=0 ) return $langs->trans('ErrorFetchingUploadedFile');
-			$elbfile=new ELbFile();
-			$ret = $elbfile->fetch($elbfilemap->fk_fileid);
-			if($ret <=0 ) return $langs->trans('ErrorFetchingUploadedFile');
-			$file_relpath = $conf->global->ELB_UPLOAD_FILES_DIRECTORY.'/'.$elbfile->id.'.'.$elbfile->type;
-			$href_download = DOL_URL_ROOT . '/document.php?modulepart=elb&attachment=true&amp;file='.urlencode($file_relpath).'&amp;fmapid='.$elbfilemap->id;
-			if($edit) {
-				$s.='<td>';
-			}
-			$s.= '<a href="'.$href_download.'">';
-			$s.= img_mime($elbfile->name,$langs->trans("File").': '.$elbfile->name);
-			$s.="&nbsp;";
-			$s.= dol_trunc($elbfile->name,50);
-			$s.='</a>';
-			$s.='<br/>';
-			if($edit) {
-				$s.='</td>';
-				$s.='<td>';
-				$link=$_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=update_extras&attribute=' . $key.'&del_value='.$elbfilemap->id;
-				$s.='<a href="'.$link.'" onclick="if(!confirm(\''.$langs->trans('ConfirmDeleteUploadedFile').'?\')) return false;">'.img_delete().'</a>';
-				$s.='</td>';
-			}
-			if($edit) {
-				$s.='</tr>';
-			}
-		}
-		if($edit) {
-			$s.='<tr>';
-			$s.='<td colspan="2">';
-			$s.='<br/><input class="flat" type="file" name="options_'.$key.'" />';
-			$s.='<input type="submit" class="button" value="' . $langs->trans('Add') . '">';
-			$s.='</td>';
-			$s.='</tr>';
-			$s.='</table>';
-		}
-		return $s;
-	}
-	
-	static function showInputExtraField($value,$key,$keyprefix) {
-		global $object, $langs;
-		$out=self::showExtraField($value, $key, true);
-		return $out;
-	}
-	
-	static function getTableRowOfLinkedFiles($object_type, $object_id, $colspan=1) {
+
+	static function getTableRowOfLinkedFiles($object_type, $object_id, $colspan=1)
+    {
 		global $langs;
 		$elbfile = new ELbFile();
 		print '<table width="100%" class="elb-subtable">';
@@ -1777,153 +1559,14 @@ class ELbFile
 		print '</table>';		
 	}
 	
-	static function fileExists($name, $type, $md5) {
+	static function fileExists($name, $type, $md5)
+    {
 		global $db;
 		$sql="select count(*) as cnt from ".MAIN_DB_PREFIX.self::$_tbl_name." f
 				where f.name='".$db->escape($name)."' and f.type='".$db->escape($type)."'
 				and f.md5='".$db->escape($md5)."'";
 		$res=ElbCommonManager::querySingle($sql);
 		return ($res->cnt > 0);
-	}
-	
-	static function getLinkedObject($object_type, $object_id) {
-		global $db,$langs;
-		switch($object_type) {
-			case "product":
-				$product=new Product($db);
-				$product->fetch($object_id);
-				return array("ref"=>$product->getNomUrl(1),"name"=>$langs->trans("Product"));
-			case"commande":
-				$commande=new Commande($db);
-				$commande->fetch($object_id);
-				return array("ref"=>$commande->getNomUrl(1),"name"=>$langs->trans("Order"));
-			case"commandedet":
-				$commande=new Commande($db);
-				$commandeLine = new OrderLine($db);
-				$commandeLine->fetch($object_id);
-				$fk_commande=$commandeLine->fk_commande;
-				$commande->fetch($fk_commande);
-				return array("ref"=>$commande->getNomUrl(1),"name"=>$langs->trans("OrderLine"));
-			case"propaldet":
-				$propal=new Propal($db);
-				$propalLine=new PropaleLigne($db);
-				$propalLine->fetch($object_id);
-				$fk_propal=$propalLine->fk_propal;
-				$propal->fetch($fk_propal);
-				return array("ref"=>$propal->getNomUrl(1),"name"=>$langs->trans("ProposalLine"));
-			case"propal":
-				$propal=new Propal($db);
-				$propal->fetch($object_id);
-				return array("ref"=>$propal->getNomUrl(1),"name"=>$langs->trans("Proposal"));
-			case"societe":
-				$societe=new Societe($db);
-				$societe->fetch($object_id);
-				return array("ref"=>$societe->getNomUrl(1),"name"=>$langs->trans("Company"));
-			case"order_supplier":
-				$order_supplier=new CommandeFournisseur($db);
-				$order_supplier->fetch($object_id);
-				return array("ref"=>$order_supplier->getNomUrl(1),"name"=>$langs->trans("SupplierOrder"));
-			case"tech_procedure":
-				$techProcedue = ElbTechProcedure::fetch($object_id);
-				$fk_product = $techProcedue->fk_product;
-				$product=new Product($db);
-				$product->fetch($fk_product);
-				return array("ref"=>$product->getNomUrl(1),"name"=>$langs->trans("TechProcedure"));
-			case"askpricesupplier":
-				$supplierOffer = new AskPriceSupplier($db);
-				$supplierOffer->fetch($object_id);
-				return array("ref"=>$supplierOffer->getNomUrl(1), "name"=>$langs->trans("SupplyRequest"));
-			case"inquiry":
-				$inquiry = ElbInquiry::fetch($object_id);
-				return array("ref"=>$inquiry->getNomUrl(1),"name"=>$langs->trans("Inquiry"));
-			case"process":
-				$process=ElbProcess::fetchById($object_id);
-				return array("ref"=>$process->getNomUrl(1),"name"=>$langs->trans("Process"));
-			case"commande_fournisseurdet":
-				$order_supplier=new CommandeFournisseur($db);
-				$order_supplier_line = new CommandeFournisseurLigne($db);
-				$order_supplier_line->fetch($object_id);
-				$fk_order_supplier = $order_supplier_line->fk_commande;
-				$order_supplier->fetch($fk_order_supplier);
-				return array("ref"=>$order_supplier->getNomUrl(1),"name"=>$langs->trans("OrderLine"));
-			case"project":
-				$project=new Project($db);
-				$project->fetch($object_id);
-				return array("ref"=>$project->getNomUrl(1),"name"=>$langs->trans("Project"));
-			case "facture":
-				$facture=new Facture($db);
-				$facture->fetch($object_id);
-				return array("ref"=>$facture->getNomUrl(1),"name"=>$langs->trans("Invoice"));
-			case "invoice_supplier":
-				$facture=new FactureFournisseur($db);
-				$facture->fetch($object_id);
-				return array("ref"=>$facture->getNomUrl(1),"name"=>$langs->trans("SupplierInvoice"));
-			case"propal_extrafield":
-			case"user_extrafield":
-			default:
-				return array("ref"=>$object_id,"name"=>$object_type);
-		}
-	}
-	
-	/**
-	 * Moves file from file system to elb upload directory
-	 * Returns filemap id of file
-	 * 
-	 * @param 	int 	$object_id
-	 * @param 	string 	$object_element
-	 * @param 	string 	$exf_identf
-	 * @param 	string 	$full_file_path
-	 * @return 	Ambigous <boolean, number>	false KO, >0 OK
-	 */
-	function addFileFromFileSysToObjectExfTypeUpload($object_id, $object_element, $exf_identf, $full_file_path) 
-	{
-		global $db, $conf, $user;
-		
-		$error=false;
-		
-		$output_dir = DOL_DATA_ROOT.'/elbmultiupload/'.$conf->global->ELB_UPLOAD_FILES_DIRECTORY.'/';
-		
-		// create elb file upload directory (if not exists)
-		if (!file_exists($output_dir)) {
-			mkdir($output_dir, 0775, true);
-		}
-		
-		$db->begin();
-	
-		$fileName = basename($full_file_path);
-		
-		$this->name = $fileName;
-		$ext  = (new SplFileInfo($fileName))->getExtension();
-		$this->type = $ext;
-		$this->md5 = md5_file($full_file_path);
-			
-		$newfileid = $this->create();
-		
-		$elbfilemapid = false;
-			
-		if ($newfileid > 0) {
-			$elbfilemap = new ELbFileMapping($db);
-			$elbfilemap->fk_fileid=$newfileid;
-			$elbfilemap->object_type=$object_element."_extrafield";
-			$elbfilemap->object_id=$object_id;
-			$elbfilemap->user=$user->id;
-			$elbfilemap->created_date=dol_now();
-			$elbfilemap->active=1;
-			$elbfilemapid=$elbfilemap->create();
-
-			if ($elbfilemapid > 0) {
-				$move_res = dol_move($full_file_path, $output_dir.$newfileid.'.'.$ext);
-				if (!$move_res) $error=true;
-			} else {
-				$error=true;
-			}
-		} else {
-			$error=true;
-		}
-		
-		(!$error && $elbfilemapid > 0) ? $db->commit() : $db->rollback();
-		
-		return $elbfilemapid;
 	}
 
     /**
@@ -1970,6 +1613,5 @@ class ELbFile
     {
         unlink($fileFullPath);
     }
-
 	
 }
