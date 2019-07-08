@@ -1,6 +1,5 @@
 <?php
-/* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
+/* Copyright (C) 2019-... LiveMediaGroup - Milos Petkovic <milos.petkovic@livemediagroup.de>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +16,9 @@
  */
 
 /**
- * \file    htdocs/modulebuilder/template/admin/setup.php
- * \ingroup mymodule
- * \brief   MyModule setup page.
+ * \file    htdocs/elbmultiupload/admin/setup.php
+ * \ingroup elbmultiupload
+ * \brief   modElbmultiupload setup page.
  */
 
 // Load Dolibarr environment
@@ -41,7 +40,6 @@ global $langs, $user;
 // Libraries
 require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
 require_once '../lib/elbmultiupload.lib.php';
-//require_once "../class/myclass.class.php";
 
 // Translations
 $langs->loadLangs(array("admin", "elbmultiupload@elbmultiupload"));

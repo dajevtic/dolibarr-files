@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) ---Put here your own copyright and developer email---
+/* Copyright (C) 2019-... LiveMediaGroup - Milos Petkovic <milos.petkovic@livemediagroup.de>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
  */
 
 /**
- * \file    htdocs/modulebuilder/template/class/actions_mymodule.class.php
- * \ingroup mymodule
+ * \file    htdocs/elbmultiupload/class/actions_elbmultiupload.class.php
+ * \ingroup elbmultiupload
  * \brief   Example hook overload.
  *
  * Put detailed description here.
@@ -180,8 +180,6 @@ class ActionsElbmultiupload
         }
     }
 
-
-
     /**
      * Execute action
      *
@@ -238,12 +236,6 @@ class ActionsElbmultiupload
         }
 
         return $ret;
-    }
-
-    /* Add here any other hooked methods... */
-    function completeTabsHead($parameters, &$object, &$action, $hookmanager)
-    {
-        //die('callded tabs head..');
     }
 
     /**

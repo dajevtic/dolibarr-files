@@ -1,6 +1,5 @@
 <?php
-/* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
+/* Copyright (C) 2019-... LiveMediaGroup - Milos Petkovic <milos.petkovic@livemediagroup.de>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +16,9 @@
  */
 
 /**
- * \file    htdocs/modulebuilder/template/admin/about.php
- * \ingroup mymodule
- * \brief   About page of module MyModule.
+ * \file    htdocs/elbmultiupload/template/admin/about.php
+ * \ingroup elbmultiupload
+ * \brief   About page of module modElbmultiupload.
  */
 
 // Load Dolibarr environment

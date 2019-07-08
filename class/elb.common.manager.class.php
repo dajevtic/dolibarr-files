@@ -1,12 +1,22 @@
-<?php 
-/**
- * Class that is used for some common operations with database
- * 
- * @author Marko
+<?php
+/* Copyright (C) 2019-... LiveMediaGroup - Marko Popovic <marko.popovic@livemediagroup.de>
+ * Copyright (C) 2019-... LiveMediaGroup - Milos Petkovic <milos.petkovic@livemediagroup.de>
  *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-class ElbCommonManager {
-	
+class ElbCommonManager
+{
 	/**
 	 * Function retrieves and create objects from query. 
 	 * All columns returned in result are assigned to object properties
@@ -17,7 +27,8 @@ class ElbCommonManager {
 	 * @param boolean $force_prop set property on object event not exists
 	 * @return unknown
 	 */
-	static function resultToObject($res, $name, $set_id=true, $force_prop=false) {
+	static function resultToObject($res, $name, $set_id=true, $force_prop=false)
+    {
 		global $db;
 		$obj=new $name($db);
 		$vars=get_object_vars($res);
@@ -40,7 +51,8 @@ class ElbCommonManager {
 	 * @param boolean $force_prop set property on object event not exists
 	 * @return array |boolean	returns array of objects, or false on error
 	 */
-	static function queryList($sql, $name='', $force_prop = false) {
+	static function queryList($sql, $name='', $force_prop = false)
+    {
 		global $db;
 		
 		$list=array();
@@ -67,8 +79,6 @@ class ElbCommonManager {
 		}
 	}
 	
-
-	
 	/**
 	 * Function creates and executes insert of record in database
 	 * 
@@ -77,7 +87,8 @@ class ElbCommonManager {
 	 * @param boolean $transaction set true to use trnasaction in method
 	 * @return unknown|number id of inserted object, -1 if there is error
 	 */
-	static function insert(&$obj,$fields,$transaction=true) {
+	static function insert(&$obj,$fields,$transaction=true)
+    {
 		global $db;
 		
 		if(!method_exists($obj, 'getTableName')) {
@@ -137,7 +148,8 @@ class ElbCommonManager {
 	 * @param boolean $transaction	if query will be executed in transaction, default: true
 	 * @return number|boolean	1 if success, false otherwise
 	 */
-	static function execute($sql,$transaction=true) {
+	static function execute($sql,$transaction=true)
+    {
 		global $db;
 		
 		if($transaction) $db->begin();
@@ -145,13 +157,10 @@ class ElbCommonManager {
 		
 		$result = $db->query($sql);
 			
-		if ($result)
-		{
+		if ($result) {
 			if($transaction) $db->commit();
 			return true;
-		}
-		else
-		{
+		} else {
 			if($transaction) $db->rollback();
 			dol_print_error($db);
 			return false;
@@ -165,7 +174,8 @@ class ElbCommonManager {
 	 * @param string $name	name of object to retrieve, if empty stdClass is created
 	 * @return object, or false on error
 	 */
-	static function querySingle($sql, $name='', $force_prop = false) {
+	static function querySingle($sql, $name='', $force_prop = false)
+    {
 		global $db;
 	
 		$result=$db->query($sql);
@@ -195,7 +205,8 @@ class ElbCommonManager {
 	 * @param boolean $transactionset true to use trnasaction in update
 	 * @return number|boolean
 	 */
-	static function update($obj,$fields,$transaction=true) {
+	static function update($obj,$fields,$transaction=true)
+    {
 		global $db;
 		
 		if(!method_exists($obj, 'getTableName')) {
@@ -249,7 +260,8 @@ class ElbCommonManager {
 	 * @param int $rowid - id of row to update
 	 * @return Ambigous <number, boolean> 1 if ok, false otherwise
 	 */
-	static function updateField($tbl_name,$field,$value,$rowid,$key_column="rowid") {
+	static function updateField($tbl_name,$field,$value,$rowid,$key_column="rowid")
+    {
 		global $db;
 		$sql="UPDATE ".MAIN_DB_PREFIX.$tbl_name;
 		if (is_null($value)) {
@@ -258,68 +270,36 @@ class ElbCommonManager {
             $sql .= " SET " . $field . "='" . $db->escape($value) . "'";
         }
 		$sql.=" WHERE $key_column=".$db->escape($rowid);
-		return ElbCommonManager::execute($sql);
+		return self::execute($sql);
 	}
 	
-	static function deleteRow($tbl_name,$rowid) {
+	static function deleteRow($tbl_name,$rowid)
+    {
 		global $db;
 		$sql="DELETE FROM ".MAIN_DB_PREFIX.$tbl_name;
 		$sql.=" WHERE rowid=".$db->escape($rowid);
 		return self::execute($sql);
 	}
 	
-	static function fetch($tbl_name, $id, $name, $key_column='rowid') {
+	static function fetch($tbl_name, $id, $name, $key_column='rowid')
+    {
 		global $db;
 		$sql="SELECT * FROM ".MAIN_DB_PREFIX.$tbl_name;
 		$sql.=" WHERE ".$key_column."=".$db->escape($id);
 		return self::querySingle($sql, $name);
 	}
 	
-	static function fetchField($tbl_name, $field, $rowid) {
+	static function fetchField($tbl_name, $field, $rowid)
+    {
 		global $db;
 		$sql="SELECT $field FROM ".MAIN_DB_PREFIX.$tbl_name;
 		$sql.=" WHERE rowid=".$db->escape($rowid);
 		$obj = self::querySingle($sql);
 		return $obj->$field;
 	}
-	
-	static function cloneTableRow($tbl_name, $fields, $rowid) {
-		
-		global $db;
-		$db->begin();
-		
-		$sql="INSERT INTO ".MAIN_DB_PREFIX.$tbl_name;
-		$sql.="(";
-		$fields_num=count($fields);
-		$i=0;
-		foreach($fields as $field) {
-			$i++;
-			$sql.= $field;
-			if($i!=$fields_num) $sql.=", ";
-		}
-		$sql.=") ";
-		$sql.=" SELECT ";
-		$j=0;
-		foreach($fields as $field) {
-			$j++;		
-			$sql.= $field;		
-			if($j!=$fields_num) $sql.=", ";
-		}
-		$sql.=" FROM ".MAIN_DB_PREFIX.$tbl_name;
-		$sql.=" WHERE rowid=".$db->escape($rowid);
-		
-		$res = $db->query($sql);
-		
-		if ($res > 0) {
-			$db->commit();
-			return $db->last_insert_id(MAIN_DB_PREFIX.$tbl_name);
-		} else {
-			$db->rollback();
-			return false;
-		}
-	}
-	
-	static function fetchFieldByField($tbl_name, $getfield, $search_column_name, $search_column_value) {
+
+	static function fetchFieldByField($tbl_name, $getfield, $search_column_name, $search_column_value)
+    {
 		global $db;
 		$sql="SELECT $getfield FROM ".MAIN_DB_PREFIX.$tbl_name;
 		$sql.=" WHERE ".$search_column_name." ='".$db->escape($search_column_value)."'";
@@ -327,78 +307,12 @@ class ElbCommonManager {
 		return $obj->$getfield;
 	}
 
-    static function fetchFieldValuesByWildcard($tbl_name, $getfield, $search_column_name, $search_column_value) {
+    static function fetchFieldValuesByWildcard($tbl_name, $getfield, $search_column_name, $search_column_value)
+    {
         global $db;
         $sql="SELECT $getfield FROM ".MAIN_DB_PREFIX.$tbl_name;
         $sql.=" WHERE ".$search_column_name." LIKE '%".$db->escape($search_column_value)."%'";
         return self::queryList($sql);
-    }
-
-    /**
-     * Method creates a new record for columns and values of columns supplied in array
-     *
-     * @param   string    $tableName        The table name to insert new record into (name without db prefix)
-     * @param   array     $fields           Array of columns and values ([$column_name => $column_value])
-     * @param   bool      $transaction      Use transaction
-     * @return  bool
-     */
-    static function insertFromArray($tableName, $fields, $transaction=true)
-    {
-        global $db;
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX.$tableName." (";
-        $fields_num=count($fields);
-        $i=0;
-        foreach ($fields as $key => $val) {
-            $sql.=" ".$key." ";
-            if ($i++ < $fields_num-1) $sql.=" , ";
-        }
-        $sql.= ") VALUES (";
-        $i=0;
-        foreach ($fields as $key => $val) {
-            if(is_null($val)) {
-                $sql.="null";
-            } else {
-                $sql.=" '".$db->escape($val)."' ";
-            }
-            if ($i++ < $fields_num-1) $sql.=" , ";
-        }
-        $sql.= ")";
-        return self::execute($sql, $transaction);
-    }
-
-    static function cloneFullTableRow($table, $primaryKey, $id) {
-    	global $db;
-    	$error=0;
-    	$db->begin();
-    	$sql="CREATE TEMPORARY TABLE tmptable_1 select * from ".MAIN_DB_PREFIX.$table." where $primaryKey = $id";
-    	$res = self::execute($sql, false);
-    	if(!$res) {
-		    $error++;
-	    }
-	    $sql="UPDATE tmptable_1 SET $primaryKey = 0";
-	    $res = self::execute($sql, false);
-	    if(!$res) {
-		    $error++;
-	    }
-	    $sql="insert into ".MAIN_DB_PREFIX.$table." SELECT * FROM tmptable_1";
-	    $res = self::execute($sql, false);
-	    if(!$res) {
-		    $error++;
-	    }
-	    $newId = $db->last_insert_id(MAIN_DB_PREFIX.$table);
-	    $sql="DROP TEMPORARY TABLE IF EXISTS tmptable_1";
-	    $res = self::execute($sql, false);
-	    if(!$res) {
-		    $error++;
-	    }
-	    if($error==0) {
-	    	$db->commit();
-	    	return $newId;
-	    } else {
-	    	$db->rollback();
-	    	return false;
-	    }
-
     }
 	
 }

@@ -1,7 +1,5 @@
 <?php
-/* Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2018	   Nicolas ZABOURI 	<info@inovea-conseil.com>
- * Copyright (C) ---Put here your own copyright and developer email---
+/* Copyright (C) 2019-... LiveMediaGroup - Milos Petkovic <milos.petkovic@livemediagroup.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,12 +16,12 @@
  */
 
 /**
- * 	\defgroup   mymodule     Module MyModule
- *  \brief      MyModule module descriptor.
+ * 	\defgroup   elbmultiupload     Module Elbmultiupload
+ *  \brief      Module adds upload additional files tab/functionality for each object in the system
  *
- *  \file       htdocs/mymodule/core/modules/modMyModule.class.php
- *  \ingroup    mymodule
- *  \brief      Description and activation file for module MyModule
+ *  \file       htdocs/elbmultiupload/core/modules/modElbmultiupload.class.php
+ *  \ingroup    elbmultiupload
+ *  \brief      Description and activation file for module Elbmultiupload
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
@@ -61,12 +59,12 @@ class modElbmultiupload extends DolibarrModules
         // Module label (no space allowed), used if translation string 'ModuleMyModuleName' not found (MyModule is name of module).
         $this->name = preg_replace('/^mod/i','',get_class($this));
         // Module description, used if translation string 'ModuleMyModuleDesc' not found (MyModule is name of module).
-        $this->description = "MyModuleDescription";
+        $this->description = "Module adds upload additional files tab/functionality for each object in the system";
         // Used only if file README.md and README-LL.md not found.
-        $this->descriptionlong = "MyModule description (Long)";
+        $this->descriptionlong = "Module adds upload additional files tab/functionality for each object in the system";
 
-        $this->editor_name = 'ELB Solutions';
-        $this->editor_url = 'https://www.elb-solutions.com';
+        $this->editor_name = 'LiveMediaGroup';
+        $this->editor_url = 'http://www.livemediagroup.de';
 
         // Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
         $this->version = '1.0';
