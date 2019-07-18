@@ -16,6 +16,8 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/elbmultiupload/class/elb.file.grouping.class.php';
+require_once DOL_DOCUMENT_ROOT . '/elbmultiupload/class/elb.file.category.class.php';
+require_once DOL_DOCUMENT_ROOT . '/elbmultiupload/class/elb.html.form.class.php';
 require_once DOL_DOCUMENT_ROOT . '/elbmultiupload/class/utils/elb.file.session.class.php';
 require_once DOL_DOCUMENT_ROOT . '/elbmultiupload/class/view/elb.file.view.class.php';
 

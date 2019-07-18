@@ -755,22 +755,22 @@ class ELbFile
 
 				//check and store tags
 				$tags_list=array();
-//				if(count($tags)>0) {
-//					$all_tags = Categorie::getFileTags();
-//					foreach ($tags as $tag) {
-//						if(!in_array($tag, $all_tags)) {
-//							$sql="INSERT INTO ".MAIN_DB_PREFIX."categorie SET label='".$db->escape($tag)."', type=".Categorie::TYPE_ELB_FILE;
-//							ElbCommonManager::execute($sql);
-//						}
-//					}
-//				}
-				
-//				if(!empty($conf->global->ELB_ADD_FILES_TO_SOLR)) {
-//					//update file in Solr
-//					$elbfile = new ELbFile();
-//					$elbfile->fetch($elbfilemap->fk_fileid);
-//					ElbSolrUtil::add_to_search_index($elbfile, $elbfilemap, $tags);
-//				}
+				if(count($tags)>0) {
+					$all_tags = ElbFileCategory::getFileTags();
+					foreach ($tags as $tag) {
+						if(!in_array($tag, $all_tags)) {
+							$sql="INSERT INTO ".MAIN_DB_PREFIX."categorie SET label='".$db->escape($tag)."', type=".ElbFileCategory::TYPE_ELB_FILE;
+							ElbCommonManager::execute($sql);
+						}
+					}
+				}
+
+				if(!empty($conf->global->ELB_ADD_FILES_TO_SOLR)) {
+					//update file in Solr
+					$elbfile = new ELbFile();
+					$elbfile->fetch($elbfilemap->fk_fileid);
+					ElbSolrUtil::add_to_search_index($elbfile, $elbfilemap, $tags);
+				}
 
 			} else {
 				$db->rollback();

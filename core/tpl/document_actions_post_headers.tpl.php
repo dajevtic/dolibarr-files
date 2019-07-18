@@ -35,6 +35,9 @@ $file_list_display = GETPOST('file-list-display', 'none', 1);
 if ($file_list_display && (!ElbFileSession::isSetGroupFiles() || ElbFileSession::getGroupFilesMethod() != $file_list_display)) {
     ElbFileSession::setGroupFilesMethod($file_list_display);
 }
+if (!ElbFileSession::isSetGroupFiles()) {
+    ElbFileSession::setGroupFilesMethod(ElbFileGrouping::GROUP_FILES_DEFAULT);
+}
 // read files grouping method from session
 $file_list_display = ElbFileSession::getGroupFilesMethod();
 
