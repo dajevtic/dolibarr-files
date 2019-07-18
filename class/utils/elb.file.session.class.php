@@ -25,30 +25,25 @@
 
 class ElbFileSession
 {
-    const GROUP_FILES_PARAM = 'file-list-display';
-
-    const GROUP_FILES_DEFAULT = '';
-    const GROUP_FILES_BY_REV = 'by_rev';
-    const GROUP_FILES_BY_TAG = 'by_tag';
 
     static function isSetGroupFiles()
     {
-        return isset($_SESSION[self::GROUP_FILES_PARAM]);
+        return isset($_SESSION[ElbFileGrouping::GROUP_FILES_PARAM]);
     }
 
     static function setGroupFilesMethod($setGroupingMethod=null)
     {
-        $_SESSION[self::GROUP_FILES_PARAM] = $setGroupingMethod;
+        $_SESSION[ElbFileGrouping::GROUP_FILES_PARAM] = $setGroupingMethod;
     }
 
     static function getGroupFilesMethod()
     {
-        return $_SESSION[self::GROUP_FILES_PARAM];
+        return $_SESSION[ElbFileGrouping::GROUP_FILES_PARAM];
     }
 
     static function unsetGroupFilesMethod()
     {
-        unset($_SESSION[self::GROUP_FILES_PARAM]);
+        unset($_SESSION[ElbFileGrouping::GROUP_FILES_PARAM]);
     }
 
 }

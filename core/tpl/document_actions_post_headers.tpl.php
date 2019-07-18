@@ -158,19 +158,17 @@ foreach(array_keys($tag_map) as $tag) {
 
 <br>
 <form id="file-list-display-form" action="" method="post" >
-	<?php echo $langs->trans('GroupFilesBy'); ?>
-	<select id="select-file-list-display" name="file-list-display" >
-        <option value=''></option>
-		<option value='by_tag' <?php if ($file_list_display == 'by_tag') { echo 'selected="selected"'; } ?> ><?php echo $langs->trans('Tag'); ?></option>
-		<option value='by_rev' <?php if ($file_list_display == 'by_rev') { echo 'selected="selected"'; } ?> ><?php echo $langs->trans('Revision'); ?></option>
-	</select>
+	<?php
+    echo $langs->trans('GroupFilesBy');
+    echo ElbFileView::renderSelect($file_list_display, ElbFileGrouping::GROUP_FILES_PARAM, ElbFileGrouping::returnAvailableGroupingMethods())
+    ?>
 </form>
 <br>
 
 <?php
-if ($file_list_display == ElbFileSession::GROUP_FILES_BY_TAG) {
+if ($file_list_display == ElbFileGrouping::GROUP_FILES_BY_TAG) {
 	$elbfile->getUploadedFiles($object->element, $object->id, 1, $tag_map, $search_files, $restictDeleteFile);
-} elseif (empty($file_list_display) || $file_list_display == ElbFileSession::GROUP_FILES_BY_REV) {
+} elseif (empty($file_list_display) || $file_list_display == ElbFileGrouping::GROUP_FILES_BY_REV) {
 	$fetch_files = $elbfile->fetchUploadedFiles($object->element,$object->id, $search_files);
     $elbfile->renderFilesByRevision($fetch_files, 1, $restictDeleteFile);
 }
@@ -179,7 +177,7 @@ print "<br>";
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		$('#select-file-list-display').on('change', function() {
+		$('select[name="<?php echo ElbFileGrouping::GROUP_FILES_PARAM ?>"]').on('change', function() {
 			$('#file-list-display-form').submit();
 		});
 	});
