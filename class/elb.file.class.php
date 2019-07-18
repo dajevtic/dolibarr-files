@@ -1359,75 +1359,6 @@ class ELbFile
 		}
 	}
 	
-	static function linkFile()
-    {
-		global $db, $langs, $user;
-	
-		$return_url = GETPOST('return_url_link');
-		$link = GETPOST('link', 'alpha');
-		$description = GETPOST('description', 'alpha');
-		$revision = GETPOST('revision', 'alpha');
-		require_once DOL_DOCUMENT_ROOT.'/elbmultiupload/class/elb.file_mapping.class.php';
-		$elbfilemap = new ELbFileMapping($db);
-		
-		if (!$link) {
-			setEventMessage($langs->trans('FilePathMissing'), 'errors');
-			header("Location: ". $return_url);
-			exit;
-		}
-		
-		$db->begin();
-		 
-		// set file mapping properties
-		$elbfilemap->fk_fileid=null;
-		$elbfilemap->object_type=$_POST['object_type'];
-		$elbfilemap->object_id=$_POST['object_id'];
-		$elbfilemap->created_date=dol_now();
-		$elbfilemap->user=$user->id;
-		$elbfilemap->active=ELbFileMapping::FILE_ACTIVE;
-		$elbfilemap->description=$description;
-		$elbfilemap->revision=$revision;
-		$elbfilemap->path=$link;
-		 
-		$fmid = $elbfilemap->create();
-		 
-		if ($fmid > 0) {
-			$db->commit();
-			setEventMessage($langs->trans("FileSuccessfullyLInked"), 'mesgs');
-			
-			// link to the product tab also
-			if ($elbfilemap->object_type=='propaldet' || $elbfilemap->object_type=='commandedet') {
-				$link_to_product = new ELbFileMapping($db);
-				$link_to_product->fk_fileid=$elbfilemap->fk_fileid;
-				$link_to_product->object_type='product';
-				$elbfilemap->object_type=='propaldet' ? $orderline=false : $orderline=true;
-				$product_id = getProductIDViaPositionID($elbfilemap->object_id, $orderline);
-				$link_to_product->object_id=$product_id;
-				$link_to_product->created_date=$elbfilemap->created_date;
-				$link_to_product->user=$elbfilemap->user;
-				$link_to_product->active=ELbFileMapping::FILE_ACTIVE;
-				$link_to_product->description=$elbfilemap->description;
-				$link_to_product->revision=$elbfilemap->revision;
-				$link_to_product->path=$elbfilemap->path;
-				$res = $link_to_product->create();
-				if ($res > 0) {
-					setEventMessage($langs->trans("FileAddedToTheProduct"), 'mesgs');
-					// update clone_of_fmap_id for propaldet/commnade
-					//$elbfilemap->clone_of_fmap_id = $res;
-					//$elbfilemap->update();
-					// delete file map from propaldet or commandedet because it will be created from the product trigger
-					$elbfilemap->delete();
-				}
-			}
-		} else {
-			$db->rollback();
-			setEventMessage($link.' - '.$langs->trans("FileNotLinked"), 'errors');
-		}
-		
-		header("Location: ". $return_url.'#mvfid'.$fmid);
-		exit;
-	}
-	
 	static function searchPositionAttachedFiles($object_type, $object_id, $search_filename)
     {
 		global $db;
@@ -1474,24 +1405,6 @@ class ELbFile
 			}
 		}
 		return;
-	}	
-	
-	static function getDocumentFilename($original_file)
-    {
-		global $db;
-		if($_GET['modulepart'] == 'elb' && !empty($_GET['fmapid'])) {
-			$elb_fmap = new ELbFileMapping($db);
-			$elb_fmap->fetch($_GET['fmapid']);
-			$elb_fk_file = new ELbFile();
-			$elb_fk_file->fetch($elb_fmap->fk_fileid);
-			if (!empty($elb_fk_file->name))
-			{
-				$filename = $elb_fk_file->name;
-			}
-		} else {
-			return basename($original_file);
-		}
-		return $filename;
 	}
 
     /**
@@ -1527,37 +1440,8 @@ class ELbFile
 			$elbfile = new ELbFile($db);
 			$elbfile->actionPositionActivateFile();
 		}
-
-		// link file (@TODO - check and remove linking functionality!)
-		if (!elb_empty(GETPOST('link'))) {
-			ElbFile::linkFile();
-		}
 	}
 
-	static function getTableRowOfLinkedFiles($object_type, $object_id, $colspan=1)
-    {
-		global $langs;
-		$elbfile = new ELbFile();
-		print '<table width="100%" class="elb-subtable">';
-		print '<thead>';
-		print '<tr>';
-		print '<th align="left">';
-		print '<a href="" onclick="toggleSubtable(this); return false;" class="toggle-link">';
-		print '<span class="ui-icon ui-icon-triangle-1-e"></span>';
-		print $langs->trans("LinkedFiles");
-		print '</a>';
-		print '</th>';
-		print '</tr>';
-		print '</thead>';
-		print '<tbody style="display:none">';
-		print '<tr>';
-		print '<td class="nobottom">';			
-		$elbfile->getUploadedFiles($object_type, $object_id, 0);
-		print '</td>';
-		print '</tr>';
-		print '</tbody>';
-		print '</table>';		
-	}
 	
 	static function fileExists($name, $type, $md5)
     {

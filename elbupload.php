@@ -119,7 +119,3 @@ if(isset($_FILES["elb_file"]))
     }
     echo json_encode($ret);
 }
-// Linked documents (Strato server)
-else if (!empty(GETPOST("linkit"))) {
-    $elbfile->linkFile();
-}

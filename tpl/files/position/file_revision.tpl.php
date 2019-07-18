@@ -15,7 +15,7 @@
 	?>
 			
 	<!-- Show file name with link to download-->
-	<td class="td-file-name nowrap">
+	<td class="td-file-name">
 
 		<?php 
 			if(empty($obj->fmpath)) {
@@ -58,7 +58,7 @@
 		<?php } ?>
 	</td>
 	
-	<td class="td-file-desc nowrap">
+	<td class="td-file-">
 		<?php if ($modef) { ?>
 			<input type="text" name="description" value="<?php echo $obj->fmdescription; ?>" />
 		<?php } else { ?>
@@ -114,7 +114,7 @@
 	</td>		
 
 	<?php if ($toolbox)	{ ?>
-		<td align="right" class="td-file-toolbox">
+		<td align="right" class="td-file-toolbox nowrap">
 			<?php if ($modef) { ?>
 				<input type="hidden" name="id" value="<?php echo $id ?>" />
 				<input type="hidden" name="facid" value="<?php echo $facid ?>" />

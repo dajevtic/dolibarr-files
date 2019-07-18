@@ -161,6 +161,7 @@ foreach(array_keys($tag_map) as $tag) {
 <form id="file-list-display-form" action="" method="post" >
 	<?php echo $langs->trans('GroupFilesBy'); ?>
 	<select id="select-file-list-display" name="file-list-display" >
+        <option value=''></option>
 		<option value='by_tag' <?php if ($file_list_display == 'by_tag') { echo 'selected="selected"'; } ?> ><?php echo $langs->trans('Tag'); ?></option>
 		<option value='by_rev' <?php if ($file_list_display == 'by_rev') { echo 'selected="selected"'; } ?> ><?php echo $langs->trans('Revision'); ?></option>
 	</select>
@@ -172,7 +173,7 @@ if ($file_list_display == 'by_tag')
 {
 	$elbfile->getUploadedFiles($object->element, $object->id, 1, $tag_map, $search_files, $restictDeleteFile);
 }
-elseif ($file_list_display == 'by_rev')
+elseif (empty($file_list_display) || $file_list_display == 'by_rev')
 {
 	$fetch_files = $elbfile->fetchUploadedFiles($object->element,$object->id, $search_files);
     $elbfile->renderFilesByRevision($fetch_files, 1, $restictDeleteFile);
@@ -189,8 +190,8 @@ print "<br>";
 </script>
 
 <?php 
+
 // ELB - add ajax modal dialog
 if(!empty($conf->elbmultiupload->enabled)) {
     elbmultiupload_renderAjaxPopup();
 }
-?>
