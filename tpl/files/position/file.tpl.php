@@ -87,14 +87,19 @@ $canDeleteFile = (($restictDeleteFile && ($obj->fmuser == $user->id || $user->ad
 					} 
 				?>
 			</a>
-			
-			<?php 
-			if(isset($search_highlights[$doc_id])) {
-				echo '<p class="file-search-highlight">';
-				echo $search_highlights[$doc_id];
-				echo '</p>';
-			}
-			?>
+
+            <br/>
+            <?php
+            $all_tags = ElbFileCategory::getFileTags();
+
+            $file_id=$obj->fmd5."_".$obj->fmrowid;
+            $tags = json_decode($obj->fmtags,true);
+
+            $form=new ElbForm($db);
+            if (is_array($tags) && count($tags)) {
+                print $form->multiselectarray('tags' . $obj->fmrowid, $all_tags, $tags, '', 0, '', 0, '100%', 'disabled', '', true);
+            }
+            ?>
 			
 		<?php } ?>
 	</td>
