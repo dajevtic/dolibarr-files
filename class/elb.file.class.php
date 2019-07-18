@@ -588,14 +588,12 @@ class ELbFile
 
 				print '<tbody>';
 
-				foreach ($my_arr as $key => $files_res_key)
-				{
+				foreach ($my_arr as $key => $files_res_key) {
 					$obj = $files_res_key;
 
 					($action2 == 'editfile' &&  $fileid == $obj->fmrowid) ? $modef=true : $modef=false;
 
 					include dol_buildpath('/elbmultiupload/tpl/files/position/file.tpl.php');
-
 
 					$this->getFileVersions($obj->fmrowid, $toolbox);
 				}

@@ -168,12 +168,9 @@ foreach(array_keys($tag_map) as $tag) {
 <br>
 
 <?php
-if ($file_list_display == 'by_tag')
-{
+if ($file_list_display == ElbFileSession::GROUP_FILES_BY_TAG) {
 	$elbfile->getUploadedFiles($object->element, $object->id, 1, $tag_map, $search_files, $restictDeleteFile);
-}
-elseif (empty($file_list_display) || $file_list_display == 'by_rev')
-{
+} elseif (empty($file_list_display) || $file_list_display == ElbFileSession::GROUP_FILES_BY_REV) {
 	$fetch_files = $elbfile->fetchUploadedFiles($object->element,$object->id, $search_files);
     $elbfile->renderFilesByRevision($fetch_files, 1, $restictDeleteFile);
 }
