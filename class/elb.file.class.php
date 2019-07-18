@@ -530,15 +530,21 @@ class ELbFile
 		}
 
 		// populate array of files without revision
-		foreach ($fetch_all_files as $ind => $file) {
-			if (empty($file->fmrevision)) {
-				$file_without_rev['no_revision'][] = $file;
-			}
-		}
+        if (ElbFileSession::getGroupFilesMethod() == ElbFileGrouping::GROUP_FILES_BY_REV) {
+            foreach ($fetch_all_files as $ind => $file) {
+                if (empty($file->fmrevision)) {
+                    $file_without_rev['no_revision'][] = $file;
+                }
+            }
+        } else {
+            foreach ($fetch_all_files as $ind => $file) {
+                $file_without_rev['no_revision'][] = $file;
+            }
+        }
 
 		$counter=0;
 
-		if (count($file_with_rev) > 0) {
+		if (count($file_with_rev) > 0 && ElbFileSession::getGroupFilesMethod() == ElbFileGrouping::GROUP_FILES_BY_REV) {
 
 			foreach ($file_with_rev as $rev => $my_arr)	{
 
@@ -612,12 +618,9 @@ class ELbFile
 			}
 		}
 
-		if (count($file_without_rev) > 0)
-		{
-			foreach ($file_without_rev as $without_ref => $my_arr)
-			{
-				if (!$counter)
-				{
+		if (count($file_without_rev) > 0) {
+			foreach ($file_without_rev as $without_ref => $my_arr)	{
+				if (!$counter)	{
 					$a_class = 'toggle-link expanded';
 					$span_class = 'ui-icon ui-icon-triangle-1-se';
 					$display = 'style="display: table-row-group;"';
@@ -629,23 +632,25 @@ class ELbFile
 					$display = ' style="display: none;"';
 				}
 
-				print '<table class="border" width="100%">
+				if (ElbFileSession::getGroupFilesMethod() == ElbFileGrouping::GROUP_FILES_BY_REV) {
+                    print '<table class="border" width="100%">
 					<tr class="position-subtable">
 					<td colspan="<?php echo $coldisplay ?>">
 					<table width="100%" class="elb-subtable">
 					<thead>
 					<tr>
 					<th colspan="2" align="left" class="oldv-enable">';
-				print '<a href="" onclick="toggleSubtable(this); return false;" class="' . $a_class . '">
+                    print '<a href="" onclick="toggleSubtable(this); return false;" class="' . $a_class . '">
 					<span class="' . $span_class . '"></span>';
-				print $langs->trans('WithoutRevision');
-				print '</a>
+                    print $langs->trans('WithoutRevision');
+                    print '</a>
 					</th>
 					</tr>
 					</thead>
 					<tbody ' . $display . '>
 						<tr>
 							<td class="nobottom" colspan="2">';
+                }
 
 				print '<table class="border listofdocumentstable" summary="listofdocumentstable" width="100%">';
 				print '<thead>';
@@ -679,7 +684,8 @@ class ELbFile
 				print '</tbody>';
 				print "</table>\n";
 
-				print '
+                if (ElbFileSession::getGroupFilesMethod() == ElbFileGrouping::GROUP_FILES_BY_REV) {
+                    print '
 							</td>
 						</tr>
 						</tbody>
@@ -687,6 +693,7 @@ class ELbFile
 						</td>
 						</tr>
 						</table>';
+                }
 				$counter++;
 			}
 		}

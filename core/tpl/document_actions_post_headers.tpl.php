@@ -28,13 +28,17 @@ $langs->load("link");
 if (empty($relativepathwithnofile)) $relativepathwithnofile='';
 
 // get selected files grouping method from select box
-$file_list_display = GETPOST('file-list-display');
+$file_list_display = GETPOST('file-list-display', 'none', 1);
+
+//var_dump($file_list_display);
 // set selected grouping method in session
-if (!ElbFileSession::isSetGroupFiles() || ElbFileSession::getGroupFilesMethod() != $file_list_display) {
+if ($file_list_display && (!ElbFileSession::isSetGroupFiles() || ElbFileSession::getGroupFilesMethod() != $file_list_display)) {
     ElbFileSession::setGroupFilesMethod($file_list_display);
 }
 // read files grouping method from session
 $file_list_display = ElbFileSession::getGroupFilesMethod();
+
+//var_dump($file_list_display);
 
 /*
  * Confirm form to delete
@@ -157,9 +161,11 @@ foreach(array_keys($tag_map) as $tag) {
 </style>
 
 <br>
-<form id="file-list-display-form" action="" method="post" >
+<form id="file-list-display-form" action="" method="get" >
 	<?php
     echo $langs->trans('GroupFilesBy');
+    echo '<input type="hidden" name="object_element" value="'.$object_element.'" >';
+    echo '<input type="hidden" name="id" value="'.$id.'" >';
     echo ElbFileView::renderSelect($file_list_display, ElbFileGrouping::GROUP_FILES_PARAM, ElbFileGrouping::returnAvailableGroupingMethods())
     ?>
 </form>
@@ -168,7 +174,7 @@ foreach(array_keys($tag_map) as $tag) {
 <?php
 if ($file_list_display == ElbFileGrouping::GROUP_FILES_BY_TAG) {
 	$elbfile->getUploadedFiles($object->element, $object->id, 1, $tag_map, $search_files, $restictDeleteFile);
-} elseif (empty($file_list_display) || $file_list_display == ElbFileGrouping::GROUP_FILES_BY_REV) {
+} elseif (in_array($file_list_display, array(ElbFileGrouping::GROUP_FILES_DEFAULT, ElbFileGrouping::GROUP_FILES_BY_REV))) {
 	$fetch_files = $elbfile->fetchUploadedFiles($object->element,$object->id, $search_files);
     $elbfile->renderFilesByRevision($fetch_files, 1, $restictDeleteFile);
 }

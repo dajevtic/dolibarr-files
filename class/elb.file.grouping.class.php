@@ -2,10 +2,10 @@
 
 class ElbFileGrouping
 {
-    const GROUP_FILES_PARAM = 'file-list-display';
-    const GROUP_FILES_DEFAULT = '';
-    const GROUP_FILES_BY_REV = 'by_rev';
-    const GROUP_FILES_BY_TAG = 'by_tag';
+    const GROUP_FILES_PARAM     = 'file-list-display';
+    const GROUP_FILES_DEFAULT   = 'none';
+    const GROUP_FILES_BY_REV    = 'by_rev';
+    const GROUP_FILES_BY_TAG    = 'by_tag';
 
     /**
      * Get available files grouping methods
