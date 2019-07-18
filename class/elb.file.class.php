@@ -138,50 +138,6 @@ class ELbFile
 
 		return ElbCommonManager::queryList($sql);
 	}
-
-	function printFileVersions($files, $toolbox)
-    {
-		global $langs,$conf,$db,$user;
-		global $bc;
-
-		$action2 = GETPOST('action2');
-		$fileid = GETPOST('rowid');
-        $object_element = GETPOST('object_element');
-
-		print '<tr>';
-		print '<td></td>';
-		print '<td colspan="6">';
-		$title=$langs->trans("FileVersion(s)");
-
-		print '<div class="titre">'.$title.'</div>';
-		print '<table class="border" summary="listofdocumentstable" width="100%">';
-		print '<tr class="liste_titre malign" width="100%">';
-		print '<td width="30" align="center">'.$langs->trans("Nr").'</td>';
-		print '<td>'.$langs->trans("File").'</td>';
-		print '<td>'.$langs->trans("Description").'</td>';
-		print '<td>'.$langs->trans("Revision").'</td>';
-		print '<td>'.$langs->trans("Size").'</td>';
-		print '<td width="110">'.$langs->trans("Modified").'</td>';
-		print '<td>'.$langs->trans("User").'</td>';
-		if ($toolbox){
-			print '<td align="right">';
-			print '</td>';
-		}
-		print '</tr>';
-
-		//$maxfilenamelength = 30; //define max length of a file name
-		$var = false;
-		foreach($files as $obj) {
-			$var=!$var;
-
-			($action2 == 'editfile' &&  $fileid == $obj->fmrowid) ? $modef=true : $modef=false;
-
-			include dol_buildpath('/elbmultiupload/tpl/files/position/file_revision.tpl.php');
-		}
-		print "</table>\n";
-		print '</td>';
-		print '</tr>';
-	}
 	
 	function getFileVersions($fileid, $toolbox, $restictDelete=false)
     {
@@ -582,18 +538,15 @@ class ELbFile
 
 		$counter=0;
 
-		if (count($file_with_rev) > 0)
-		{
-			foreach ($file_with_rev as $rev => $my_arr)
-			{
-				if (!$counter)
-				{
+		if (count($file_with_rev) > 0) {
+
+			foreach ($file_with_rev as $rev => $my_arr)	{
+
+				if (!$counter) {
 					$a_class = 'toggle-link expanded';
 					$span_class = 'ui-icon ui-icon-triangle-1-se';
 					$display = 'style="display: table-row-group;"';
-				}
-				else
-				{
+				} else {
 					$a_class = 'toggle-link';
 					$span_class = 'ui-icon ui-icon-triangle-1-e';
 					$display = ' style="display: none;"';

@@ -8,6 +8,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/elbmultiupload/class/elb.file.class.php';
 require_once DOL_DOCUMENT_ROOT.'/elbmultiupload/class/elb.file_mapping.class.php';
 require_once DOL_DOCUMENT_ROOT.'/elbmultiupload/lib/elbmultiupload.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/elbmultiupload/class/utils/elb.file.session.class.php';
 
 require_once DOL_DOCUMENT_ROOT.'/elbmultiupload/class/elb.common.manager.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';

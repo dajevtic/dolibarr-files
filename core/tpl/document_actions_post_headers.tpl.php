@@ -27,15 +27,14 @@ if ($conf->elbmultiupload->enabled) {
 $langs->load("link");
 if (empty($relativepathwithnofile)) $relativepathwithnofile='';
 
+// get selected files grouping method from select box
 $file_list_display = GETPOST('file-list-display');
-if (empty($file_list_display)) {
-	if (empty($_SESSION['file-list-display'])) {
-	    $file_list_display = 'by_rev';
-	} else {
-		$file_list_display = $_SESSION['file-list-display'];
-	}
+// set selected grouping method in session
+if (!ElbFileSession::isSetGroupFiles() || ElbFileSession::getGroupFilesMethod() != $file_list_display) {
+    ElbFileSession::setGroupFilesMethod($file_list_display);
 }
-$_SESSION['file-list-display'] = $file_list_display;
+// read files grouping method from session
+$file_list_display = ElbFileSession::getGroupFilesMethod();
 
 /*
  * Confirm form to delete
