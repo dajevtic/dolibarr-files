@@ -121,24 +121,6 @@ class ELbFile
         return -1;
     }
 
-	function fetchFileVersions($fileid)
-    {
-		global $db;
-		$sql = "SELECT f.rowid as frowid, f.name as fname, f.type as ftype, f.md5 as fmd5,";
-		$sql.= " fm.rowid as fmrowid, fm.fk_fileid as fmfk_fileid, fm.object_type as fmobject_type,";
-		$sql.= " fm.object_id as fmobject_id, fm.created_date as fmcreated_date, fm.user as fmuser, fm.description as fmdescription,";
-		$sql.= " fm.path as fmpath, fm.parent_file as fmparent_file, fm.revision as fmrevision, fm.active as fmactive";
-		$sql.= " FROM ".MAIN_DB_PREFIX.ELbFileMapping::$_tbl_name." as fm";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX.self::$_tbl_name." as f ON (f.rowid=fm.fk_fileid)";
-		$sql.= " WHERE fm.parent_file = '".$db->escape($fileid)."'";
-		$sql.= " AND fm.active=".ELbFileMapping::FILE_REVISION;
-		$sql.= " ORDER BY f.rowid DESC";
-
-		dol_syslog(get_class($this)."::fetchFileVersions sql=".$sql);
-
-		return ElbCommonManager::queryList($sql);
-	}
-	
 	function getFileVersions($fileid, $toolbox, $restictDelete=false)
     {
 		global $langs,$conf,$db,$user;
@@ -465,42 +447,6 @@ class ELbFile
 			print '</tbody>';
 			print "</table>\n";
 		}
-	}
-
-	function getUploadedFilesbyRev($object_type=null, $object_id=null, $toolbox=1, $tag_map=false, $search_files=null)
-	{
-		global $bc, $langs, $conf, $db, $user;
-	
-		$sql = "SELECT f.rowid as frowid, f.name as fname, f.type as ftype, f.md5 as fmd5,";
-		$sql.= " fm.rowid as fmrowid, fm.fk_fileid as fmfk_fileid, fm.object_type as fmobject_type,";
-		$sql.= " fm.object_id as fmobject_id, fm.created_date as fmcreated_date, fm.user as fmuser, fm.description as fmdescription,";
-		$sql.= " fm.path as fmpath, fm.parent_file as fmparent_file, fm.revision as fmrevision, fm.active as fmactive, fm.tags as fmtags";
-		$sql.= " FROM ".MAIN_DB_PREFIX.ELbFileMapping::$_tbl_name." as fm";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX.self::$_tbl_name." as f ON (f.rowid=fm.fk_fileid)";
-		$sql.= " WHERE 1=1 ";
-		if(!empty($object_type)) {
-			$sql.= " AND fm.object_type = '".$db->escape($object_type)."'";
-		}
-		if(!empty($object_id)) {
-			$sql.= " AND fm.object_id = ".$db->escape($object_id);
-		}
-		if(isset($search_files)) {
-			if(count($search_files)==0) {
-// 				$list="0";
-			} else {
-				$list=implode(",", $search_files);
-				$sql.= " AND fm.rowid IN (".$list.")";
-			}
-		}
-		$sql.= " ORDER BY f.name";
-	
-		dol_syslog(get_class($this)."::getUploadedFilesByRev sql=".$sql);
-
-		$fetch_all_files = ElbCommonManager::queryList($sql);
-
-        if ($fetch_all_files !==false) {
-        	self::renderFilesByRevision($fetch_all_files, $toolbox);
-        }
 	}
 
 	function renderFilesByRevision($fetch_all_files,$toolbox=1,$restictDeleteFile=false)
@@ -936,20 +882,9 @@ class ELbFile
 		self::headerLocationAfterOperation($linemode, $id, $lineid, $ufmid, $facid, $socid, $object_element);
 		exit;
 	}
-	
-	/**
-	 *
-	 * @param 	string 		$module 		use when link a file - module name: elb, commande, propal (in href it will be modulepart)
-	 * @param 	string 		$prefix			use as a folder seperator DOL_DATA_ROOT/$module_dir/$prefix/$objectid/$lineid
-	 * @param	int 		$objectid		object id
-	 * @param 	int			$lineid			line id
-	 * @param 	int 		$userid			user id (who uplods file)
-	 * @param 	int 		$showstatus  	result of uploading files (it will not show if page reloads after success
-	 * @param 	bool 		$multiupload  	allow multiupload (true/false)
-	 * @return 								print out upload button with js
-	 */
-	static function showMultiUploadButton($object_type, $object_id, $multiupload=true, $attach_external=true, $id_add=false) {
-	
+
+	static function showMultiUploadButton($object_type, $object_id, $multiupload=true, $attach_external=true, $id_add=false)
+    {
 		global $langs, $db, $user;
 	
 		$out = '';
@@ -1283,66 +1218,7 @@ class ELbFile
 			return -1;
 		}
 	}	
-	
-	function getRealPath($path)
-    {
-		$path="file://".urldecode($path);
-		return $path;
-	}
-	
-	static function countLinkedFiles($object)
-    {
-		global $db;
-		
-		$sql="SELECT COUNT(*) AS cnt ";
-		$sql.=" FROM ".MAIN_DB_PREFIX.ELbFileMapping::$_tbl_name;
-		$sql.=" WHERE object_type=".$object->element;
-			
-		dol_syslog(get_called_class().'::countLinkedFiles sql='.$sql, LOG_DEBUG);
-			
-		if ($resql=$db->query($sql))
-		{
-			$obj = $db->fetch_object($resql);
-			$count=$obj->cnt;
-			if($count>0) {
-				return $count;
-			} else {
-				return 0;
-			}
-		}
-		else
-		{
-			dol_syslog(get_called_class().'::countLinkedFiles ERROR sql='.$sql, LOG_DEBUG);
-			return 0;
-		}
-	}
-	
-	static function searchPositionAttachedFiles($object_type, $object_id, $search_filename)
-    {
-		global $db;
-		
-		$sql = "SELECT f.rowid as frowid, f.name as fname, f.type as ftype, f.md5 as fmd5,";
-		$sql.= " fm.rowid as fmrowid, fm.fk_fileid as fmfk_fileid, fm.object_type as fmobject_type,";
-		$sql.= " fm.object_id as fmobject_id, fm.created_date as fmcreated_date, fm.user as fmuser, fm.description as fmdescription,";
-		$sql.= " fm.path as fmpath, fm.parent_file as fmparent_file, fm.revision as fmrevision, fm.active as fmactive";
-		$sql.= " FROM ".MAIN_DB_PREFIX.ELbFileMapping::$_tbl_name." as fm";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX.self::$_tbl_name." as f ON (f.rowid=fm.fk_fileid)";
-		$sql.= " WHERE fm.object_type = '".$db->escape($object_type)."'";
-		$sql.= " AND fm.object_id = ".$db->escape($object_id);
-		$sql.= " AND f.name like '%".$db->escape($search_filename)."%'";
-		
-		dol_syslog(get_called_class()."::searchPositionAttachedFiles sql=".$sql);
-		
-		$resql = $db->query($sql);
-		
-		if ($resql) {
-			$num = $db->num_rows($resql);
-			return $num;
-		} else {
-			return 0;
-		}
-	}
-	
+
 	static function headerLocationAfterOperation($linemode=false, $id=false, $lineid=false, $filemapid=false, $facid=false, $socid=false, $object_element=false)
 	{	
 		if ($linemode) {
@@ -1398,17 +1274,6 @@ class ELbFile
 			$elbfile = new ELbFile($db);
 			$elbfile->actionPositionActivateFile();
 		}
-	}
-
-	
-	static function fileExists($name, $type, $md5)
-    {
-		global $db;
-		$sql="select count(*) as cnt from ".MAIN_DB_PREFIX.self::$_tbl_name." f
-				where f.name='".$db->escape($name)."' and f.type='".$db->escape($type)."'
-				and f.md5='".$db->escape($md5)."'";
-		$res=ElbCommonManager::querySingle($sql);
-		return ($res->cnt > 0);
 	}
 
     /**
