@@ -163,16 +163,16 @@ foreach(array_keys($tag_map) as $tag) {
 	}
 </style>
 
-<br>
-<form id="file-list-display-form" action="" method="get" >
-	<?php
-    echo $langs->trans('GroupFilesBy');
-    echo '<input type="hidden" name="object_element" value="'.$object_element.'" >';
-    echo '<input type="hidden" name="id" value="'.$id.'" >';
-    echo ElbFileView::renderSelect($file_list_display, ElbFileGrouping::GROUP_FILES_PARAM, ElbFileGrouping::returnAvailableGroupingMethods())
-    ?>
-</form>
-<br>
+<?php if ($totalnr) { ?>
+    <form id="file-list-display-form" action="" method="get" >
+        <?php
+        echo $langs->trans('GroupFilesBy');
+        echo '<input type="hidden" name="object_element" value="'.$object_element.'" >';
+        echo '<input type="hidden" name="id" value="'.$id.'" >';
+        echo ElbFileView::renderSelect($file_list_display, ElbFileGrouping::GROUP_FILES_PARAM, ElbFileGrouping::returnAvailableGroupingMethods())
+        ?>
+    </form>
+<?php } ?>
 
 <?php
 if ($file_list_display == ElbFileGrouping::GROUP_FILES_BY_TAG) {
