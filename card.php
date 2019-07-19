@@ -29,109 +29,160 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 
 // holiday needed files
-require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+if ($conf->holiday->enabled) {
+    require_once DOL_DOCUMENT_ROOT . '/core/lib/holiday.lib.php';
+    require_once DOL_DOCUMENT_ROOT . '/holiday/class/holiday.class.php';
+}
 
 // expense needed files
-require_once DOL_DOCUMENT_ROOT . '/core/lib/expensereport.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
+if ($conf->expensereport->enabled) {
+    require_once DOL_DOCUMENT_ROOT . '/core/lib/expensereport.lib.php';
+    require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
+}
 
 // member needed files
-require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
+if ($conf->adherent->enabled) {
+    require_once DOL_DOCUMENT_ROOT . '/core/lib/member.lib.php';
+    require_once DOL_DOCUMENT_ROOT . '/adherents/class/adherent.class.php';
+    require_once DOL_DOCUMENT_ROOT . '/adherents/class/adherent_type.class.php';
+}
 
 // third party needed files
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+if ($conf->societe->enabled) {
+    require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
+    require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+}
 
 // proposal needed files
-require_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/propal.lib.php';
+if ($conf->propal->enabled) {
+    require_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
+    require_once DOL_DOCUMENT_ROOT . '/core/lib/propal.lib.php';
+}
 
 // customer order needed files
-require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/order.lib.php';
+if ($conf->commande->enabled) {
+    require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
+    require_once DOL_DOCUMENT_ROOT . '/core/lib/order.lib.php';
+}
 
 // contract needed files
-require_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+if ($conf->contrat->enabled) {
+    require_once DOL_DOCUMENT_ROOT . '/core/lib/contract.lib.php';
+    require_once DOL_DOCUMENT_ROOT . '/contrat/class/contrat.class.php';
+}
 
 // shipment needed files
-require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+if ($conf->expedition->enabled) {
+    require_once DOL_DOCUMENT_ROOT . '/core/lib/sendings.lib.php';
+    require_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
+}
 
 // intervention needed files
-require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+if ($conf->ficheinter->enabled) {
+    require_once DOL_DOCUMENT_ROOT . '/core/lib/fichinter.lib.php';
+    require_once DOL_DOCUMENT_ROOT . '/fichinter/class/fichinter.class.php';
+}
 
-// supply order needed files
-require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+// supply needed files
+if ($conf->fournisseur->enabled) {
+    // supply order needed files
+    require_once DOL_DOCUMENT_ROOT . '/core/lib/fourn.lib.php';
+    require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.commande.class.php';
 
-// price request needed files
-require_once DOL_DOCUMENT_ROOT . '/core/lib/supplier_proposal.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/supplier_proposal/class/supplier_proposal.class.php';
+    // price request needed files
+    require_once DOL_DOCUMENT_ROOT . '/core/lib/supplier_proposal.lib.php';
+    require_once DOL_DOCUMENT_ROOT . '/supplier_proposal/class/supplier_proposal.class.php';
+}
 
 // invoice needed files
-require_once DOL_DOCUMENT_ROOT . '/core/lib/invoice.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+if ($conf->facture->enabled) {
+    require_once DOL_DOCUMENT_ROOT . '/core/lib/invoice.lib.php';
+    require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+}
 
 // invoice payments needed files
-require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
+if ($conf->facture->enabled) {
+    require_once DOL_DOCUMENT_ROOT . '/core/lib/payments.lib.php';
+    require_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
+}
 
 // sales tax payment needed files
-require_once DOL_DOCUMENT_ROOT.'/core/lib/vat.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
+if ($conf->tax->enabled) {
+    require_once DOL_DOCUMENT_ROOT . '/core/lib/vat.lib.php';
+    require_once DOL_DOCUMENT_ROOT . '/compta/tva/class/tva.class.php';
+}
 
 // social or fiscal tax needed files
-require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
+if ($conf->tax->enabled) {
+    require_once DOL_DOCUMENT_ROOT . '/core/lib/tax.lib.php';
+    require_once DOL_DOCUMENT_ROOT . '/compta/sociales/class/chargesociales.class.php';
+}
 
 // supplier invoice needed files
-require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+if ($conf->supplier_invoice->enabled) {
+    require_once DOL_DOCUMENT_ROOT . '/core/lib/fourn.lib.php';
+    require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
+}
 
 // supplier invoice payment needed files
-require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
+if ($conf->supplier_invoice->enabled) {
+    require_once DOL_DOCUMENT_ROOT . '/core/lib/payments.lib.php';
+    require_once DOL_DOCUMENT_ROOT . '/fourn/class/paiementfourn.class.php';
+}
 
 // salary payment needed files
-require_once DOL_DOCUMENT_ROOT.'/core/lib/salaries.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
+if ($conf->salaries->enabled) {
+    require_once DOL_DOCUMENT_ROOT . '/core/lib/salaries.lib.php';
+    require_once DOL_DOCUMENT_ROOT . '/compta/salaries/class/paymentsalary.class.php';
+}
 
 // loan needed files
-require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
+if ($conf->loan->enabled) {
+    require_once DOL_DOCUMENT_ROOT . '/core/lib/loan.lib.php';
+    require_once DOL_DOCUMENT_ROOT . '/loan/class/loan.class.php';
+}
 
 // donation needed files
-require_once DOL_DOCUMENT_ROOT . '/core/lib/donation.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/don/class/don.class.php';
+if ($conf->don->enabled) {
+    require_once DOL_DOCUMENT_ROOT . '/core/lib/donation.lib.php';
+    require_once DOL_DOCUMENT_ROOT . '/don/class/don.class.php';
+}
 
 // bank account needed files
-require_once DOL_DOCUMENT_ROOT . '/core/lib/bank.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
+if ($conf->banque->enabled) {
+    require_once DOL_DOCUMENT_ROOT . '/core/lib/bank.lib.php';
+    require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
+}
 
 // product needed files
-require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+if ($conf->product->enabled || $conf->service->enabled) {
+    require_once DOL_DOCUMENT_ROOT . '/core/lib/product.lib.php';
+    require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+}
 
 // warehouse needed files
-require_once DOL_DOCUMENT_ROOT.'/core/lib/stock.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+if ($conf->stock->enabled) {
+    require_once DOL_DOCUMENT_ROOT . '/core/lib/stock.lib.php';
+    require_once DOL_DOCUMENT_ROOT . '/product/stock/class/entrepot.class.php';
+}
 
 // project needed files
-require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+if ($conf->projet->enabled) {
+    require_once DOL_DOCUMENT_ROOT . '/core/lib/project.lib.php';
+    require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+}
 
 // agenda/calender needed files
-require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+if ($conf->agenda->enabled) {
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
+    require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+}
 
 // category needed files
-//require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
-//require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+if ($conf->categorie->enabled) {
+    require_once DOL_DOCUMENT_ROOT . '/core/lib/categories.lib.php';
+    require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+}
 
 // elbmultiupload module needed files
 require_once DOL_DOCUMENT_ROOT . '/elbmultiupload/lib/elbmultiupload.lib.php';
