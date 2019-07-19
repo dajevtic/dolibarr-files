@@ -58,7 +58,6 @@ class ELbFileMapping extends CommonObject
 	function __construct($db)
 	{
 		$this->db = $db;
-		return 1;
 	}
 
 	function fetch($id='')
@@ -387,25 +386,6 @@ class ELbFileMapping extends CommonObject
 		return $sql;
 	}
 
-	static function getFilesAndFileMappingsForObjectList($object_type, $object_ids, $map_type=0)
-    {
-		global $db;
-		$sql = "SELECT f.rowid as frowid, f.name as fname, f.type as ftype, f.md5 as fmd5,";
-		$sql.= " fm.rowid as fmrowid, fm.fk_fileid as fmfk_fileid, fm.object_type as fmobject_type,";
-		$sql.= " fm.object_id as fmobject_id, fm.created_date as fmcreated_date, fm.user as fmuser, fm.description as fmdescription,";
-		$sql.= " fm.path as fmpath, fm.parent_file as fmparent_file, fm.revision as fmrevision, fm.active as fmactive, fm.clone_of_fmap_id";
-		$sql.= " FROM ".MAIN_DB_PREFIX.self::$_tbl_name." as fm";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX.ELbFile::$_tbl_name." as f ON (f.rowid=fm.fk_fileid)";
-		$sql.= " WHERE fm.object_type = '".$db->escape($object_type)."'";
-		$sql.= " AND fm.object_id in (".implode(",", $object_ids).")";
-		if ($map_type==1) {
-			$sql.= " AND fm.active=1";
-		} elseif ($map_type==2) {
-			$sql.= " AND fm.active=0";
-		}
-		return ElbCommonManager::queryList($sql);
-	}
-
 	static function getAttachedFilesSize($object_type, $object_id)
     {
 		global $db, $conf;
@@ -467,150 +447,6 @@ class ELbFileMapping extends CommonObject
 		return $fetch;
 	}
 
-	static function deleteLinkedFileMapsForObject($object_type, $object_id)
-    {
-		global $db;
-		
-		require_once DOL_DOCUMENT_ROOT.'/elbmultiupload/class/elb.file.class.php';
-		$elbfile = new Elbfile($db);
-		
-		$fetch_objs = self::fetchLinkedFileMapsForObject($object_type, $object_id);
-		if ($fetch_objs) {
-			foreach ($fetch_objs as $obj) {
-				$get_fmid = $obj->fmrowid;
-				$ret = $elbfile->deleteLinked($get_fmid);
-				if($ret<0) return false;
-			}
-		}
-		return true;
-	}
-
-	function deleteFileMapsById($fmap_id)
-    {
-		global $db;
-		$elbfile = new Elbfile($db);
-		$elbfile_map = new self($db);
-		$elbfile_map->id = $fmap_id;
-		$res2 = $elbfile->deleteLinked($fmap_id);
-		if ($res2 > 0) {
-			return 1;
-		}
-		return -1;
-	}
-
-	static function actionForActivateRevisionOnSomeObjects($fmap_object, $product_type_change) 
-	{
-		global $db, $user;
-		
-		// fmap id of product to activate
-		if ($product_type_change) {
-			$fmap_id_prod_to_activate=$fmap_object->id;
-		} else {
-			$fmap_id_prod_to_activate=$fmap_object->clone_of_fmap_id;
-		}
-		$fetch_fmprod_to_activate = new ELbFileMapping($db);
-
-		// fetch fmap of product to activate
-		$fetch_fmprod_to_activate->fetch($fmap_id_prod_to_activate);
-		
-		// get parent file of fmap of product to activate
-		$fetch_fmprod_pf = $fetch_fmprod_to_activate->parent_file;
-		
-		// activate fmap of product for activation
-		$fetch_fmprod_to_activate->parent_file = null;
-		$fetch_fmprod_to_activate->active=ELbFileMapping::FILE_ACTIVE;
-		$fetch_fmprod_to_activate->created_date	= dol_now();
-		$fetch_fmprod_to_activate->user	= $user->id;
-		$fetch_fmprod_to_activate_update = $fetch_fmprod_to_activate->update();
-		
-		// fetch product to deactivate
-		$fetch_fmprod_to_deactivate = new ELbFileMapping($db);
-		$fetch_fmprod_to_deactivate->fetch($fetch_fmprod_pf);
-
-		// update product for deactivation
-		$fetch_fmprod_to_deactivate->parent_file = $fetch_fmprod_to_activate->id;
-		$fetch_fmprod_to_deactivate->active = ELbFileMapping::FILE_REVISION;
-		$fetch_fmprod_to_deactivate->created_date = $db->jdate($fetch_fmprod_to_deactivate->created_date);
-		$fetch_fmprod_to_deactivate->user = $fetch_fmprod_to_deactivate->user;
-		$fetch_fmprod_to_deactivate_update = $fetch_fmprod_to_deactivate->update();
-		
-		if ($fetch_fmprod_to_deactivate_update > 0) 
-		{
-			// fetch all subversions of product which initial was active
-			$subvers = new ELbFile(); 
-			$fetch_all_subversions = $subvers->fetchFileVersionByParentFile($fetch_fmprod_to_deactivate->id);
-			if (!empty($fetch_all_subversions)) {
-				foreach ($fetch_all_subversions as $fmid) {
-					$change_pfm = new ELbFileMapping($db);
-					$change_pfm->fetch($fmid);
-					$change_pfm->parent_file = $fetch_fmprod_to_activate->id;
-					$change_pfm->active = ELbFileMapping::FILE_REVISION;
-					$change_pfm->created_date	= $db->jdate($change_pfm->created_date);
-					$res = $change_pfm->update();
-				}
-			}
-		}
-
-		return 1;
-	}
-	
-	static function returnAttachedFilesAsHyperLinks($object_type, $object_id, $map_type, $filter_by_name=false, $filter_by_rev=false, $separator=', ', $attachment=true, $short_fname=true, $fileData=null)
-    {
-        global $conf;
-
-		$out = '';
-		if($fileData==null) {
-			$res = ElbCommonManager::queryList(self::sqlSelectFilesAndFileMappings($object_type, $object_id, $map_type));
-		} else {
-			$res = $fileData;
-		}
-		if (!empty($res)) {
-			foreach ($res as $index => $obj) {
-				if (!$filter_by_name || (!empty($filter_by_name) && strpos($obj->fname, $filter_by_name) !== false)) {
-					if (empty($filter_by_rev) || (!empty($filter_by_rev) && strpos($obj->fname, '_'.$filter_by_rev.'.'.$obj->ftype) !== false)) {
-						if ($obj->fmpath) {
-							$href_download = $obj->fmpath;
-							$out .= '<a href="'.$href_download.'">';
-                            ($short_fname) ? $out.=dol_trunc($obj->fmpath, 30) : $out.=$obj->fmpath;
-                            $out .='</a>'. $separator;
-						} else {
-							$file_relpath = $conf->elbmultiupload->ELB_UPLOAD_FILES_DIRECTORY.'/'.$obj->frowid.'.'.$obj->ftype;
-                            ($attachment) ? $link_as_attachment='&amp;attachment=true' : $link_as_attachment='';
-							$href_download = DOL_URL_ROOT . '/document.php?modulepart=elb'.$link_as_attachment.'&amp;file='.urlencode($file_relpath).'&amp;fmapid='.$obj->fmrowid;
-							$out .= '<a href="'.$href_download.'">';
-                            ($short_fname) ? $out.=dol_trunc($obj->fname, 30) : $out.=$obj->fname;
-                            $out .='</a>'.$separator;
-						}
-					}
-				}
-			}
-		}
-		if ($separator==', ') $out = trim($out, $separator);
-		return $out;
-	}
-
-	static function deleteFilesFromStorageFolder($path)
-    {
-		dol_delete_dir_recursive($path);
-	}
-
-	static function checkIfFileWithMD5ExistsForObject($object_id, $object_type, $md5_hash)
-    {
-		global $db;
-		$sql = " SELECT fm.fk_fileid, fm.object_type, fm.object_id, ";
-		$sql.= " f.rowid, f.md5 ";
-		$sql.= " FROM ".MAIN_DB_PREFIX.self::$_tbl_name." fm ";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX.ELbFile::$_tbl_name." f ON (f.rowid=fm.fk_fileid) ";
-		$sql.= " WHERE fm.object_id=".$db->escape($object_id);
-		$sql.= " AND fm.object_type='".$db->escape($object_type)."' ";
-		$sql.= " AND f.md5='".$db->escape($md5_hash)."' ";
-		$res = ElbCommonManager::queryList($sql);
-		if (count($res) > 0) {
-			return true;
-		}
-		return false;
-	}
-	
 	static function getObjectTags($object_type, $object_id)
     {
 		global $db;
@@ -633,20 +469,4 @@ class ELbFileMapping extends CommonObject
 		}
 		return $data;
 	}
-
-	function getNomUrl()
-    {
-		global $conf, $langs;
-		$file_relpath = '';
-		if (empty($this->fmpath)) {
-			$file_relpath = $conf->elbmultiupload->ELB_UPLOAD_FILES_DIRECTORY.'/'.$this->frowid.'.'.$this->ftype;
-		} else {
-			$file_relpath .= $this->fmpath;
-		}
-		$href = DOL_URL_ROOT . '/document.php?modulepart=elb&attachment=true&amp;file='.urlencode($file_relpath).'&amp;fmapid='.$this->id;
-		$label=img_mime($this->fname,$langs->trans("File").': '.$this->fname);
-		$label.=" ".$this->fname;
-		return '<a href="'.$href.'">'.$label.'</a>';
-	}
-		
 }
