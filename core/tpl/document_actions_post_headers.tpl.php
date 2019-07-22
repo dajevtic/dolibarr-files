@@ -30,7 +30,6 @@ if (empty($relativepathwithnofile)) $relativepathwithnofile='';
 // get selected files grouping method from select box
 $file_list_display = GETPOST('file-list-display', 'none', 1);
 
-//var_dump($file_list_display);
 // set selected grouping method in session
 if ($file_list_display && (!ElbFileSession::isSetGroupFiles() || ElbFileSession::getGroupFilesMethod() != $file_list_display)) {
     ElbFileSession::setGroupFilesMethod($file_list_display);
@@ -41,30 +40,8 @@ if (!ElbFileSession::isSetGroupFiles()) {
 // read files grouping method from session
 $file_list_display = ElbFileSession::getGroupFilesMethod();
 
-//var_dump($file_list_display);
-
-/*
- * Confirm form to delete
- */
-
-if ($action == 'delete')
-{
-	$langs->load("companies");	// Need for string DeleteFile+ConfirmDeleteFiles
-	$ret = $form->form_confirm(
-			$_SERVER["PHP_SELF"] . '?id=' . $object->id . '&urlfile=' . urlencode(GETPOST("urlfile")) . '&linkid=' . GETPOST('linkid', 'int') . (empty($param)?'':$param),
-			$langs->trans('DeleteFile'),
-			$langs->trans('ConfirmDeleteFile'),
-			'confirm_deletefile',
-			'',
-			0,
-			1
-	);
-	if ($ret == 'html') print '<br>';
-}
-
-
 //search files
-if(isset($_REQUEST['Search'])) {
+if(!empty($conf->global->ELB_ADD_FILES_TO_SOLR) && isset($_REQUEST['Search'])) {
 	$search_object_element=GETPOST('search_object_element','alpha');
 	$id=GETPOST('id','int');
 	$search_name=GETPOST('search_name','alpha');

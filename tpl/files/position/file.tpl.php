@@ -149,7 +149,7 @@ $canDeleteFile = (($restictDeleteFile && ($obj->fmuser == $user->id || $user->ad
 	
 	<?php 			
 		// Show user who created file
-		$userObj = new User($db);
+		$userObj = new User($this->db);
 		$userObj->fetch($obj->fmuser, '', '',1);
 	?>						
 	<td align="left" class="td-file-user nowrap">

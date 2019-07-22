@@ -454,7 +454,7 @@ class ELbFile
 
 	function renderFilesByRevision($fetch_all_files,$toolbox=1,$restictDeleteFile=false)
     {
-		global $bc, $langs;
+		global $bc, $langs, $user;
 
 		$action2 = GETPOST('action2');
 		$fileid = GETPOST('rowid');
