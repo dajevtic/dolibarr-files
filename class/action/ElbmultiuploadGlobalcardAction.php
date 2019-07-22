@@ -38,7 +38,7 @@ class ElbmultiuploadGlobalcardAction
 
         $error = 0;
 
-        $oldFile = new ELbFile();
+        $oldFile = new ELbFile($db);
         $oldFile->fetch($file_id);
 
         if (strlen($new_file_name) > 0) {
@@ -54,7 +54,7 @@ class ElbmultiuploadGlobalcardAction
         $elbAjax->addCode(' $("#elb-ajax-dlg").dialog("destroy"); ');
         $elbAjax->addCode('setTimeout(function(){location.reload()},10);');
 
-        $newFile = new ELbFile();
+        $newFile = new ELbFile($db);
         $newFile->fetch($file_id);
         if($oldFile != $newFile) {
             $fm = new ELbFileMapping($db);

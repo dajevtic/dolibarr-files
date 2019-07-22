@@ -21,7 +21,7 @@
 // ELB CHANGE
 if ($conf->elbmultiupload->enabled) {
 	global $db, $conf;
-	$elbfile = new ELbFile();
+	$elbfile = new ELbFile($db);
 }
 
 $langs->load("link");

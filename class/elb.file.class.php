@@ -25,6 +25,8 @@
  
 class ELbFile
 {
+    public $db;
+
 	public $id;
     public $name;
     public $type;
@@ -33,6 +35,15 @@ class ELbFile
 
     public $tbl_name='elb_file';
 	static $_tbl_name='elb_file';
+
+    /**
+     * ELbFile constructor.
+     * @param $db
+     */
+    function __construct($db)
+    {
+        $this->db = $db;
+    }
 	
 	/**
 	 *  Load file info from database to memory
@@ -42,7 +53,6 @@ class ELbFile
 	 */
 	function fetch($id='')
 	{
-		global $db;
 	
 		dol_syslog(get_class($this)."::fetch id=".$id);
 	
@@ -59,19 +69,19 @@ class ELbFile
 	
 		dol_syslog(get_class($this)."::fetch sql=".$sql);
 	
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 	
 		if ($resql)	{
-			if ($db->num_rows($resql) > 0) {
+			if ($this->db->num_rows($resql) > 0) {
 
-				$obj = $db->fetch_object($resql);
+				$obj = $this->db->fetch_object($resql);
 				
 				// set properties
 				$this->id	  		= $obj->rowid;
 				$this->name 		= $obj->name;
 				$this->type 		= $obj->type;
 				$this->md5			= $obj->md5;
-				$db->free($resql);	
+                $this->db->free($resql);
 				return 1;
 			}
 		}
@@ -87,11 +97,7 @@ class ELbFile
 	 */
 	function create()
     {
-        global $db;
-
-        $db->begin();
-
-        $error = 0;
+        $this->db->begin();
 
         dol_syslog(get_class($this) . "::create", LOG_DEBUG);
 
@@ -100,31 +106,30 @@ class ELbFile
         $sql .= ", type";
         $sql .= ", md5";
         $sql .= ") VALUES (";
-        $sql .= "'" . $db->escape($this->name) . "'";
-        $sql .= ", '" . $db->escape($this->type) . "'";
-        $sql .= ", " . ($this->md5 == null ? 'null' : "'" . $db->escape($this->md5) . "'");
+        $sql .= "'" . $this->db->escape($this->name) . "'";
+        $sql .= ", '" . $this->db->escape($this->type) . "'";
+        $sql .= ", " . ($this->md5 == null ? 'null' : "'" . $this->db->escape($this->md5) . "'");
         $sql .= ")";
 
         dol_syslog(get_class($this) . "::create sql=" . $sql);
 
-        $result = $db->query($sql);
+        $result = $this->db->query($sql);
 
         if ($result) {
-            $this->id = $db->last_insert_id(MAIN_DB_PREFIX . $this->tbl_name);
-            $db->commit();
+            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->tbl_name);
+            $this->db->commit();
             dol_syslog(get_class($this) . "::create done id=" . $this->id);
             return $this->id;
         }
 
-        $db->rollback();
+        $this->db->rollback();
         dol_syslog(get_class($this) . "::create Error id=" . $this->id);
         return -1;
     }
 
 	function getFileVersions($fileid, $toolbox, $restictDelete=false)
     {
-		global $langs,$conf,$db,$user;
-		global $bc;
+		global $langs;
 		
 		$sql = "SELECT f.rowid as frowid, f.name as fname, f.type as ftype, f.md5 as fmd5,";
 		$sql.= " fm.rowid as fmrowid, fm.fk_fileid as fmfk_fileid, fm.object_type as fmobject_type,";
@@ -132,16 +137,16 @@ class ELbFile
 		$sql.= " fm.path as fmpath, fm.parent_file as fmparent_file, fm.revision as fmrevision, fm.active as fmactive";
 		$sql.= " FROM ".MAIN_DB_PREFIX.ELbFileMapping::$_tbl_name." as fm";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX.self::$_tbl_name." as f ON (f.rowid=fm.fk_fileid)";
-		$sql.= " WHERE fm.parent_file = '".$db->escape($fileid)."'";
+		$sql.= " WHERE fm.parent_file = '".$this->db->escape($fileid)."'";
 		$sql.= " AND fm.active=".ELbFileMapping::FILE_REVISION;
 		$sql.= " ORDER BY f.rowid DESC";
 		
 		dol_syslog(get_class($this)."::getFileVersions sql=".$sql);
 	
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 	
 		if ($resql)
-			$num = $db->num_rows($resql);
+			$num = $this->db->num_rows($resql);
 	
 		if ($num > 0) {
 				
@@ -175,7 +180,7 @@ class ELbFile
 			$var = false;
 			while ($i < $num)
 			{
-				$obj = $db->fetch_object($resql);
+				$obj = $this->db->fetch_object($resql);
 				$var=!$var;
 	
 				($action2 == 'editfile' &&  $fileid == $obj->fmrowid) ? $modef=true : $modef=false;
@@ -190,8 +195,6 @@ class ELbFile
 
 	function fetchUploadedFiles($object_type=null,$object_id=null, $search_files=null)
     {
-		global $db;
-
 		$sql = "SELECT f.rowid as frowid, f.name as fname, f.type as ftype, f.md5 as fmd5,";
 		$sql.= " fm.rowid as fmrowid, fm.fk_fileid as fmfk_fileid, fm.object_type as fmobject_type,";
 		$sql.= " fm.object_id as fmobject_id, fm.created_date as fmcreated_date, fm.user as fmuser, fm.description as fmdescription,";
@@ -200,10 +203,10 @@ class ELbFile
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX.self::$_tbl_name." as f ON (f.rowid=fm.fk_fileid)";
 		$sql.= " WHERE fm.active=".ELbFileMapping::FILE_ACTIVE;
 		if(!empty($object_type)) {
-			$sql.= " AND fm.object_type = '".$db->escape($object_type)."'";
+			$sql.= " AND fm.object_type = '".$this->db->escape($object_type)."'";
 		}
 		if(!empty($object_id)) {
-			$sql.= " AND fm.object_id = ".$db->escape($object_id);
+			$sql.= " AND fm.object_id = ".$this->db->escape($object_id);
 		}
 		if(isset($search_files)) {
 			if(count($search_files)==0) {
@@ -231,7 +234,7 @@ class ELbFile
 
 	function printUploadedFiles($fetch_files, $tag_map=false, $toolbox=1, $restictDeleteFile=false)
     {
-		global $bc, $langs, $conf, $db, $user;
+		global $bc, $langs;
 
 		$action2 = GETPOST('action2');
 		$fileid = GETPOST('rowid');
@@ -451,7 +454,7 @@ class ELbFile
 
 	function renderFilesByRevision($fetch_all_files,$toolbox=1,$restictDeleteFile=false)
     {
-		global $bc, $langs, $conf, $db, $user;
+		global $bc, $langs;
 
 		$action2 = GETPOST('action2');
 		$fileid = GETPOST('rowid');
@@ -648,26 +651,26 @@ class ELbFile
 	/**
 	 *  Update file attached in the position
 	 */
-	function actionPositionUpdateFile($linemode=true)
+	function actionPositionUpdateFile()
     {
-		global $langs, $conf, $db, $user;
+		global $langs, $conf, $user;
 	
-		$elbfilemap = new ELbFileMapping($db);
+		$elbfilemap = new ELbFileMapping($this->db);
 			
 		$id = GETPOST('id', 'int');
+        $object_element = GETPOST('object_element');
+
 		$facid = GETPOST('facid', 'int');
 		$socid = GETPOST('socid', 'int');
-		if ($linemode){
-			$lineid = GETPOST('lineid');
-		}
 		$path = GETPOST('path', 'alpha');
 		$description = GETPOST('description', 'alpha');
 		$rev = $this->sanitizeText(GETPOST('frev'));
 		$filemapid = GETPOST('filemapid', 'int');
 		$tags = GETPOST('tags');
-        $object_element = GETPOST('object_element');
-		
-		$db->begin();
+
+		$error = 0;
+
+        $this->db->begin();
 		
 		$res = $elbfilemap->fetch($filemapid);
 
@@ -676,10 +679,8 @@ class ELbFile
 		if ($res > 0) {
 			
 			if (!empty($elbfilemap->path) && empty($path)) {
-				$db->rollback();
-				setEventMessage($langs->trans("FileNotUpdated"), 'errors');
-				self::headerLocationAfterOperation($id, $object_element, $filemapid, $facid, $socid);
-				exit;
+
+                $this->db->rollback();
 			}
 				
 			// update properties
@@ -696,7 +697,7 @@ class ELbFile
 			$result = $elbfilemap->update(); 
 				
 			if ($result > 0) {
-				$db->commit();
+
 				setEventMessage($langs->trans("FileSuccessfullyUpdated"), 'mesgs');
 
 				//check and store tags
@@ -705,7 +706,7 @@ class ELbFile
 					$all_tags = ElbFileCategory::getFileTags();
 					foreach ($tags as $tag) {
 						if(!in_array($tag, $all_tags)) {
-							$sql="INSERT INTO ".MAIN_DB_PREFIX."categorie SET label='".$db->escape($tag)."', type=".ElbFileCategory::TYPE_ELB_FILE;
+							$sql="INSERT INTO ".MAIN_DB_PREFIX."categorie SET label='".$this->db->escape($tag)."', type=".ElbFileCategory::TYPE_ELB_FILE;
 							ElbCommonManager::execute($sql);
 						}
 					}
@@ -713,26 +714,22 @@ class ELbFile
 
 				if(!empty($conf->global->ELB_ADD_FILES_TO_SOLR)) {
 					//update file in Solr
-					$elbfile = new ELbFile();
+					$elbfile = new ELbFile($this->db);
 					$elbfile->fetch($elbfilemap->fk_fileid);
 					ElbSolrUtil::add_to_search_index($elbfile, $elbfilemap, $tags);
 				}
 
 			} else {
-				$db->rollback();
+                $error++;
+                $this->db->rollback();
 				setEventMessage($langs->trans("FileNotUpdated"), 'errors');
-				unset($_SESSION['dol_events']['mesgs']);
-				self::headerLocationAfterOperation($id, $object_element, $filemapid, $facid, $socid);
-				exit;
 			}
 		} else {
-			$db->rollback();
-			setEventMessage($langs->trans("FileNotUpdated"), 'errors');
-			unset($_SESSION['dol_events']['mesgs']);
-			self::headerLocationAfterOperation($id, $object_element, $filemapid, $facid, $socid);
-			exit;
+			$error++;
 		}
-	
+
+        (!$error) ? $this->db->commit() : $this->db->rollback();
+
 		self::headerLocationAfterOperation($id, $object_element, $filemapid, $facid, $socid);
 		exit;
 	}
@@ -740,14 +737,13 @@ class ELbFile
 	/**
 	 *  Upload new version for file in the position
 	 */
-	function actionPositionUploadFileNewVersion($linemode=true)
+	function actionPositionUploadFileNewVersion()
     {
-		global $db, $langs, $user, $conf;
+		global $langs, $user, $conf;
 	
 		$id = GETPOST('id');
 		$facid = GETPOST('facid');
 		$socid = GETPOST('socid');
-		$lineid = GETPOST('lineid');
 		$ufmid = GETPOST('ufmid', 'int');
 		$ufmnvfile = 'ufmnvfile'.$ufmid;
 		$description = GETPOST('description', 'alpha');
@@ -758,7 +754,7 @@ class ELbFile
 			setEventMessage($langs->trans("FileMissing"), 'errors');
 		} elseif (isset($_FILES[$ufmnvfile]))	{
 
-			$db->begin();
+            $this->db->begin();
 				
 			$fileName = $_FILES[$ufmnvfile]["name"];
 			$output_buffer_dir = DOL_DATA_ROOT.'/'.$conf->global->ELB_UPLOAD_FILES_BUFFER.'/';
@@ -790,7 +786,7 @@ class ELbFile
 	
 				if ($newfileid > 0) {
 						
-					$elbfilemap = new ELbFileMapping($db);
+					$elbfilemap = new ELbFileMapping($this->db);
 					$elbfilemap_fetch = $elbfilemap->fetch($ufmid);
 
 					if ($elbfilemap_fetch > 0) {
@@ -803,7 +799,7 @@ class ELbFile
 						$old_object_created_date = $elbfilemap->created_date;
 						
 						// create new file map
-						$fm_new = new ELbFileMapping($db);
+						$fm_new = new ELbFileMapping($this->db);
 						$fm_new->fk_fileid 		= $newfileid;
 						$fm_new->object_type 	= $old_object_type;
 						$fm_new->object_id 		= $old_object_id;
@@ -824,9 +820,9 @@ class ELbFile
 							
 							if (!empty($fetch_all_subversions)) {
 								foreach ($fetch_all_subversions as $fmid) {
-									$change_pfm = new ELbFileMapping($db);
+									$change_pfm = new ELbFileMapping($this->db);
 									$change_pfm->fetch($fmid);
-									$change_pfm->created_date = $db->jdate($change_pfm->created_date);
+									$change_pfm->created_date = $this->db->jdate($change_pfm->created_date);
 									$change_pfm->parent_file = $fm_new_create;
 									$change_pfm->active = ELbFileMapping::FILE_REVISION;
 									$change_pfm->update();		
@@ -836,7 +832,7 @@ class ELbFile
 							
 							// update old file map in the db
 							$elbfilemap->active	   = null;
-							$elbfilemap->created_date = $db->jdate($elbfilemap->created_date);
+							$elbfilemap->created_date = $this->db->jdate($elbfilemap->created_date);
 							$elbfilemap->parent_file = $fm_new_create;
 							$elbfilemap_update = $elbfilemap->update();
 							$files_to_reindex[]=$elbfilemap;
@@ -855,27 +851,27 @@ class ELbFile
 								}
 								
 								if ($res)
-								{	
-									$db->commit();
+								{
+                                    $this->db->commit();
 									setEventMessage($langs->trans("FileVersionSuccessfullyCreated"), 'mesgs');
 									
 								} else {
-									$db->rollback();
+                                    $this->db->rollback();
 								}
 							} else {
-								$db->rollback();
+                                $this->db->rollback();
 							}	
 						} else {
-							$db->rollback();
+                            $this->db->rollback();
 						}
 					} else {
-						$db->rollback();
+                        $this->db->rollback();
 					}
 				} else {
-					$db->rollback();
+                    $this->db->rollback();
 				}
 			} else {
-				$db->rollback();
+                $this->db->rollback();
 			}
 		}
 		
@@ -885,7 +881,7 @@ class ELbFile
 
 	static function showMultiUploadButton($object_type, $object_id, $multiupload=true, $attach_external=true, $id_add=false)
     {
-		global $langs, $db, $user;
+		global $langs, $user;
 	
 		$out = '';
 		(strpos('https', strtolower($_SERVER["SERVER_PROTOCOL"]) !== false)) ? $protocol='https' : $protocol='http';
@@ -912,10 +908,11 @@ class ELbFile
 						method: "POST",
 						//allowedTypes:"jpg,jpeg,png,gif,doc,pdf,zip",
 						fileName: "elb_file",';
-		if ($multiupload)
-			$out .= '		multiple: true,';
-		else
-			$out .= '		multiple: false,';
+		if ($multiupload) {
+            $out .= '		multiple: true,';
+        } else {
+            $out .= '		multiple: false,';
+        }
 	
 		$out .= '		formData: {';
 		$out .=	 '   		object_type: "'.$object_type.'",';
@@ -923,9 +920,7 @@ class ELbFile
 		$out .=  '			user_id:  '.$user->id.'
 					},
 					afterUploadAll:function() {';
-		if ($object_type != 'suppdlvid') {		
-			$out .=  '			location.reload();';
-		}
+		$out .=  '			location.reload();';
 		$out .=  '	},
 					onSuccess:function(files,data,xhr)
 					{
@@ -952,11 +947,8 @@ class ELbFile
 	
 	function fetchFileVersionByParentFile($parent_file)
     {
-		global $langs, $conf, $db;
-				
 		// Check parameters
-		if ( empty($parent_file) || !is_numeric($parent_file))
-		{
+		if ( empty($parent_file) || !is_numeric($parent_file)) {
 			return false;
 		}
 		
@@ -964,16 +956,16 @@ class ELbFile
 		$sql.= ' FROM '.MAIN_DB_PREFIX.ELbFileMapping::$_tbl_name;
 		$sql.= ' WHERE parent_file = '.$parent_file;
 		
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 		
 		if ($resql)
 		{
-			$num = $db->num_rows($resql);
+			$num = $this->db->num_rows($resql);
 			$i = 0;
 			$ids = false;
 			while ($i < $num)
 			{
-				$obj = $db->fetch_object($resql);
+				$obj = $this->db->fetch_object($resql);
 				$ids[$i] = $obj->rowid;
 				$i++;
 			}
@@ -985,11 +977,11 @@ class ELbFile
 	
 	function activateRevision($fileid)
     {
-		global $db, $user;
-	
-		$db->begin();
+		global $user;
+
+        $this->db->begin();
 		
-		$fm_toactivate = new ELbFileMapping($db);
+		$fm_toactivate = new ELbFileMapping($this->db);
 		$fm_toactivate_fetch = $fm_toactivate->fetch($fileid);
 		
 		if ($fm_toactivate_fetch > 0) {
@@ -1003,13 +995,13 @@ class ELbFile
 			
 			if ($fm_toactivate_update > 0) {
 				
-				$fm_to_deactivate = new ELbFileMapping($db);
+				$fm_to_deactivate = new ELbFileMapping($this->db);
 				$fm_to_deactivate_fetch = $fm_to_deactivate->fetch($fm_toactivate_pf);
 				
 				if ($fm_to_deactivate_fetch > 0) {
 					$fm_to_deactivate->parent_file = $fileid;
 					$fm_to_deactivate->active = ELbFileMapping::FILE_REVISION;
-					$fm_to_deactivate->created_date	= $db->jdate($fm_to_deactivate->created_date);
+					$fm_to_deactivate->created_date	= $this->db->jdate($fm_to_deactivate->created_date);
 					$fm_to_deactivate_update = $fm_to_deactivate->update();
 					
 					if ($fm_to_deactivate_update > 0) {
@@ -1018,37 +1010,37 @@ class ELbFile
 							
 						if (!empty($fetch_all_subversions)) {
 							foreach ($fetch_all_subversions as $fmid) {
-								$change_pfm = new ELbFileMapping($db);
+								$change_pfm = new ELbFileMapping($this->db);
 								$change_pfm->fetch($fmid);
 								$change_pfm->parent_file = $fileid;
 								$change_pfm->active = ELbFileMapping::FILE_REVISION;
-								$change_pfm->created_date	= $db->jdate($change_pfm->created_date);
+								$change_pfm->created_date	= $this->db->jdate($change_pfm->created_date);
 								$res = $change_pfm->update();
 								if (!($res >0)) {
-									$db->rollback();
+                                    $this->db->rollback();
 									return -1;
 								}
 							}
 						}
 						
 						// commit change
-						$db->commit();
+                        $this->db->commit();
 						return 1;
 							
 					} else {
-						$db->rollback();
+                        $this->db->rollback();
 						return -1;
 					}
 				} else {
-					$db->rollback();
+                    $this->db->rollback();
 					return -1;
 				}
 			} else {
-				$db->rollback();
+                $this->db->rollback();
 				return -1;
 			}
 		} else {
-			$db->rollback();
+            $this->db->rollback();
 			return -1;
 		}
 	}
@@ -1127,8 +1119,6 @@ class ELbFile
 	
 	function deleteLinked($filemapid, $activate_trigger=true)
     {
-		global $conf, $db, $langs;
-	
 		$sql = "SELECT rowid, parent_file";
 		$sql.= " FROM ".MAIN_DB_PREFIX.ELbFileMapping::$_tbl_name;
 		$sql.= " WHERE rowid = ".$filemapid;
@@ -1138,19 +1128,19 @@ class ELbFile
 
         $error = 0;
 
-        $db->begin();
+        $this->db->begin();
 	
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 	
 		if ($resql) {
 				
-			$num = $db->num_rows($resql);
+			$num = $this->db->num_rows($resql);
 			$i = 0;
-			$fm = new ELbFileMapping($db);
+			$fm = new ELbFileMapping($this->db);
 			
 			while ($i < $num) {
 
-				$obj = $db->fetch_object($resql);
+				$obj = $this->db->fetch_object($resql);
 				
 				// fetch file map
 				$fm->fetch($obj->rowid);
@@ -1183,27 +1173,27 @@ class ELbFile
 		}
 
 		if ($error) {
-		    $db->rollback();
+            $this->db->rollback();
 		    return -1;
         }
 
-        $db->commit();
+        $this->db->commit();
         return 1;
 
 	}
 	
 	function delete()
     {
-		global $db,$conf;
-	
-		$db->begin();
+		global $conf;
+
+        $this->db->begin();
 	
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->tbl_name;
 		$sql.= " WHERE rowid = ".$this->id;
 	
 		dol_syslog(get_class($this)."::delete id=".$this->id, LOG_DEBUG);
 	
-		$resql=$db->query($sql);
+		$resql=$this->db->query($sql);
 		
 		//delete fie in solr
 		if($resql && !empty($conf->global->ELB_ADD_FILES_TO_SOLR)) {
@@ -1211,10 +1201,10 @@ class ELbFile
 		}
 	
 		if($resql) {
-			$db->commit();
+            $this->db->commit();
 			return 1;
 		} else {
-			$db->rollback();
+            $this->db->rollback();
 			return -1;
 		}
 	}	

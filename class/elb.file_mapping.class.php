@@ -54,6 +54,10 @@ class ELbFileMapping extends CommonObject
     public $tbl_name='elb_file_mapping';
 	static $_tbl_name='elb_file_mapping';
 
+    /**
+     * ELbFileMapping constructor.
+     * @param $db
+     */
 	function __construct($db)
 	{
 		$this->db = $db;
