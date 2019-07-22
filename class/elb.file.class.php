@@ -678,7 +678,7 @@ class ELbFile
 			if (!empty($elbfilemap->path) && empty($path)) {
 				$db->rollback();
 				setEventMessage($langs->trans("FileNotUpdated"), 'errors');
-				self::headerLocationAfterOperation($linemode, $id, $lineid, $filemapid, $facid, $socid, $object_element);
+				self::headerLocationAfterOperation($id, $object_element, $filemapid, $facid, $socid);
 				exit;
 			}
 				
@@ -722,18 +722,18 @@ class ELbFile
 				$db->rollback();
 				setEventMessage($langs->trans("FileNotUpdated"), 'errors');
 				unset($_SESSION['dol_events']['mesgs']);
-				self::headerLocationAfterOperation($linemode, $id, $lineid, $filemapid, $facid, $socid, $object_element);
+				self::headerLocationAfterOperation($id, $object_element, $filemapid, $facid, $socid);
 				exit;
 			}
 		} else {
 			$db->rollback();
 			setEventMessage($langs->trans("FileNotUpdated"), 'errors');
 			unset($_SESSION['dol_events']['mesgs']);
-			self::headerLocationAfterOperation($linemode, $id, $lineid, $filemapid, $facid, $socid, $object_element);
+			self::headerLocationAfterOperation($id, $object_element, $filemapid, $facid, $socid);
 			exit;
 		}
 	
-		self::headerLocationAfterOperation($linemode, $id, $lineid, $filemapid, $facid, $socid, $object_element);
+		self::headerLocationAfterOperation($id, $object_element, $filemapid, $facid, $socid);
 		exit;
 	}
 	
@@ -879,7 +879,7 @@ class ELbFile
 			}
 		}
 		
-		self::headerLocationAfterOperation($linemode, $id, $lineid, $ufmid, $facid, $socid, $object_element);
+		self::headerLocationAfterOperation($id, $object_element, $ufmid, $facid, $socid);
 		exit;
 	}
 
@@ -1077,7 +1077,7 @@ class ELbFile
 			setEventMessage($langs->trans("RevisionNotActivated"), 'errors');
 		}
 		
-		self::headerLocationAfterOperation($linemode, $id, $lineid, $fileid, $facid, $socid, $object_element);
+		self::headerLocationAfterOperation($id, $object_element, $fileid, $facid, $socid);
 		exit;
 	}
 	
@@ -1219,25 +1219,17 @@ class ELbFile
 		}
 	}	
 
-	static function headerLocationAfterOperation($linemode=false, $id=false, $lineid=false, $filemapid=false, $facid=false, $socid=false, $object_element=false)
-	{	
-		if ($linemode) {
-			if(!empty($id)) {
-				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id.'&action=editline&lineid='.$lineid.'&rowid='.$filemapid.'&object_element='.$object_element.'#mvfid'.$filemapid);
-			} elseif (!empty($facid)) {
-				header("Location: ".$_SERVER['PHP_SELF'].'?facid='.$facid.'&action=editline&lineid='.$lineid.'&rowid='.$filemapid.'&object_element='.$object_element.'#mvfid'.$filemapid);
-			} elseif (!empty($socid)) {
-				header("Location: ".$_SERVER['PHP_SELF'].'?socid='.$socid.'&action=editline&lineid='.$lineid.'&rowid='.$filemapid.'&object_element='.$object_element.'#mvfid'.$filemapid);
-			}
-		} else {
-			if (!empty($id)) {
-				header('Location: ' .$_SERVER['PHP_SELF'].'?id='.$id.'&object_element='.$object_element.'#mvfid'.$filemapid);
-			} elseif (!empty($facid)) {
-				header('Location: ' .$_SERVER['PHP_SELF'].'?facid='.$facid.'&object_element='.$object_element.'#mvfid'.$filemapid);
-			} elseif (!empty($socid)) {
-				header('Location: ' .$_SERVER['PHP_SELF'].'?socid='.$socid.'&object_element='.$object_element.'#mvfid'.$filemapid);
-			}
-		}
+	static function headerLocationAfterOperation($id=false, $object_element=false, $filemapid=false, $facid=false, $socid=false)
+	{
+	    if (!empty($object_element)) {
+            if (!empty($id)) {
+                header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $id . '&object_element=' . $object_element . '#mvfid' . $filemapid);
+            } elseif (!empty($facid)) {
+                header('Location: ' . $_SERVER['PHP_SELF'] . '?facid=' . $facid . '&object_element=' . $object_element . '#mvfid' . $filemapid);
+            } elseif (!empty($socid)) {
+                header('Location: ' . $_SERVER['PHP_SELF'] . '?socid=' . $socid . '&object_element=' . $object_element . '#mvfid' . $filemapid);
+            }
+        }
 		return;
 	}
 
