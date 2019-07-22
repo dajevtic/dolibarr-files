@@ -75,7 +75,6 @@
 	<?php 
 		// Show file size
 		if(empty($obj->fmpath)) {
-			$module = $remove_module[0];
 			$filepath=DOL_DATA_ROOT.'/elbmultiupload/'.$conf->global->ELB_UPLOAD_FILES_DIRECTORY.'/'.$obj->frowid.'.'.$obj->ftype;
 			if (file_exists($filepath)) {
 				$size= dol_filesize($filepath);

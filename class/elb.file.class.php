@@ -176,7 +176,6 @@ class ELbFile
 			print '</tr>';
 				
 			$i = 0;
-			//$maxfilenamelength = 30; //define max length of a file name
 			$var = false;
 			while ($i < $num)
 			{
@@ -679,8 +678,7 @@ class ELbFile
 		if ($res > 0) {
 			
 			if (!empty($elbfilemap->path) && empty($path)) {
-
-                $this->db->rollback();
+                $error++;
 			}
 				
 			// update properties
@@ -721,7 +719,6 @@ class ELbFile
 
 			} else {
                 $error++;
-                $this->db->rollback();
 				setEventMessage($langs->trans("FileNotUpdated"), 'errors');
 			}
 		} else {
@@ -749,12 +746,15 @@ class ELbFile
 		$description = GETPOST('description', 'alpha');
 		$fsubrev = $this->sanitizeText(GETPOST('fsubrev'));
         $object_element = GETPOST('object_element');
+
+        $error = 0;
+
+        $this->db->begin();
 			
         if (empty($_FILES[$ufmnvfile]["name"])) {
+            $error++;
 			setEventMessage($langs->trans("FileMissing"), 'errors');
 		} elseif (isset($_FILES[$ufmnvfile]))	{
-
-            $this->db->begin();
 				
 			$fileName = $_FILES[$ufmnvfile]["name"];
 			$output_buffer_dir = DOL_DATA_ROOT.'/'.$conf->global->ELB_UPLOAD_FILES_BUFFER.'/';
@@ -850,30 +850,29 @@ class ELbFile
 									}
 								}
 								
-								if ($res)
-								{
-                                    $this->db->commit();
+								if ($res) {
 									setEventMessage($langs->trans("FileVersionSuccessfullyCreated"), 'mesgs');
-									
 								} else {
-                                    $this->db->rollback();
+                                    $error++;
 								}
 							} else {
-                                $this->db->rollback();
+                                $error++;
 							}	
 						} else {
-                            $this->db->rollback();
+                            $error++;
 						}
 					} else {
-                        $this->db->rollback();
+                        $error++;
 					}
 				} else {
-                    $this->db->rollback();
+                    $error++;
 				}
 			} else {
-                $this->db->rollback();
+                $error++;
 			}
 		}
+
+        (!$error) ? $this->db->commit() : $this->db->rollback();
 		
 		self::headerLocationAfterOperation($id, $object_element, $ufmid, $facid, $socid);
 		exit;
@@ -979,6 +978,8 @@ class ELbFile
     {
 		global $user;
 
+		$error = 0;
+
         $this->db->begin();
 		
 		$fm_toactivate = new ELbFileMapping($this->db);
@@ -1017,38 +1018,36 @@ class ELbFile
 								$change_pfm->created_date	= $this->db->jdate($change_pfm->created_date);
 								$res = $change_pfm->update();
 								if (!($res >0)) {
-                                    $this->db->rollback();
-									return -1;
+                                    $error++;
 								}
 							}
 						}
-						
-						// commit change
-                        $this->db->commit();
-						return 1;
-							
 					} else {
-                        $this->db->rollback();
-						return -1;
+                        $error++;
 					}
 				} else {
-                    $this->db->rollback();
-					return -1;
+                    $error++;
 				}
 			} else {
-                $this->db->rollback();
-				return -1;
+                $error++;
 			}
 		} else {
-            $this->db->rollback();
-			return -1;
+            $error++;
 		}
+
+        if (!$error) {
+            $this->db->commit();
+            return 1;
+        }
+
+        $this->db->rollback();
+        return -1;
 	}
 	
 	/**
 	 * Activate revision (set revision as current/active version)
 	 */
-	function actionPositionActivateFile($linemode=true)
+	function actionPositionActivateFile()
     {
 		global $langs;
 		
@@ -1056,9 +1055,6 @@ class ELbFile
 		$id = GETPOST('id', 'int');
 		$facid = GETPOST('facid', 'int');
 		$socid = GETPOST('socid', 'int');
-		if ($linemode) {
-            $lineid = GETPOST('lineid', 'int');
-        }
         $object_element = GETPOST('object_element');
 		
 		$res = $this->activateRevision($fileid);
@@ -1076,7 +1072,7 @@ class ELbFile
 	/**
 	 *  Remove/delete file and it's revisions (if file revisions exist)
 	 */
-	function actionPositionRemoveFile($linemode=true)
+	function actionPositionRemoveFile()
     {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		
@@ -1085,9 +1081,6 @@ class ELbFile
 		$id = GETPOST('id', 'int');
 		$facid = GETPOST('facid', 'int');
 		$socid = GETPOST('socid', 'int');
-		if ($linemode) {
-			$lineid = GETPOST('lineid', 'int');
-		}
         $object_element = GETPOST('object_element');
 		
 		$delresp = $this->deleteLinked(GETPOST('fileid', 'int'));
@@ -1096,24 +1089,8 @@ class ELbFile
 		} else {
 			setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), 'errors');
 		}
-		
-		if ($linemode) {
-			if(!empty($id)) {
-				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id.'&action=editline&lineid='.$lineid.'&object_element='.$object_element.'#line_'.$lineid);
-			} elseif (!empty($facid)) {
-				header("Location: ".$_SERVER['PHP_SELF'].'?facid='.$facid.'&action=editline&lineid='.$lineid.'&object_element='.$object_element.'#line_'.$lineid);
-			} elseif (!empty($socid)) {
-				header("Location: ".$_SERVER['PHP_SELF'].'?socid='.$socid.'&action=editline&lineid='.$lineid.'&object_element='.$object_element.'#line_'.$lineid);
-			}
-		} else {
-			if (!empty($id)) {
-				header('Location: ' .$_SERVER['PHP_SELF'].'?id='.$id.'&object_element='.$object_element);
-			} elseif (!empty($facid)) {
-				header('Location: ' .$_SERVER['PHP_SELF'].'?facid='.$facid.'&object_element='.$object_element);
-			} elseif (!empty($socid)) {
-				header('Location: ' .$_SERVER['PHP_SELF'].'?socid='.$socid.'&object_element='.$object_element);
-			}
-		}
+
+        self::headerLocationAfterOperation($id, $object_element, '', $facid, $socid);
 		exit;
 	}
 	
@@ -1164,10 +1141,8 @@ class ELbFile
                         }
                     }
                 }
-
 				$i++;
 			}
-
 		} else {
 			$error++;
 		}
@@ -1200,13 +1175,13 @@ class ELbFile
 			$resql = ElbSolrUtil::remove_from_index($this->md5."_".$this->id);
 		}
 	
-		if($resql) {
+		if ($resql) {
             $this->db->commit();
 			return 1;
-		} else {
-            $this->db->rollback();
-			return -1;
 		}
+
+        $this->db->rollback();
+		return -1;
 	}	
 
 	static function headerLocationAfterOperation($id=false, $object_element=false, $filemapid=false, $facid=false, $socid=false)
@@ -1265,7 +1240,7 @@ class ELbFile
      */
 	function deleteFile($fileID)
     {
-        $elbFile = new $this();
+        $elbFile = new $this($this->db);
         $elbFile->fetch($fileID);
         $res = $elbFile->delete();
         if (!($res > 0)) {
