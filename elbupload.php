@@ -44,77 +44,70 @@ if(isset($_FILES["elb_file"]))
     if(!is_array($_FILES["elb_file"]['name'])) //single file
     {
         $fileName = $_FILES["elb_file"]["name"];
-        //$file_search = $elbfile->searchFileByNameInSystemDir($fileName, $stored_files);
-        $file_search = false;
 
-        if(!$file_search) {
+        // move uploaded file to buffer
+        $fileName = str_replace("..", ".", $fileName);
+        $res = dol_move_uploaded_file($_FILES["elb_file"]["tmp_name"], $output_buffer.$fileName, true);
 
-            // move uploaded file to buffer
-            $fileName = str_replace("..", ".", $fileName);
-            $res = dol_move_uploaded_file($_FILES["elb_file"]["tmp_name"], $output_buffer.$fileName, true);
+        if ($res==1) {
 
-            if ($res==1) {
+            // set file properties
+            $elbfile->name = $fileName;
+            $ext  = (new SplFileInfo($fileName))->getExtension();
+            $elbfile->type = $ext;
+            $elbfile->md5 =  md5_file($output_buffer.$fileName);
 
-                // set file properties
-                $elbfile->name = $fileName;
-                $ext  = (new SplFileInfo($fileName))->getExtension();
-                $elbfile->type = $ext;
-                $elbfile->md5 =  md5_file($output_buffer.$fileName);
+            $db->begin();
 
-                $db->begin();
+            // insert file in db
+            $fileid = $elbfile->create();
 
-                // insert file in db
-                $fileid = $elbfile->create();
+            if ($fileid>0) {
 
-                if ($fileid>0) {
+                // set file mapping properties
+                $object_type = $_POST['object_type'];
+                $elbfilemap->fk_fileid=$fileid;
+                $elbfilemap->object_type=$object_type;
+                $elbfilemap->object_id=$_POST['object_id'];
+                $elbfilemap->created_date=dol_now();
+                $elbfilemap->user=$user->id;
+                $elbfilemap->active=ELbFileMapping::FILE_ACTIVE;
 
-                    // set file mapping properties
-                    $object_type = $_POST['object_type'];
-                    $elbfilemap->fk_fileid=$fileid;
-                    $elbfilemap->object_type=$object_type;
-                    $elbfilemap->object_id=$_POST['object_id'];
-                    $elbfilemap->created_date=dol_now();
-                    $elbfilemap->user=$user->id;
-                    $elbfilemap->active=ELbFileMapping::FILE_ACTIVE;
+                $fmid = $elbfilemap->create();
 
-                    $fmid = $elbfilemap->create();
+                $elbfilemap_to_index=$elbfilemap;
 
-                    $elbfilemap_to_index=$elbfilemap;
+                if ($fmid > 0) {
+                    $move_res = dol_move($output_buffer.$fileName, $output_dir.$fileid.'.'.$ext);
+                    if ($move_res==true) {
 
-                    if ($fmid > 0) {
-                        $move_res = dol_move($output_buffer.$fileName, $output_dir.$fileid.'.'.$ext);
-                        if ($move_res==true) {
+                        $db->commit();
 
-                            $db->commit();
-
-                            //send file to solr index
-                            if(!empty($conf->global->ELB_ADD_FILES_TO_SOLR)) {
-                                $res = ElbSolrUtil::add_to_search_index($elbfile, $elbfilemap_to_index);
-                                if(!$res) {
-                                    setEventMessage("Error uploading document to Solr: ".ElbSolrUtil::$last_error);
-                                } else {
-                                    setEventMessage("File succesfully added to Solr", 'mesgs');
-                                }
+                        //send file to solr index
+                        if(!empty($conf->global->ELB_ADD_FILES_TO_SOLR)) {
+                            $res = ElbSolrUtil::add_to_search_index($elbfile, $elbfilemap_to_index);
+                            if(!$res) {
+                                setEventMessage("Error uploading document to Solr: ".ElbSolrUtil::$last_error);
+                            } else {
+                                setEventMessage("File succesfully added to Solr", 'mesgs');
                             }
-
-                            setEventMessage($fileName.' - '.$langs->trans("FileSuccessfullyUploaded"), 'mesgs');
-                        } else {
-                            $db->rollback();
-                            setEventMessage($fileName.' -1 '.$langs->trans("FileNotSuccessfullyUploaded"), 'errors');
                         }
+
+                        setEventMessage($fileName.' - '.$langs->trans("FileSuccessfullyUploaded"), 'mesgs');
                     } else {
                         $db->rollback();
-                        setEventMessage($fileName.' -2 '.$langs->trans("FileNotSuccessfullyUploaded"), 'errors');
+                        setEventMessage($fileName.' -1 '.$langs->trans("FileNotSuccessfullyUploaded"), 'errors');
                     }
-
                 } else {
                     $db->rollback();
-                    setEventMessage($fileName.' -3 '.$langs->trans("FileNotSuccessfullyUploaded"), 'errors');
+                    setEventMessage($fileName.' -2 '.$langs->trans("FileNotSuccessfullyUploaded"), 'errors');
                 }
+
+            } else {
+                $db->rollback();
+                setEventMessage($fileName.' -3 '.$langs->trans("FileNotSuccessfullyUploaded"), 'errors');
             }
-        }
-        else
-        {
+        } else {
             setEventMessage($fileName.' - '.$langs->trans("FileAlreadyExists"), 'errors');
         }
     }

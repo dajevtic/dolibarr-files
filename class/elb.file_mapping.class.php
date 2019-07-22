@@ -27,8 +27,7 @@ class ELbFileMapping extends CommonObject
 {
 	const FILE_REVISION = 0;
 	const FILE_ACTIVE = 1;
-	
-	const ACTION_NONE 		 = 0;
+
 	const ACTION_CREATE  	 = 1;
 	const ACTION_READ 		 = 2;
 	const ACTION_UPDATE 	 = 3;
@@ -60,6 +59,13 @@ class ELbFileMapping extends CommonObject
 		$this->db = $db;
 	}
 
+    /**
+     * Fetch file mapping
+     *
+     * @param  int    $id
+     * @return int          >0 if OK, <0 if KO
+     * @throws Exception
+     */
 	function fetch($id='')
 	{
 		global $db;
@@ -107,14 +113,18 @@ class ELbFileMapping extends CommonObject
 				$db->free($resql);
 				return 1;
 			}
-		}
-		else
-		{
-			dol_print_error($db);
+		} else	{
 			return -1;
 		}
 	}
 
+    /**
+     * Fetch file map by fk_file_id
+     *
+     * @param string $fileid
+     * @return int
+     * @throws Exception
+     */
 	function fetchByFileID($fileid='')
 	{
 		global $db;
@@ -157,17 +167,14 @@ class ELbFileMapping extends CommonObject
 				$db->free($resql);
 				return 1;
 			}
-		}
-		else
-		{
-			dol_print_error($db);
+		} else {
 			return -1;
 		}
 	}
 	
 	function create($activate_trigger=true) 
 	{
-		global $user, $langs, $conf, $db;
+		global $user;
 		
 		$this->db->begin();
 		

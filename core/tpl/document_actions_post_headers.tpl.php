@@ -90,7 +90,7 @@ if(isset($_REQUEST['Search'])) {
 
 $formfile=new FormFile($db);
 
-// show multiupload and link buttons
+// show multiupload button
 print ELbFile::showMultiUploadButton($object->element, $object->id);
 
 //tag - file map
