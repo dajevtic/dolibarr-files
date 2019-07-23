@@ -52,20 +52,21 @@ $canDeleteFile = (($restictDeleteFile && ($obj->fmuser == $user->id || $user->ad
 		    	if(empty($obj->fmpath)) {
 					echo $obj->fname;
 				} else {
-					//echo $obj->fmpath;
 					echo '<input type="text" name="path" value="'.$obj->fmpath.'" />';
 				}
 		     ?>
 		     
 		     <br/>
-		     <?php 
-		     	$all_tags = ElbFileCategory::getFileTags();
+		     <?php
+                if ($conf->global->ELB_ALLOW_CATEGORIES_FOR_FILES) {
+                    $all_tags = ElbFileCategory::getFileTags();
 
-		     	$file_id=$obj->fmd5."_".$obj->fmrowid;
-			    $tags = json_decode($obj->fmtags,true);
+                    $file_id = $obj->fmd5 . "_" . $obj->fmrowid;
+                    $tags = json_decode($obj->fmtags, true);
 
-		     	$form=new ElbForm($db);
-		     	print $form->multiselectarray('tags', $all_tags, $tags, '', 0, '', 0, '100%','','',true);
+                    $form = new ElbForm($db);
+                    print $form->multiselectarray('tags', $all_tags, $tags, '', 0, '', 0, '100%', '', '', true);
+                }
 		     ?>
 		     
 		<?php } else { ?>
@@ -90,14 +91,16 @@ $canDeleteFile = (($restictDeleteFile && ($obj->fmuser == $user->id || $user->ad
 
             <br/>
             <?php
-            $all_tags = ElbFileCategory::getFileTags();
+            if ($conf->global->ELB_ALLOW_CATEGORIES_FOR_FILES) {
+                $all_tags = ElbFileCategory::getFileTags();
 
-            $file_id=$obj->fmd5."_".$obj->fmrowid;
-            $tags = json_decode($obj->fmtags,true);
+                $file_id = $obj->fmd5 . "_" . $obj->fmrowid;
+                $tags = json_decode($obj->fmtags, true);
 
-            $form=new ElbForm($db);
-            if (is_array($tags) && count($tags)) {
-                print $form->multiselectarray('tags' . $obj->fmrowid, $all_tags, $tags, '', 0, '', 0, '100%', 'disabled', '', true);
+                $form = new ElbForm($db);
+                if (is_array($tags) && count($tags)) {
+                    print $form->multiselectarray('tags' . $obj->fmrowid, $all_tags, $tags, '', 0, '', 0, '100%', 'disabled', '', true);
+                }
             }
             ?>
 			

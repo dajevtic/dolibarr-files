@@ -14,9 +14,12 @@ class ElbFileGrouping
      */
     static function returnAvailableGroupingMethods()
     {
-        global $langs;
-        return  array( self::GROUP_FILES_DEFAULT => '',
-                       self::GROUP_FILES_BY_REV  => $langs->trans('Revision'),
-                       self::GROUP_FILES_BY_TAG  => $langs->trans('Tag'));
+        global $langs, $conf;
+        $ret = array( self::GROUP_FILES_DEFAULT => '',
+                      self::GROUP_FILES_BY_REV  => $langs->trans('Revision'));
+        if ($conf->global->ELB_ALLOW_CATEGORIES_FOR_FILES) {
+            $ret[self::GROUP_FILES_BY_TAG] = $langs->trans('Tag');
+        }
+        return $ret;
     }
 }

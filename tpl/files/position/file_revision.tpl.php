@@ -36,6 +36,18 @@
 					echo '<input type="text" name="path" value="'.$obj->fmpath.'" />';
 				}
 		     ?>
+            <br/>
+            <?php
+            if ($conf->global->ELB_ALLOW_CATEGORIES_FOR_FILES) {
+                $all_tags = ElbFileCategory::getFileTags();
+
+                $file_id = $obj->fmd5 . "_" . $obj->fmrowid;
+                $tags = json_decode($obj->fmtags, true);
+
+                $form = new ElbForm($db);
+                print $form->multiselectarray('tags', $all_tags, $tags, '', 0, '', 0, '100%', '', '', true);
+            }
+            ?>
 		<?php } else { ?>
 			<?php 
 				if(empty($obj->fmpath)) {
@@ -55,6 +67,18 @@
 					} 
 				?>
 			</a>
+            <br/>
+            <?php
+            if ($conf->global->ELB_ALLOW_CATEGORIES_FOR_FILES) {
+                $all_tags = ElbFileCategory::getFileTags();
+
+                $file_id = $obj->fmd5 . "_" . $obj->fmrowid;
+                $tags = json_decode($obj->fmtags, true);
+
+                $form = new ElbForm($db);
+                print $form->multiselectarray('tags', $all_tags, $tags, '', 0, '', 0, '100%', 'disabled', '', true);
+            }
+            ?>
 		<?php } ?>
 	</td>
 	

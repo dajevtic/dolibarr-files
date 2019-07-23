@@ -129,7 +129,7 @@ class ELbFile
 
 	function getFileVersions($fileid, $toolbox, $restictDelete=false)
     {
-		global $langs;
+		global $conf, $langs;
 		
 		$sql = "SELECT f.rowid as frowid, f.name as fname, f.type as ftype, f.md5 as fmd5,";
 		$sql.= " fm.rowid as fmrowid, fm.fk_fileid as fmfk_fileid, fm.object_type as fmobject_type,";
