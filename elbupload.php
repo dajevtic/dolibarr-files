@@ -80,19 +80,7 @@ if(isset($_FILES["elb_file"]))
                 if ($fmid > 0) {
                     $move_res = dol_move($output_buffer.$fileName, $output_dir.$fileid.'.'.$ext);
                     if ($move_res==true) {
-
                         $db->commit();
-
-                        //send file to solr index
-                        if(!empty($conf->global->ELB_ADD_FILES_TO_SOLR)) {
-                            $res = ElbSolrUtil::add_to_search_index($elbfile, $elbfilemap_to_index);
-                            if(!$res) {
-                                setEventMessage("Error uploading document to Solr: ".ElbSolrUtil::$last_error);
-                            } else {
-                                setEventMessage("File succesfully added to Solr", 'mesgs');
-                            }
-                        }
-
                         setEventMessage($fileName.' - '.$langs->trans("FileSuccessfullyUploaded"), 'mesgs');
                     } else {
                         $db->rollback();

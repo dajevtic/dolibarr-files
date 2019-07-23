@@ -269,4 +269,84 @@ class ActionsElbmultiupload
             }
         }
     }
+
+
+	function getObjectLink($parameters, &$object, &$action, $hookmanager)
+	{
+
+		require_once DOL_DOCUMENT_ROOT . '/elbmultiupload/class/elb.file_mapping.class.php';
+
+		global $conf, $db;
+		$modulepart = $parameters['modulepart'];
+		$relativefile = $parameters['relativefile'];
+		if ($modulepart == 'elbmultiupload' && !empty($relativefile)) {
+			$file = str_replace($conf->global->ELB_UPLOAD_FILES_DIRECTORY . "/", "", $relativefile);
+			$file_parts = explode(".", $file);
+			$file_id = $file_parts[0];
+			$elbfilemap = new ELbFileMapping($db);
+			$res = $elbfilemap->fetch($file_id);
+			if ($res > 0) {
+				$object_id = $elbfilemap->object_id;
+				$modulepart = $elbfilemap->object_type;
+
+				if ($modulepart == "produit") $modulepart = "product";
+				if ($modulepart == "propale") $modulepart = "propal";
+
+				if ($modulepart == 'company') {
+					include_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+					$object_instance = new Societe($db);
+				} else if ($modulepart == 'invoice') {
+					include_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+					$object_instance = new Facture($db);
+				} else if ($modulepart == 'invoice_supplier') {
+					include_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
+					$object_instance = new FactureFournisseur($db);
+				} else if ($modulepart == 'propal') {
+					include_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
+					$object_instance = new Propal($db);
+				} else if ($modulepart == 'supplier_proposal') {
+					include_once DOL_DOCUMENT_ROOT . '/supplier_proposal/class/supplier_proposal.class.php';
+					$object_instance = new SupplierProposal($db);
+				} else if ($modulepart == 'order') {
+					include_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
+					$object_instance = new Commande($db);
+				} else if ($modulepart == 'order_supplier') {
+					include_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.commande.class.php';
+					$object_instance = new CommandeFournisseur($db);
+				} else if ($modulepart == 'contract') {
+					include_once DOL_DOCUMENT_ROOT . '/contrat/class/contrat.class.php';
+					$object_instance = new Contrat($db);
+				} else if ($modulepart == 'product') {
+					include_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+					$object_instance = new Product($db);
+				} else if ($modulepart == 'tax') {
+					include_once DOL_DOCUMENT_ROOT . '/compta/sociales/class/chargesociales.class.php';
+					$object_instance = new ChargeSociales($db);
+				} else if ($modulepart == 'project') {
+					include_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+					$object_instance = new Project($db);
+				} else if ($modulepart == 'fichinter') {
+					include_once DOL_DOCUMENT_ROOT . '/fichinter/class/fichinter.class.php';
+					$object_instance = new Fichinter($db);
+				} else if ($modulepart == 'user') {
+					include_once DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
+					$object_instance = new User($db);
+				} else if ($modulepart == 'expensereport') {
+					include_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
+					$object_instance = new ExpenseReport($db);
+				} else if ($modulepart == 'holiday') {
+					include_once DOL_DOCUMENT_ROOT . '/holiday/class/holiday.class.php';
+					$object_instance = new Holiday($db);
+				}
+
+				$hookmanager->object_instance = $object_instance;
+				$hookmanager->object_id = $object_id;
+				$hookmanager->object_ref = null;
+
+			}
+			return 1;
+		}
+		return 0;
+	}
+
 }

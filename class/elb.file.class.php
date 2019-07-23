@@ -916,7 +916,8 @@ class ELbFile
 		$out .= '		formData: {';
 		$out .=	 '   		object_type: "'.$object_type.'",';
 		$out .=	 '   		object_id: '.$object_id.',';
-		$out .=  '			user_id:  '.$user->id.'
+		$out .=  '			user_id:  '.$user->id.',';
+		$out .=  '			sendit: "ajaxUpload"
 					},
 					afterUploadAll:function() {';
 		$out .=  '			location.reload();';
@@ -1275,7 +1276,7 @@ class ELbFile
      */
     public function removeFileFromFileSystem($fileFullPath)
     {
-        unlink($fileFullPath);
+        dol_delete_file($fileFullPath);
     }
 	
 }
