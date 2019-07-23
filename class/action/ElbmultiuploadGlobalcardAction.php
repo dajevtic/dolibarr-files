@@ -16,13 +16,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+
 class ElbmultiuploadGlobalcardAction
 {
     static function rename_file($object, $params)
     {
         if(!defined("DO_AJAX_ACTION")) exit;
 
-        global $db;
+        global $db, $user;
 
         // start transaction
         $db->begin();
@@ -60,6 +62,22 @@ class ElbmultiuploadGlobalcardAction
             $fm = new ELbFileMapping($db);
             $fm->fetchByFileID($file_id);
         }
+
+        //Update fullpath_orig in ecmfiles
+	    $file_path = $newFile->getFullServerPathForFile($newFile);
+	    $rel_filetorename = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $file_path);
+	    $rel_filetorename = preg_replace('/^[\\/]/', '', $rel_filetorename);
+	    $ecmfile=new EcmFiles($db);
+	    $resultecm = $ecmfile->fetch(0, '', $rel_filetorename);
+	    if($resultecm < 0) {
+		    $error++;
+	    } else {
+	        $ecmfile->fullpath_orig = $new_file_name.$file_ext;
+		    $resultecm = $ecmfile->update($user);
+		    if($resultecm < 0) {
+			    $error++;
+		    }
+	    }
 
         // close transaction
         (!$error) ? $db->commit() : $db->rollback();
