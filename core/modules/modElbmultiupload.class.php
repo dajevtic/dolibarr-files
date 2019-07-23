@@ -122,7 +122,6 @@ class modElbmultiupload extends DolibarrModules
         //                             1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0, 'current', 1)
         // );
         $this->const = array(
-            1=>array('MYMODULE_MYCONSTANT', 'chaine', 'avalue', 'This is a constant to add', 1, 'allentities', 1),
             2=>array('ELB_UPLOAD_FILES_BUFFER','chaine','uploadbuffer','Buffer for uploaded files. Files will be removed to the ELB_UPLOAD_FILES_DIRECTORY if everything is OK',1,'current',0),
             3=>array('ELB_UPLOAD_FILES_DIRECTORY','chaine','uploadedfiles','Subdirectory in DOL_DATA_ROOT where we store uploaded files',1,'current',0)
         );
@@ -246,7 +245,7 @@ class modElbmultiupload extends DolibarrModules
         // Boxes/Widgets
         // Add here list of php file(s) stored in mymodule/core/boxes that contains class to show a widget.
         $this->boxes = array(
-            0=>array('file'=>'mymodulewidget1.php@elbmultiupload','note'=>'Widget provided by MyModule','enabledbydefaulton'=>'Home'),
+            //0=>array('file'=>'mymodulewidget1.php@elbmultiupload','note'=>'Widget provided by MyModule','enabledbydefaulton'=>'Home'),
             //1=>array('file'=>'mymodulewidget2.php@mymodule','note'=>'Widget provided by MyModule'),
             //2=>array('file'=>'mymodulewidget3.php@mymodule','note'=>'Widget provided by MyModule')
         );
@@ -294,18 +293,18 @@ class modElbmultiupload extends DolibarrModules
         // Add here entries to declare new menus
 
         /* BEGIN MODULEBUILDER TOPMENU */
-        $this->menu[$r++]=array('fk_menu'=>'',			                // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-            'type'=>'top',			                // This is a Top menu entry
-            'titre'=>'MyModule',
-            'mainmenu'=>'mymodule',
-            'leftmenu'=>'',
-            'url'=>'/elbmultiupload/index.php',
-            'langs'=>'elbmultiupload@elbmultiupload',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-            'position'=>1000+$r,
-            'enabled'=>'$conf->elbmultiupload->enabled',	// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-            'perms'=>'1',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-            'target'=>'',
-            'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
+//        $this->menu[$r++]=array('fk_menu'=>'',			                // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+//            'type'=>'top',			                // This is a Top menu entry
+//            'titre'=>'MyModule',
+//            'mainmenu'=>'mymodule',
+//            'leftmenu'=>'',
+//            'url'=>'/elbmultiupload/index.php',
+//            'langs'=>'elbmultiupload@elbmultiupload',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+//            'position'=>1000+$r,
+//            'enabled'=>'$conf->elbmultiupload->enabled',	// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
+//            'perms'=>'1',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+//            'target'=>'',
+//            'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
 
         /* END MODULEBUILDER TOPMENU */
 
