@@ -18,11 +18,9 @@
  * or see http://www.gnu.org/
  */
 
-// ELB CHANGE
-if ($conf->elbmultiupload->enabled) {
-	global $db, $conf;
-	$elbfile = new ELbFile($db);
-}
+
+global $db, $conf, $toolbox;
+$elbfile = new ELbFile($db);
 
 $langs->load("link");
 if (empty($relativepathwithnofile)) $relativepathwithnofile='';
@@ -152,11 +150,12 @@ foreach(array_keys($tag_map) as $tag) {
 <?php } ?>
 
 <?php
+// render uploaded files
 if ($file_list_display == ElbFileGrouping::GROUP_FILES_BY_TAG) {
-	$elbfile->getUploadedFiles($object->element, $object->id, 1, $tag_map, $search_files, $restictDeleteFile);
+	$elbfile->getUploadedFiles($object->element, $object->id, $toolbox, $tag_map, $search_files, $restictDeleteFile);
 } elseif (in_array($file_list_display, array(ElbFileGrouping::GROUP_FILES_DEFAULT, ElbFileGrouping::GROUP_FILES_BY_REV))) {
 	$fetch_files = $elbfile->fetchUploadedFiles($object->element,$object->id, $search_files);
-    $elbfile->renderFilesByRevision($fetch_files, 1, $restictDeleteFile);
+    $elbfile->renderFilesByRevision($fetch_files, $toolbox, $restictDeleteFile);
 }
 print "<br>";
 ?>

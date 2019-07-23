@@ -1,4 +1,7 @@
-<?php global $elbfile;?>
+<?php
+global $elbfile, $conf, $toolbox, $modef;
+?>
+
 <tr <?php echo $bc[false] ?>>
 	<td align="center" class="td-file-nr" id="mvfid<?php echo $obj->fmrowid; ?>"><?php echo ++$i; ?>.</td>
 	<?php

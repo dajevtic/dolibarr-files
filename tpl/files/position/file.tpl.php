@@ -1,14 +1,7 @@
-<?php 
-
-//use ELBClass\solr\ElbSolrUtil;
-
-global $elbfile, $conf;
-global $search_highlights;
-$doc_id=$obj->fmd5."_".$obj->fmrowid;
-
-$canDeleteFile = (($restictDeleteFile && ($obj->fmuser == $user->id || $user->admin)) || !$restictDeleteFile);
-
+<?php
+global $elbfile, $conf, $toolbox, $modef;
 ?>
+
 <tr <?php echo $bc[true] ?>>					
 	<td align="center"  class="td-file-nr" id="mvfid<?php echo $obj->fmrowid; ?>"><?php echo ++$i; ?>.</td>
 	<?php
@@ -36,16 +29,22 @@ $canDeleteFile = (($restictDeleteFile && ($obj->fmuser == $user->id || $user->ad
 					 </span>';
 			}
 		?>
-		
-		<!-- Rename file link-->
-		<span class="pushright">
-			<?php
-				$url = DOL_URL_ROOT . '/elbmultiupload/ajax/rename_file.php?file_id=' . $obj->frowid.'&object_element='.$object_element;
-				$trans = $langs->trans('RenameFile');
-				$icon = img_edit($langs->trans('RenameFile'));
-				print '<a href="#" onclick="elb_ajax_dialog(\''. $url .'\',\''. $trans .'\',\'400\'); return false;">'. $icon .'</a>&nbsp;&nbsp;';
-			?>
-		</span>
+
+        <?php
+        // Rename file link
+        if ($toolbox) {
+        ?>
+            <span class="pushright">
+                <?php
+                    $url = DOL_URL_ROOT . '/elbmultiupload/ajax/rename_file.php?file_id=' . $obj->frowid.'&object_element='.$object_element;
+                    $trans = $langs->trans('RenameFile');
+                    $icon = img_edit($langs->trans('RenameFile'));
+                    print '<a href="#" onclick="elb_ajax_dialog(\''. $url .'\',\''. $trans .'\',\'400\'); return false;">'. $icon .'</a>&nbsp;&nbsp;';
+                ?>
+            </span>
+        <?php
+        }
+        ?>
 		
 		<?php if ($modef) { ?>
 		    <?php 
@@ -124,7 +123,6 @@ $canDeleteFile = (($restictDeleteFile && ($obj->fmuser == $user->id || $user->ad
 	<?php 
 		// Show file size
 		if(empty($obj->fmpath)) {
-			$module = $remove_module[0];
 			$filepath=DOL_DATA_ROOT.'/elbmultiupload/'.$conf->global->ELB_UPLOAD_FILES_DIRECTORY.'/'.$obj->frowid.'.'.$obj->ftype;
 			if (file_exists($filepath)) {
 				$size= dol_filesize($filepath);
@@ -294,11 +292,11 @@ $canDeleteFile = (($restictDeleteFile && ($obj->fmuser == $user->id || $user->ad
 						});
 					});
 				</script>					
-				<?php if($canDeleteFile) { ?>
-                    <a class="ufdel" onclick="if (!confirm('<?php echo $langs->trans('ReallyDeleteFileAndItsVersions');?>?')) return false;" href="<?php echo $delete_href ?>" >
-                        <?php echo img_picto($langs->trans("Delete"), 'delete.png');?>
-                    </a>
-                <?php } ?>
+
+                <a class="ufdel" onclick="if (!confirm('<?php echo $langs->trans('ReallyDeleteFileAndItsVersions');?>?')) return false;" href="<?php echo $delete_href ?>" >
+                    <?php echo img_picto($langs->trans("Delete"), 'delete.png');?>
+                </a>
+
 			<?php } ?>		
 		</td>
 	<?php } ?>

@@ -300,18 +300,21 @@ if ($object_element=='commande') {
     $typeOfObject = 'Commande';
     $tabName = 'CustomerOrder';
     $tabIcon = 'order';
+    $toolbox = $user->rights->commande->creer;
 }
 // proposal module
 elseif ($object_element=='propal') {
     $typeOfObject = 'Propal';
     $tabName = 'Proposal';
     $tabIcon = 'propal';
+    $toolbox = $user->rights->propale->creer;
 }
 // user module
 elseif ($object_element=='user') {
     $typeOfObject = 'User';
     $tabName = 'User';
     $tabIcon = 'user';
+    $toolbox = (!empty($user->admin) || $user->rights->user->user->creer);
 }
 // user group module
 elseif ($object_element=='usergroup') {
@@ -319,6 +322,7 @@ elseif ($object_element=='usergroup') {
     $tabName = 'UserGroup';
     $tabIcon = 'group';
     $objectTabsMethodPrefix = 'group';
+    $toolbox = (!empty($user->admin) || $user->rights->user->user->creer);
 }
 // holiday/leaves module
 elseif ($object_element=='holiday') {
@@ -326,6 +330,7 @@ elseif ($object_element=='holiday') {
     $tabName = 'CPTitreMenu';
     $tabIcon = 'holiday';
     $objectTabsMethodPrefix = 'holiday';
+    $toolbox = $user->rights->holiday->write_all;
 }
 // expense module
 elseif ($object_element=='expensereport') {
@@ -333,6 +338,7 @@ elseif ($object_element=='expensereport') {
     $tabName = 'ExpenseReport';
     $tabIcon = 'trip';
     $objectTabsMethodPrefix = 'expensereport';
+    $toolbox = $user->rights->expensereport->creer;
 }
 // members module
 elseif ($object_element=='member') {
@@ -340,6 +346,7 @@ elseif ($object_element=='member') {
     $tabName = 'Member';
     $tabIcon = 'user';
     $objectTabsMethodPrefix = 'member';
+    $toolbox = $user->rights->adherent->creer;
 }
 // third party module
 elseif ($object_element=='societe') {
@@ -347,6 +354,7 @@ elseif ($object_element=='societe') {
     $tabName = 'ThirdParty';
     $tabIcon = 'company';
     $objectTabsMethodPrefix = 'societe';
+    $toolbox = $user->rights->societe->creer;
 }
 // contract module
 elseif ($object_element=='contrat') {
@@ -354,6 +362,7 @@ elseif ($object_element=='contrat') {
     $tabName = 'Contract';
     $tabIcon = 'contract';
     $objectTabsMethodPrefix = 'contract';
+    $toolbox = $user->rights->contrat->creer;
 }
 // shipment module
 elseif ($object_element=='shipping') {
@@ -361,6 +370,7 @@ elseif ($object_element=='shipping') {
     $tabName = 'Shipment';
     $tabIcon = 'sending';
     $objectTabsMethodPrefix = 'shipping';
+    $toolbox = $user->rights->expedition->creer;
 }
 // intervention module
 elseif ($object_element=='fichinter') {
@@ -368,6 +378,7 @@ elseif ($object_element=='fichinter') {
     $tabName = 'InterventionCard';
     $tabIcon = 'intervention';
     $objectTabsMethodPrefix = 'fichinter';
+    $toolbox = $user->rights->ficheinter->creer;
 }
 // supply order module
 elseif ($object_element=='order_supplier') {
@@ -375,6 +386,7 @@ elseif ($object_element=='order_supplier') {
     $tabName = 'OrderCard';
     $tabIcon = 'order';
     $objectTabsMethodPrefix = 'ordersupplier';
+    $toolbox = $user->rights->fournisseur->commande->creer;
 }
 // supplier_proposal module (price request)
 elseif ($object_element=='supplier_proposal') {
@@ -382,6 +394,7 @@ elseif ($object_element=='supplier_proposal') {
     $tabName = 'CommRequest';
     $tabIcon = 'supplier_proposal';
     $objectTabsMethodPrefix = 'supplier_proposal';
+    $toolbox = $user->rights->supplier_proposal->creer;
 }
 // invoice module
 elseif ($object_element=='facture') {
@@ -389,6 +402,7 @@ elseif ($object_element=='facture') {
     $tabName = 'InvoiceCustomer';
     $tabIcon = 'bill';
     $objectTabsMethodPrefix = 'facture';
+    $toolbox = $user->rights->facture->creer;
 }
 // invoice payment
 elseif ($object_element=='payment') {
@@ -396,6 +410,7 @@ elseif ($object_element=='payment') {
     $tabName = 'PaymentCustomerInvoice';
     $tabIcon = 'payment';
     $objectTabsMethodPrefix = 'payment';
+    $toolbox = $user->rights->facture->paiement;
 }
 // sales tax payment
 elseif ($object_element=='tva') {
@@ -403,6 +418,7 @@ elseif ($object_element=='tva') {
     $tabName = 'VATPayment';
     $tabIcon = 'payment';
     $objectTabsMethodPrefix = 'vat';
+    $toolbox = $user->rights->tax->charges->creer;
 }
 // social or fiscal tax
 elseif ($object_element=='chargesociales') {
@@ -410,6 +426,7 @@ elseif ($object_element=='chargesociales') {
     $tabName = 'SocialContribution';
     $tabIcon = 'bill';
     $objectTabsMethodPrefix = 'tax';
+    $toolbox = $user->rights->tax->charges->creer;
 }
 // supplier invoice
 elseif ($object_element=='invoice_supplier') {
@@ -417,6 +434,7 @@ elseif ($object_element=='invoice_supplier') {
     $tabName = 'SupplierInvoice';
     $tabIcon = 'bill';
     $objectTabsMethodPrefix = 'facturefourn';
+    $toolbox = $user->rights->fournisseur->facture->creer;
 }
 // supplier invoice payment
 elseif ($object_element=='payment_supplier') {
@@ -424,6 +442,7 @@ elseif ($object_element=='payment_supplier') {
     $tabName = 'SupplierPayment';
     $tabIcon = 'payment';
     $objectTabsMethodPrefix = 'payment_supplier';
+    $toolbox = $user->rights->fournisseur->facture->creer;
 }
 // payment salary
 elseif ($object_element=='payment_salary') {
@@ -431,6 +450,7 @@ elseif ($object_element=='payment_salary') {
     $tabName = 'SalaryPayment';
     $tabIcon = 'payment';
     $objectTabsMethodPrefix = 'salaries';
+    $toolbox = $user->rights->salaries->write;
 }
 // loan
 elseif ($object_element=='loan') {
@@ -438,6 +458,7 @@ elseif ($object_element=='loan') {
     $tabName = 'Loan';
     $tabIcon = 'bill';
     $objectTabsMethodPrefix = 'loan';
+    $toolbox = $user->rights->loan->write;
 }
 // donation
 elseif ($object_element=='don') {
@@ -445,6 +466,7 @@ elseif ($object_element=='don') {
     $tabName = 'Donation';
     $tabIcon = 'generic';
     $objectTabsMethodPrefix = 'donation';
+    $toolbox = $user->rights->don->creer;
 }
 // bank account
 elseif ($object_element=='bank_account') {
@@ -452,24 +474,28 @@ elseif ($object_element=='bank_account') {
     $tabName = 'FinancialAccount';
     $tabIcon = 'account';
     $objectTabsMethodPrefix = 'bank';
+    $toolbox = $user->rights->banque->configurer;
 }
 // product
 elseif ($object_element=='product') {
     $typeOfObject = 'Product';
     $tabName = 'Product';
     $tabIcon = 'product';
+    $toolbox = $user->rights->produit->creer;
 }
 // warehouse
 elseif ($object_element=='stock') {
     $typeOfObject = 'Entrepot';
     $tabName = 'Warehouse';
     $tabIcon = 'stock';
+    $toolbox = $user->rights->stock->creer;
 }
 // project
 elseif ($object_element=='project') {
     $typeOfObject = 'Project';
     $tabName = 'Project';
     $tabIcon = 'project';
+    $toolbox = $user->rights->projet->creer;
 }
 
 // fetch object
@@ -517,6 +543,8 @@ print '</td></tr>';
 if (is_object($object->thirdparty)) {
     print '<tr><td>' . $langs->trans('Company') . '</td><td colspan="3">' . $object->thirdparty->getNomUrl(1) . '</td></tr>';
 }
+
+// show number and size of object's attached files
 $totalnr = ELbFileMapping::countLinkedFilesByObjectType($object->element, $object->id);
 $totalsize = ELbFileMapping::getAttachedFilesSize($object->element, $object->id);
 print '<tr><td>' . $langs->trans("NbOfAttachedFiles") . '</td><td colspan="3">' . $totalnr . '</td></tr>';
@@ -524,11 +552,6 @@ print '<tr><td>' . $langs->trans("TotalSizeOfAttachedFiles") . '</td><td colspan
 
 print "</table>\n";
 print "</div>\n";
-
-// @TODO set this part!!!
-$modulepart = 'commande';
-$permission = $user->rights->commande->creer;
-$param = '&id=' . $object->id;
 
 include_once DOL_DOCUMENT_ROOT . '/elbmultiupload/core/tpl/document_actions_post_headers.tpl.php';
 
