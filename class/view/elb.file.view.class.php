@@ -148,7 +148,7 @@ class ElbFileView
 					<table width="100%" class="elb-subtable">
 					<thead>
 					<tr>
-					<th colspan="2" align="left" class="oldv-enable">';
+					<th colspan="2" align="left">';
 
                     print '<a href="" onclick="toggleSubtable(this); return false;" class="' . $a_class . '">
 				<span class="' . $span_class . '"></span>';
@@ -212,7 +212,7 @@ class ElbFileView
                         <table width="100%" class="elb-subtable">
                         <thead>
                         <tr>
-                        <th colspan="2" align="left" class="oldv-enable">';
+                        <th colspan="2" align="left">';
                             print '<a href="" onclick="toggleSubtable(this); return false;" class="' . $a_class . '">
                         <span class="' . $span_class . '"></span>';
                             if ($nameForFilesWithoutRevisionOrCategory) {

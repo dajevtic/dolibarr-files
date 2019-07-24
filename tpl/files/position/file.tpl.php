@@ -1,33 +1,34 @@
 <?php
 global $elbfile, $conf, $toolbox;
+
+$id = GETPOST('id');
+$facid = GETPOST('facid');
+$socid = GETPOST('socid');
+$lineid = GETPOST('lineid');
+
+// relative path to the file on the file system
+$file_relpath = $conf->global->ELB_UPLOAD_FILES_DIRECTORY.'/'.$obj->frowid.'.'.$obj->ftype;
+
+// absolute path to the file on the file system
+$filepath=DOL_DATA_ROOT.'/elbmultiupload/'.$conf->global->ELB_UPLOAD_FILES_DIRECTORY.'/'.$obj->frowid.'.'.$obj->ftype;
 ?>
 
-<tr <?php echo $bc[true] ?>>					
-	<td align="center"  class="td-file-nr" id="mvfid<?php echo $obj->fmrowid; ?>"><?php echo ++$i; ?>.</td>
-	<?php
-		$file_relpath = '';
-		if (empty($obj->fmpath)) {
-			$file_relpath = $conf->global->ELB_UPLOAD_FILES_DIRECTORY.'/'.$obj->frowid.'.'.$obj->ftype;
-		} else {		
-			$file_relpath .= $obj->fmpath;
-		}
-		$id = GETPOST('id');
-		$facid = GETPOST('facid');
-		$socid = GETPOST('socid');
-		$lineid = GETPOST('lineid');
-	?>
+<tr <?php echo $bc[true] ?>>
+
+	<td align="center"  class="td-file-nr" id="mvfid<?php echo $obj->fmrowid; ?>">
+        <?php echo ++$i; ?>.
+    </td>
+
 	<!-- Show file name with link to download-->
 	<td class="td-file-name">
 	
-		<?php 
-			if(empty($obj->fmpath)) {
-				$href_download = DOL_URL_ROOT . '/document.php?modulepart=elbmultiupload&attachment=true&amp;file='.urlencode($file_relpath).'&amp;fmapid='.$obj->fmrowid;
-				echo '<span class="pushright">
-						<a href="'.$href_download.'" class="oldv-enable">'.
-							 img_picto($langs->trans('DownloadFile'), 'elb-download-14x14.png@elbmultiupload') .'
-						</a>
-					 </span>';
-			}
+		<?php
+        $href_download = DOL_URL_ROOT . '/document.php?modulepart=elbmultiupload&attachment=true&amp;file='.urlencode($file_relpath).'&amp;fmapid='.$obj->fmrowid;
+        echo '<span class="pushright">
+                <a href="'.$href_download.'">'.
+                     img_picto($langs->trans('DownloadFile'), 'elb-download-14x14.png@elbmultiupload') .'
+                </a>
+             </span>';
 		?>
 
         <?php
@@ -45,65 +46,39 @@ global $elbfile, $conf, $toolbox;
         <?php
         }
         ?>
-		
-		<?php if ($modef) { ?>
-		    <?php 
-		    	if(empty($obj->fmpath)) {
-					echo $obj->fname;
-				} else {
-					echo '<input type="text" name="path" value="'.$obj->fmpath.'" />';
-				}
-		     ?>
-		     
-		     <br/>
-		     <?php
-                if ($conf->global->ELB_ALLOW_CATEGORIES_FOR_FILES) {
-                    $all_tags = ElbFileCategory::getFileTags();
 
-                    $file_id = $obj->fmd5 . "_" . $obj->fmrowid;
-                    $tags = json_decode($obj->fmtags, true);
-
-                    $form = new ElbForm($db);
-                    print $form->multiselectarray('tags'.$obj->fmrowid, $all_tags, $tags, '', 0, '', 0, '100%', '', '', true);
-                }
-		     ?>
-		     
-		<?php } else { ?>
-			<?php 
-				if(empty($obj->fmpath)) {
-					$href=DOL_URL_ROOT . '/document.php?modulepart=elbmultiupload&amp;file='.urlencode($file_relpath).'&amp;fmapid='.$obj->fmrowid;
-				} else {
-					$href=$obj->fmpath;
-				}
-			?>
-			<a href="<?php echo $href; ?>" <?php if(!empty($obj->fmpath)) { ?>target="_blank"<?php } ?>  class="oldv-enable">
-				<?php 
-					if (empty($obj->fmpath)) {
-						echo img_mime($obj->fname,$langs->trans("File").': '.$obj->fname); 
-						echo dol_trunc($obj->fname,$maxfilenamelength);
-					} else {
-						echo img_mime($obj->fmpath,$langs->trans("File").': '.$obj->fname);
-						echo dol_trunc($obj->fmpath,$maxfilenamelength);
-					} 
+        <?php
+		if ($modef) {
+		    echo $obj->fname;
+		} else {
+            $href = DOL_URL_ROOT . '/document.php?modulepart=elbmultiupload&amp;file='.urlencode($file_relpath).'&amp;fmapid='.$obj->fmrowid;
+            ?>
+            <a href="<?php echo $href ?>">
+				<?php
+                echo img_mime($obj->fname,$langs->trans("File").': '.$obj->fname);
+				echo dol_trunc($obj->fname,$maxfilenamelength);
 				?>
-			</a>
-
-            <br/>
+            </a>
             <?php
-            if ($conf->global->ELB_ALLOW_CATEGORIES_FOR_FILES) {
-                $all_tags = ElbFileCategory::getFileTags();
-
-                $file_id = $obj->fmd5 . "_" . $obj->fmrowid;
-                $tags = json_decode($obj->fmtags, true);
-
+        }
+		?>
+		 <br/>
+        <?php
+        if ($conf->global->ELB_ALLOW_CATEGORIES_FOR_FILES) {
+            $all_tags = ElbFileCategory::getFileTags();
+            $file_id = $obj->fmd5 . "_" . $obj->fmrowid;
+            $tags = json_decode($obj->fmtags, true);
+            if ($modef) {
+                $form = new ElbForm($db);
+                print $form->multiselectarray('tags' . $obj->fmrowid, $all_tags, $tags, '', 0, '', 0, '100%', '', '', true);
+            } else {
                 $form = new ElbForm($db);
                 if (is_array($tags) && count($tags)) {
                     print $form->multiselectarray('tags'.$obj->fmrowid, $all_tags, $tags, '', 0, '', 0, '100%', 'disabled', '', true);
                 }
             }
-            ?>
-			
-		<?php } ?>
+        }
+        ?>
 	</td>
 	
 	<td class="td-file-desc">
@@ -121,37 +96,35 @@ global $elbfile, $conf, $toolbox;
 	</td>
 	
 	<?php 
-		// Show file size
-		if(empty($obj->fmpath)) {
-			$filepath=DOL_DATA_ROOT.'/elbmultiupload/'.$conf->global->ELB_UPLOAD_FILES_DIRECTORY.'/'.$obj->frowid.'.'.$obj->ftype;
-			if (file_exists($filepath)) {
-				$size= dol_filesize($filepath);
-				$size= dol_print_size($size,1,1);
-			}
-		}
+    // calculate file size
+    $size = '';
+    if (file_exists($filepath)) {
+        $size = dol_filesize($filepath);
+        $size = dol_print_size($size,1,1);
+    }
 	?>
-	<td align="left" class="td-file-size nowrap"><?php echo $size; ?></td>
+	<td align="left" class="td-file-size nowrap">
+        <?php echo $size; ?>
+    </td>
 	
 	<?php 			
-		// Show file date
-	    $cdate='';
-		if(empty($obj->fmpath)) {
-			$cdate=  dol_print_date(dol_filemtime($filepath), 'dayhour');
-			$mdate= dol_print_date($obj->fmcreated_date, 'dayhour', 'gmt');
-		}
+    // Show file date
+    $cdate='';
+    $cdate =  dol_print_date(dol_filemtime($filepath), 'dayhour');
+    $mdate = dol_print_date($obj->fmcreated_date, 'dayhour', 'gmt');
 	?>
 	<td align="left" class="td-file-modif nowrap">
 		<?php
-			if (!empty($mdate)) { 
-				echo $cdate;
-			} 
+        if (!empty($mdate)) {
+            echo $cdate;
+        }
 		?>
 	</td>
 	
 	<?php 			
-		// Show user who created file
-		$userObj = new User($db);
-		$userObj->fetch($obj->fmuser, '', '',1);
+    // Show user who created file
+    $userObj = new User($db);
+    $userObj->fetch($obj->fmuser, '', '',1);
 	?>						
 	<td align="left" class="td-file-user nowrap">
 		<?php if (is_object($userObj)) {
@@ -231,35 +204,33 @@ global $elbfile, $conf, $toolbox;
 					$trigger = 'puptr-'.$obj->fmrowid;
 					$popup 	 = 'popw-'.$obj->fmrowid;
 				?>			
-				
-				<?php //if (empty($obj->fmpath)) { ?>
-					<div class="<?php echo $trigger;?> ufpuptr" title="<?php echo $langs->trans("UploadNewVersion");?>">
-						<div class="<?php echo $popup;?>" title="<?php echo $langs->trans("UploadNewVersion");?>">
-							<label for="fsubrev-<?php echo $obj->fmrowid;?>">
-								<?php echo $langs->trans("Revision");?>:<br/>
-								<input type="text" size="10" id="fsubrev-<?php echo $obj->fmrowid;?>" name="fsubrev" />
-							</label>
-							
-							<label for="fdesc-<?php echo $obj->fmrowid;?>">
-								<br/><br/><?php echo $langs->trans("Description");?>: <br/>
-								<input type="text" name="description" value="" />
-							</label>
-							
-							<label for="ufmnvfile<?php echo $obj->fmrowid;?>">
-								<br/><br/><?php echo $langs->trans("ChooseFile");?>: *<br/>							
-								<input type="file" name="ufmnvfile<?php echo $obj->fmrowid;?>" id="ufmnvfile<?php echo $obj->fmrowid;?>" class="unv" />
-							</label>
-							<input type="hidden" name="ufmid" value="<?php echo $obj->fmrowid;?>" />
-							<input type="hidden" name="id" value="<?php echo $id ?>" />
-							<input type="hidden" name="socid" value="<?php echo $socid ?>" />
-							<input type="hidden" name="facid" value="<?php echo $facid ?>" />
-							<input type="hidden" name="lineid" value="<?php echo $lineid ?>" />
-                            <input type="hidden" name="object_element" value="<?php echo $object_element ?>" />
-                            <br/><br/>
-							<input class="button" type="submit" name="actionufnv" value="<?php echo $langs->trans("Send");?>" />
-						</div>				
-					</div>
-				<?php //} else { echo '&nbsp;'; } ?>
+
+                <div class="<?php echo $trigger;?> ufpuptr" title="<?php echo $langs->trans("UploadNewVersion");?>">
+                    <div class="<?php echo $popup;?>" title="<?php echo $langs->trans("UploadNewVersion");?>">
+                        <label for="fsubrev-<?php echo $obj->fmrowid;?>">
+                            <?php echo $langs->trans("Revision");?>:<br/>
+                            <input type="text" size="10" id="fsubrev-<?php echo $obj->fmrowid;?>" name="fsubrev" />
+                        </label>
+
+                        <label for="fdesc-<?php echo $obj->fmrowid;?>">
+                            <br/><br/><?php echo $langs->trans("Description");?>: <br/>
+                            <input type="text" name="description" value="" />
+                        </label>
+
+                        <label for="ufmnvfile<?php echo $obj->fmrowid;?>">
+                            <br/><br/><?php echo $langs->trans("ChooseFile");?>: *<br/>
+                            <input type="file" name="ufmnvfile<?php echo $obj->fmrowid;?>" id="ufmnvfile<?php echo $obj->fmrowid;?>" class="unv" />
+                        </label>
+                        <input type="hidden" name="ufmid" value="<?php echo $obj->fmrowid;?>" />
+                        <input type="hidden" name="id" value="<?php echo $id ?>" />
+                        <input type="hidden" name="socid" value="<?php echo $socid ?>" />
+                        <input type="hidden" name="facid" value="<?php echo $facid ?>" />
+                        <input type="hidden" name="lineid" value="<?php echo $lineid ?>" />
+                        <input type="hidden" name="object_element" value="<?php echo $object_element ?>" />
+                        <br/><br/>
+                        <input class="button" type="submit" name="actionufnv" value="<?php echo $langs->trans("Send");?>" />
+                    </div>
+                </div>
 				
 				<!--  popup - upload new file version  -->
 				<script>
