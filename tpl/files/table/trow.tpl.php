@@ -256,6 +256,7 @@ $filepath=DOL_DATA_ROOT.'/elbmultiupload/'.$conf->global->ELB_UPLOAD_FILES_DIREC
                             <input type="hidden" name="facid" value="<?php echo $facid ?>" />
                             <input type="hidden" name="lineid" value="<?php echo $lineid ?>" />
                             <input type="hidden" name="object_element" value="<?php echo $object_element ?>" />
+                            <input type="hidden" name="sendit" value="uploadNewRevision" />
                             <br/><br/>
                             <input class="button" type="submit" name="actionufnv" value="<?php echo $langs->trans("Send");?>" />
                         </div>

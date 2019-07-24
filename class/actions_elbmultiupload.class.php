@@ -377,32 +377,37 @@ class ActionsElbmultiupload
 
 	function solrSearchAdditionalSearch($parameters, &$object, &$action, $hookmanager)
 	{
-		global $langs;
+		global $langs, $conf;
 		require_once DOL_DOCUMENT_ROOT . '/elbmultiupload/class/elb.file.category.class.php';
 		require_once DOL_DOCUMENT_ROOT . '/elbmultiupload/class/elb.common.manager.class.php';
-		$s = '<div class="divsearchfield">';
-		$s .= '<table cellpadding="0" cellspacing="0">';
-		$s .= '<tr>';
-		$s .= '<td>' . $langs->trans('Tags') . ': </td>';
-		$form = new Form($this->db);
-		$all_tags = ElbFileCategory::getFileTags();
-		$search_tags = $_REQUEST['search_tags'];
-		$s .= '<td>';
-		$s .= $form->multiselectarray('search_tags', $all_tags, $search_tags, '', 0, '', 0, '300px', '', '', true);
-		$s .= '</td>';
-		$s .= '</tr>';
-		$s .= '</table>';
-		$s .= '</div>';
-		$hookmanager->resArray['solrSearchAdditionalSearch'] = $s;
-		return 1;
+		if ($conf->global->ELB_ALLOW_CATEGORIES_FOR_FILES) {
+			$s = '<div class="divsearchfield">';
+			$s .= '<table cellpadding="0" cellspacing="0">';
+			$s .= '<tr>';
+			$s .= '<td>' . $langs->trans('Tags') . ': </td>';
+			$form = new Form($this->db);
+			$all_tags = ElbFileCategory::getFileTags();
+			$search_tags = $_REQUEST['search_tags'];
+			$s .= '<td>';
+			$s .= $form->multiselectarray('search_tags', $all_tags, $search_tags, '', 0, '', 0, '300px', '', '', true);
+			$s .= '</td>';
+			$s .= '</tr>';
+			$s .= '</table>';
+			$s .= '</div>';
+			$hookmanager->resArray['solrSearchAdditionalSearch'] = $s;
+			return 1;
+		}
+		return 0;
 	}
 
 	function solrSearchAdditionalColumnHeader($parameters, &$object, &$action, $hookmanager) {
-		global $langs;
+		global $langs, $conf;
 		$headers = array();
-		$s = '<td>';
-		$s.= $langs->trans('Tags');
-		$s.= '</td>';
+		if ($conf->global->ELB_ALLOW_CATEGORIES_FOR_FILES) {
+			$s = '<td>';
+			$s .= $langs->trans('Tags');
+			$s .= '</td>';
+		}
 		$headers[] = $s;
 		$s = '<td>';
 		$s.= $langs->trans('Description');
@@ -417,11 +422,14 @@ class ActionsElbmultiupload
 	}
 
 	function solrSearchAdditionalColumnSearch($parameters, &$object, &$action, $hookmanager) {
+    	global $conf;
 		$columns = array();
-    	//Tags
-		$s = '<th>';
-		$s.= '</th>';
-		$columns[] = $s;
+		if ($conf->global->ELB_ALLOW_CATEGORIES_FOR_FILES) {
+			//Tags
+			$s = '<th>';
+			$s .= '</th>';
+			$columns[] = $s;
+		}
 		//Description
 		$search_desc = GETPOST('search_desc');
 		$s= '<th align="left">';
@@ -439,25 +447,26 @@ class ActionsElbmultiupload
 	}
 
 	function solrSearchAdditionalColumnData($parameters, &$object, &$action, $hookmanager) {
-		global $langs;
+		global $langs, $conf;
 		require_once DOL_DOCUMENT_ROOT . '/elbmultiupload/class/elb.file.category.class.php';
 		require_once DOL_DOCUMENT_ROOT . '/elbmultiupload/class/elb.common.manager.class.php';
 		require_once DOL_DOCUMENT_ROOT . '/elbmultiupload/class/elb.html.form.class.php';
 		$data = array();
 		$file = $parameters['file'];
-		static $all_tags;
-		if(empty($all_tags)) {
-			$all_tags = ElbFileCategory::getFileTags();
-		}
-		$tags = $file['index_data']['elb_tag'];
-		$form=new ElbForm($this->db);
 		//Tags
-		$s = '<td>';
-		if (is_array($tags) && count($tags)) {
-			$s.= "[".implode(", ", $tags)."]";
+		if ($conf->global->ELB_ALLOW_CATEGORIES_FOR_FILES) {
+			static $all_tags;
+			if(empty($all_tags)) {
+				$all_tags = ElbFileCategory::getFileTags();
+			}
+			$tags = $file['index_data']['elb_tag'];
+			$s = '<td>';
+			if (is_array($tags) && count($tags)) {
+				$s .= "[" . implode(", ", $tags) . "]";
+			}
+			$s .= '</td>';
+			$data[] = $s;
 		}
-		$s.= '</td>';
-		$data[] = $s;
 		//Description
 		$s= '<td>';
 		$s.= $file['index_data']['elb_file_desc'];
@@ -473,15 +482,18 @@ class ActionsElbmultiupload
 	}
 
 	function solrExecuteAdditionalSearch($parameters, &$object, &$action, $hookmanager) {
-		$search_tags = $_REQUEST['search_tags'];
+    	global $conf;
 		$query_parts = array();
-		if(count($search_tags)>0) {
-			$tags_array=array();
-			foreach($search_tags as $tag) {
-				$tags_array[]='"'.$tag.'"';
+		if ($conf->global->ELB_ALLOW_CATEGORIES_FOR_FILES) {
+			$search_tags = $_REQUEST['search_tags'];
+			if (count($search_tags) > 0) {
+				$tags_array = array();
+				foreach ($search_tags as $tag) {
+					$tags_array[] = '"' . $tag . '"';
+				}
+				$tag_query = "(" . implode(" OR ", $tags_array) . ")";
+				$query_parts[] = "elb_tag:" . $tag_query;
 			}
-			$tag_query="(".implode(" OR ", $tags_array). ")";
-			$query_parts[] = "elb_tag:".$tag_query;
 		}
 		$search_desc = GETPOST('search_desc');
 		if(strlen($search_desc)>0) {
@@ -501,13 +513,16 @@ class ActionsElbmultiupload
 	}
 
 	function solrSearchUrlParams($parameters, &$object, &$action, $hookmanager) {
+    	global $conf;
     	$param = $parameters['param'];
-		$search_tags = $_REQUEST['search_tags'];
 		$search_desc = GETPOST('search_desc');
 		$search_rev = GETPOST('search_rev');
-		if(count($search_tags)>0) {
-			foreach($search_tags as $tag) {
-				$param.="&search_tags[]=".$tag;
+		if ($conf->global->ELB_ALLOW_CATEGORIES_FOR_FILES) {
+			$search_tags = $_REQUEST['search_tags'];
+			if (count($search_tags) > 0) {
+				foreach ($search_tags as $tag) {
+					$param .= "&search_tags[]=" . $tag;
+				}
 			}
 		}
 		$param.="&search_desc=".$search_desc;
