@@ -43,14 +43,6 @@ $formfile=new FormFile($db);
 // show multiupload button
 print ELbFile::showMultiUploadButton($object->element, $object->id);
 
-// categories object
-if ($file_list_display==ElbFileGrouping::GROUP_FILES_BY_TAG) {
-    $tag_map = ELbFileMapping::getObjectTags($object->element, $object->id);
-    $all_tags = array();
-    foreach (array_keys($tag_map) as $tag) {
-        $all_tags[$tag] = $tag;
-    }
-}
 ?>
 
 <style>
@@ -74,13 +66,14 @@ if ($file_list_display==ElbFileGrouping::GROUP_FILES_BY_TAG) {
         echo ElbFileView::renderSelect($file_list_display, ElbFileGrouping::GROUP_FILES_PARAM, ElbFileGrouping::returnAvailableGroupingMethods())
         ?>
     </form>
+    <br/>
 <?php } ?>
 
 <?php
 
 // render uploaded files
 if ($totalnr) {
-    ElbFileView::renderAttachedFilesForObject($object->element, $object->id, $toolbox, $file_list_display, $tag_map);
+    ElbFileView::renderAttachedFilesForObject($object->element, $object->id, $toolbox, $file_list_display);
 }
 
 // render uploaded files

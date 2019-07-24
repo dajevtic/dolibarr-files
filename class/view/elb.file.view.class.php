@@ -36,52 +36,111 @@ class ElbFileView
             $fileid = GETPOST('rowid');
             $object_element = $objectElement;
 
-            // array with revision
-            $file_with_rev = array();
+            // array with revision/category
+            $file_with_rev_categ = array();
 
-            // array without revision
-            $file_without_rev = array();
+            // array without revision/category
+            $file_without_rev_categ = array();
 
-            // populate array of files with revision
-            foreach ($fetch_all_files as $ind => $file) {
-                if ($file->fmrevision) {
-                    $file_with_rev[$file->fmrevision][] = $file;
-                }
-            }
+            // flag if table should be collapsible
+            $showTableCollapsible = true;
 
-            // sort by latest revision
-            if (count($file_with_rev)) {
-                krsort($file_with_rev);
-            }
+            // name for files table which has revision/category
+            $nameForFilesWithRevisionOrCategory = '';
 
-            // populate array of files without revision
-            if (ElbFileSession::getGroupFilesMethod() == ElbFileGrouping::GROUP_FILES_BY_REV) {
-                foreach ($fetch_all_files as $ind => $file) {
-                    if (empty($file->fmrevision)) {
-                        $file_without_rev['no_revision'][] = $file;
+            // name for files table which is without revision/category
+            $nameForFilesWithoutRevisionOrCategory = '';
+
+            // sort files by revisions or categories
+            if (in_array($sortFilesMethod, array(ElbFileGrouping::GROUP_FILES_BY_REV, ElbFileGrouping::GROUP_FILES_BY_TAG))) {
+
+                // populate array of files with revisions
+                if ($sortFilesMethod == ElbFileGrouping::GROUP_FILES_BY_REV) {
+
+                    $nameForFilesWithRevisionOrCategory = $langs->trans('Revision');
+                    $nameForFilesWithoutRevisionOrCategory = $langs->trans('WithoutRevision');
+
+                    foreach ($fetch_all_files as $ind => $file) {
+                        if ($file->fmrevision) {
+                            $file_with_rev_categ[$file->fmrevision][] = $file;
+                        }
+                    }
+
+                    // sort by latest revision
+                    if (count($file_with_rev_categ)) {
+                        krsort($file_with_rev_categ);
+                    }
+
+                    // populate array of files without revision
+                    foreach ($fetch_all_files as $ind => $file) {
+                        if (empty($file->fmrevision)) {
+                            $file_without_rev_categ['no_assigned_rev_categ'][] = $file;
+                        }
                     }
                 }
-            } else {
-                foreach ($fetch_all_files as $ind => $file) {
-                    $file_without_rev['no_revision'][] = $file;
+                // populate array of files with categories
+                elseif ($sortFilesMethod == ElbFileGrouping::GROUP_FILES_BY_TAG) {
+
+                    $nameForFilesWithRevisionOrCategory = $langs->trans('Category');
+                    $nameForFilesWithoutRevisionOrCategory = $langs->trans('Uncategorized');
+
+                    $tag_map = ELbFileMapping::getObjectTags($object_element, $objectID);
+
+                    if (is_array($tag_map)) {
+
+                        // populate categorized array
+                        foreach ($tag_map as $tag_name => $arr_assigned_fmaps) {
+                            foreach ($arr_assigned_fmaps as $assigned_fmap_id) {
+                                foreach ($fetch_all_files as $ind => $files) {
+                                    if ($files->fmrowid == $assigned_fmap_id) {
+                                        $file_with_rev_categ[$tag_name][] = $ind;
+                                    }
+                                }
+                            }
+                        }
+
+                        // populate uncategorized array
+                        foreach ($fetch_all_files as $key => $resobject) {
+                            foreach ($file_with_rev_categ as $tagname => $my_arr) {
+                                foreach ($my_arr as $cindex => $res_key) {
+                                    if ($key == $res_key) {
+                                        continue 3;
+                                    }
+                                }
+                            }
+                            $file_without_rev_categ['no_assigned_rev_categ'][] = $resobject;
+                        }
+                    } else {
+                        // populate array of files without revision
+                        foreach ($fetch_all_files as $ind => $file) {
+                            $file_without_rev_categ['no_assigned_rev_categ'][] = $file;
+                        }
+                    }
                 }
+            }
+            // get files without sorting method
+            else {
+                foreach ($fetch_all_files as $ind => $file) {
+                    $file_without_rev_categ['no_assigned_rev_categ'][] = $file;
+                }
+                $showTableCollapsible = false;
             }
 
             $counter=0;
 
-            if (count($file_with_rev) > 0 && ElbFileSession::getGroupFilesMethod() == ElbFileGrouping::GROUP_FILES_BY_REV) {
+            if (count($file_with_rev_categ)) {
 
-                foreach ($file_with_rev as $rev => $my_arr)	{
+                foreach ($file_with_rev_categ as $rev_categ => $my_arr)	{
 
-                    if (!$counter) {
+                    //if (!$counter) {
                         $a_class = 'toggle-link expanded';
                         $span_class = 'ui-icon ui-icon-triangle-1-se';
                         $display = 'style="display: table-row-group;"';
-                    } else {
-                        $a_class = 'toggle-link';
-                        $span_class = 'ui-icon ui-icon-triangle-1-e';
-                        $display = ' style="display: none;"';
-                    }
+//                    } else {
+//                        $a_class = 'toggle-link';
+//                        $span_class = 'ui-icon ui-icon-triangle-1-e';
+//                        $display = ' style="display: none;"';
+//                    }
 
                     print '<table class="border" width="100%">
 					<tr class="position-subtable">
@@ -93,7 +152,10 @@ class ElbFileView
 
                     print '<a href="" onclick="toggleSubtable(this); return false;" class="' . $a_class . '">
 				<span class="' . $span_class . '"></span>';
-                    print $langs->trans('Revision').' '.$rev;
+                    if ($nameForFilesWithRevisionOrCategory) {
+                        print $nameForFilesWithRevisionOrCategory . ': ';
+                    }
+                    print $rev_categ;
                     print '</a>
 					</th>
 					</tr>
@@ -143,38 +205,38 @@ class ElbFileView
                 }
             }
 
-            if (count($file_without_rev) > 0) {
-                foreach ($file_without_rev as $without_ref => $my_arr)	{
-                    if (!$counter)	{
-                        $a_class = 'toggle-link expanded';
-                        $span_class = 'ui-icon ui-icon-triangle-1-se';
-                        $display = 'style="display: table-row-group;"';
-                    }
-                    else
-                    {
-                        $a_class = 'toggle-link';
-                        $span_class = 'ui-icon ui-icon-triangle-1-e';
-                        $display = ' style="display: none;"';
-                    }
+            if (count($file_without_rev_categ) > 0) {
+                foreach ($file_without_rev_categ as $without_ref => $my_arr)	{
 
-                    if (ElbFileSession::getGroupFilesMethod() == ElbFileGrouping::GROUP_FILES_BY_REV) {
+                    if ($showTableCollapsible) {
+                        //if (!$counter) {
+                            $a_class = 'toggle-link expanded';
+                            $span_class = 'ui-icon ui-icon-triangle-1-se';
+                            $display = 'style="display: table-row-group;"';
+//                        } else {
+//                            $a_class = 'toggle-link';
+//                            $span_class = 'ui-icon ui-icon-triangle-1-e';
+//                            $display = ' style="display: none;"';
+//                        }
                         print '<table class="border" width="100%">
-					<tr class="position-subtable">
-					<td colspan="<?php echo $coldisplay ?>">
-					<table width="100%" class="elb-subtable">
-					<thead>
-					<tr>
-					<th colspan="2" align="left" class="oldv-enable">';
-                        print '<a href="" onclick="toggleSubtable(this); return false;" class="' . $a_class . '">
-					<span class="' . $span_class . '"></span>';
-                        print $langs->trans('WithoutRevision');
-                        print '</a>
-					</th>
-					</tr>
-					</thead>
-					<tbody ' . $display . '>
-						<tr>
-							<td class="nobottom" colspan="2">';
+                        <tr class="position-subtable">
+                        <td colspan="<?php echo $coldisplay ?>">
+                        <table width="100%" class="elb-subtable">
+                        <thead>
+                        <tr>
+                        <th colspan="2" align="left" class="oldv-enable">';
+                            print '<a href="" onclick="toggleSubtable(this); return false;" class="' . $a_class . '">
+                        <span class="' . $span_class . '"></span>';
+                            if ($nameForFilesWithoutRevisionOrCategory) {
+                                print $nameForFilesWithoutRevisionOrCategory;
+                            }
+                            print '</a>
+                        </th>
+                        </tr>
+                        </thead>
+                        <tbody ' . $display . '>
+                            <tr>
+                                <td class="nobottom" colspan="2">';
                     }
 
                     print '<table class="border listofdocumentstable" summary="listofdocumentstable" width="100%">';
@@ -209,7 +271,7 @@ class ElbFileView
                     print '</tbody>';
                     print "</table>\n";
 
-                    if (ElbFileSession::getGroupFilesMethod() == ElbFileGrouping::GROUP_FILES_BY_REV) {
+                    if ($showTableCollapsible) {
                         print '
 							</td>
 						</tr>
