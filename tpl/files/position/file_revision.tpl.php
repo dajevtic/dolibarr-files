@@ -48,7 +48,7 @@ global $elbfile, $conf, $toolbox, $modef;
                 $tags = json_decode($obj->fmtags, true);
 
                 $form = new ElbForm($db);
-                print $form->multiselectarray('tags', $all_tags, $tags, '', 0, '', 0, '100%', '', '', true);
+                print $form->multiselectarray('tags'.$obj->fmrowid, $all_tags, $tags, '', 0, '', 0, '100%', '', '', true);
             }
             ?>
 		<?php } else { ?>
@@ -79,7 +79,9 @@ global $elbfile, $conf, $toolbox, $modef;
                 $tags = json_decode($obj->fmtags, true);
 
                 $form = new ElbForm($db);
-                print $form->multiselectarray('tags', $all_tags, $tags, '', 0, '', 0, '100%', 'disabled', '', true);
+                if (is_array($tags) && count($tags)) {
+                    print $form->multiselectarray('tags' . $obj->fmrowid, $all_tags, $tags, '', 0, '', 0, '100%', 'disabled', '', true);
+                }
             }
             ?>
 		<?php } ?>

@@ -242,7 +242,7 @@ class ELbFile
 		$description = GETPOST('description', 'alpha');
 		$rev = $this->sanitizeText(GETPOST('frev'));
 		$filemapid = GETPOST('filemapid', 'int');
-		$tags = GETPOST('tags');
+		$tags = GETPOST('tags'.$filemapid);
 
 		$error = 0;
 
