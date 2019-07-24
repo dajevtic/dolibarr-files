@@ -74,7 +74,7 @@ $filepath=DOL_DATA_ROOT.'/elbmultiupload/'.$conf->global->ELB_UPLOAD_FILES_DIREC
             } else {
                 $form = new ElbForm($db);
                 if (is_array($tags) && count($tags)) {
-                    print $form->multiselectarray('tags'.$obj->fmrowid, $all_tags, $tags, '', 0, '', 0, '100%', 'disabled', '', true);
+                    print $form->multiselectarray('tags'.$obj->fmrowid.uniqid(), $all_tags, $tags, '', 0, '', 0, '100%', 'disabled', '', true);
                 }
             }
         }
