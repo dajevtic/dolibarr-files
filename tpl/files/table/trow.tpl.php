@@ -207,6 +207,13 @@ $filepath=DOL_DATA_ROOT.'/elbmultiupload/'.$conf->global->ELB_UPLOAD_FILES_DIREC
                 <?php if ($subfile) { ?>
 
                     <?php
+                    if (!empty($id)) {
+                        $activate_href = $_SERVER["PHP_SELF"].'?id='.$id;
+                    } elseif (!empty($facid)) {
+                        $activate_href = $_SERVER["PHP_SELF"].'?facid='.$facid;
+                    } elseif (!empty($socid)) {
+                        $activate_href=$_SERVER["PHP_SELF"].'?socid='.$socid;
+                    }
                     if (GETPOST('action')) $activate_href.='&action='.GETPOST('action');
                     if (GETPOST('lineid')) $activate_href.='&lineid='.$lineid;
                     $activate_href.='&action2=activate_file';
