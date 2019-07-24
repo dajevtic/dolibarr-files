@@ -150,7 +150,7 @@ global $elbfile, $conf, $toolbox, $modef;
 	
 	<?php 			
 		// Show user who created file
-		$userObj = new User($this->db);
+		$userObj = new User($db);
 		$userObj->fetch($obj->fmuser, '', '',1);
 	?>						
 	<td align="left" class="td-file-user nowrap">

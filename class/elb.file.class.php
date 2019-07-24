@@ -127,7 +127,7 @@ class ELbFile
         return -1;
     }
 
-	function getFileVersions($fileid, $toolbox, $restictDelete=false)
+	function getFileVersions($fileid, $toolbox)
     {
 		global $conf, $langs;
 		
