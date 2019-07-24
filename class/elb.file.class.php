@@ -234,11 +234,16 @@ class ELbFile
 					}
 				}
 
-				if(!empty($conf->global->ELB_ADD_FILES_TO_SOLR)) {
-					//update file in Solr
-					$elbfile = new ELbFile($this->db);
-					$elbfile->fetch($elbfilemap->fk_fileid);
-					ElbSolrUtil::add_to_search_index($elbfile, $elbfilemap, $tags);
+				$elbFile = new ELbFile($this->db);
+				$elbFile->fetch($elbfilemap->fk_fileid);
+				$ecmfile = $elbFile->getEcmfileFromUploadedFile();
+				if($ecmfile === false) {
+					$error++;
+				} else {
+					$resultecm = $ecmfile->update($user);
+					if($resultecm < 0) {
+						$error++;
+					}
 				}
 
 			} else {
@@ -802,5 +807,26 @@ class ELbFile
     {
         dol_delete_file($fileFullPath);
     }
-	
+
+	/**
+	 * Retrieves EcmFiles instance from uploaded file by calculating path based on Dolibarr settings
+	 *
+	 *
+	 * @param ELbFile $elbFile instance of uploaded file
+	 * @return bool|EcmFiles false if not found, otherwise EcmFiles instance
+	 */
+    public function getEcmfileFromUploadedFile() {
+	    include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+	    $file_path = $this->getFullServerPathForFile($this);
+	    $rel_file_path = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $file_path);
+	    $rel_file_path = preg_replace('/^[\\/]/', '', $rel_file_path);
+	    $ecmfile=new EcmFiles($this->db);
+	    $resultecm = $ecmfile->fetch(0, '', $rel_file_path);
+	    if($resultecm<=0) {
+	    	return false;
+	    } else {
+	    	return $ecmfile;
+	    }
+    }
+
 }

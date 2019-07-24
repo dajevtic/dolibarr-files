@@ -64,12 +64,8 @@ class ElbmultiuploadGlobalcardAction
         }
 
         //Update fullpath_orig in ecmfiles
-	    $file_path = $newFile->getFullServerPathForFile($newFile);
-	    $rel_filetorename = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $file_path);
-	    $rel_filetorename = preg_replace('/^[\\/]/', '', $rel_filetorename);
-	    $ecmfile=new EcmFiles($db);
-	    $resultecm = $ecmfile->fetch(0, '', $rel_filetorename);
-	    if($resultecm < 0) {
+	    $ecmfile = $newFile->getEcmfileFromUploadedFile();
+		if($ecmfile === false) {
 		    $error++;
 	    } else {
 	        $ecmfile->fullpath_orig = $new_file_name.$file_ext;
