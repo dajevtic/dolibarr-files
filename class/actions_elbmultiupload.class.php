@@ -280,11 +280,10 @@ class ActionsElbmultiupload
 		$modulepart = $parameters['modulepart'];
 		$relativefile = $parameters['relativefile'];
 		if ($modulepart == 'elbmultiupload' && !empty($relativefile)) {
-			$file = str_replace($conf->global->ELB_UPLOAD_FILES_DIRECTORY . "/", "", $relativefile);
-			$file_parts = explode(".", $file);
-			$file_id = $file_parts[0];
+
 			$elbfilemap = new ELbFileMapping($db);
-			$res = $elbfilemap->fetch($file_id);
+			$res = $elbfilemap->fetchFromEcmfilesPath($relativefile);
+
 			if ($res > 0) {
 				$object_id = $elbfilemap->object_id;
 				$modulepart = $elbfilemap->object_type;
@@ -347,6 +346,112 @@ class ActionsElbmultiupload
 			return 1;
 		}
 		return 0;
+	}
+
+	function getSolrIndexingAdditionalParams($parameters, &$object, &$action, $hookmanager)
+	{
+		$ecmFiles = $parameters['ecmFiles'];
+		$elbfilemap = new ELbFileMapping($this->db);
+		$res = $elbfilemap->fetchFromEcmfilesPath($ecmFiles->filename);
+		if($res > 0) {
+			$tags = json_decode($elbfilemap->tags);
+			if(is_array($tags) && count($tags)>0) {
+				$additionalParams = array(
+					"literal.elb_tag" => $tags,
+				);
+				$hookmanager->resArray['additionalParams'] = $additionalParams;
+				return 1;
+			}
+		}
+
+		return 0;
+	}
+
+	function solrSearchAdditionalSearch($parameters, &$object, &$action, $hookmanager)
+	{
+		global $langs;
+		require_once DOL_DOCUMENT_ROOT . '/elbmultiupload/class/elb.file.category.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/elbmultiupload/class/elb.common.manager.class.php';
+		$s = '<div class="divsearchfield">';
+		$s .= '<table cellpadding="0" cellspacing="0">';
+		$s .= '<tr>';
+		$s .= '<td>' . $langs->trans('Tags') . ': </td>';
+		$form = new Form($this->db);
+		$all_tags = ElbFileCategory::getFileTags();
+		$search_tags = $_REQUEST['search_tags'];
+		$s .= '<td>';
+		$s .= $form->multiselectarray('search_tags', $all_tags, $search_tags, '', 0, '', 0, '300px', '', '', true);
+		$s .= '</td>';
+		$s .= '</tr>';
+		$s .= '</table>';
+		$s .= '</div>';
+		$hookmanager->resArray['solrSearchAdditionalSearch'] = $s;
+		return 1;
+	}
+
+	function solrSearchAdditionalColumnHeader($parameters, &$object, &$action, $hookmanager) {
+		global $langs;
+		$s = '<td>';
+		$s.= $langs->trans('Tags');
+		$s.= '</td>';
+		$hookmanager->resArray['solrSearchAdditionalColumnHeader'] = $s;
+		return 1;
+	}
+
+	function solrSearchAdditionalColumnSearch($parameters, &$object, &$action, $hookmanager) {
+		$s = '<th>';
+		$s.= '</th>';
+		$hookmanager->resArray['solrSearchAdditionalColumnSearch'] = $s;
+		return 1;
+	}
+
+	function solrSearchAdditionalColumn($parameters, &$object, &$action, $hookmanager) {
+		global $langs;
+		require_once DOL_DOCUMENT_ROOT . '/elbmultiupload/class/elb.file.category.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/elbmultiupload/class/elb.common.manager.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/elbmultiupload/class/elb.html.form.class.php';
+		$file = $parameters['file'];
+		static $all_tags;
+		if(empty($all_tags)) {
+			$all_tags = ElbFileCategory::getFileTags();
+		}
+		$tags = $file['index_data']['elb_tag'];
+		$form=new ElbForm($this->db);
+		$s = '<td>';
+		if (is_array($tags) && count($tags)) {
+			$s.= "[".implode(", ", $tags)."]";
+		}
+		$s.= '</td>';
+		$hookmanager->resArray['solrSearchAdditionalColumn'] = $s;
+		return 1;
+	}
+
+	function solrExecuteAdditionalSearch($parameters, &$object, &$action, $hookmanager) {
+		$search_tags = $_REQUEST['search_tags'];
+		if(count($search_tags)>0) {
+			$tags_array=array();
+			foreach($search_tags as $tag) {
+				$tags_array[]='"'.$tag.'"';
+			}
+			$tag_query="(".implode(" OR ", $tags_array). ")";
+			$query_parts=array("elb_tag:".$tag_query);
+			$hookmanager->resArray['query_parts'] = $query_parts;
+			return 1;
+		}
+		return 0;
+	}
+
+	function solrSearchUrlParams($parameters, &$object, &$action, $hookmanager) {
+    	$param = $parameters['param'];
+		$search_tags = $_REQUEST['search_tags'];
+		if(count($search_tags)>0) {
+			foreach($search_tags as $tag) {
+				$param.="&search_tags[]=".$tag;
+			}
+			$hookmanager->resArray['param'] = $param;
+			return 1;
+		}
+    	return 0;
 	}
 
 }

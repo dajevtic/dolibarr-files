@@ -216,6 +216,8 @@ $id = GETPOST('id', 'int');
 $ref = GETPOST('ref');
 $object_element = GETPOST('object_element');
 
+$hookmanager->initHooks(array('formfile'));
+
 // checking access per object can differ from the object's element/type
 $tableandshare = '';
 $feature2 = '';

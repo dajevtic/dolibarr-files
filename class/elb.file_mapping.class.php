@@ -480,4 +480,16 @@ class ELbFileMapping extends CommonObject
 		}
 		return $data;
 	}
+
+
+
+	public function fetchFromEcmfilesPath($filepath)
+	{
+		global $conf;
+		$file = str_replace($conf->global->ELB_UPLOAD_FILES_DIRECTORY . "/", "", $filepath);
+		$file_parts = explode(".", $file);
+		$file_id = $file_parts[0];
+		$res = $this->fetch($file_id);
+		return $res;
+	}
 }
