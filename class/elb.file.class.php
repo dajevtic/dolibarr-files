@@ -127,10 +127,8 @@ class ELbFile
         return -1;
     }
 
-	function getFileVersions($fileid, $toolbox)
+	function getFileVersions($fileid)
     {
-		global $db, $conf, $langs;
-		
 		$sql = "SELECT f.rowid as frowid, f.name as fname, f.type as ftype, f.md5 as fmd5,";
 		$sql.= " fm.rowid as fmrowid, fm.fk_fileid as fmfk_fileid, fm.object_type as fmobject_type,";
 		$sql.= " fm.object_id as fmobject_id, fm.created_date as fmcreated_date, fm.user as fmuser, fm.description as fmdescription,";
@@ -140,49 +138,7 @@ class ELbFile
 		$sql.= " WHERE fm.parent_file = '".$this->db->escape($fileid)."'";
 		$sql.= " AND fm.active=".ELbFileMapping::FILE_REVISION;
 		$sql.= " ORDER BY f.rowid DESC";
-		
-		dol_syslog(get_class($this)."::getFileVersions sql=".$sql);
-	
-		$resql = $this->db->query($sql);
-	
-		if ($resql)
-			$num = $this->db->num_rows($resql);
-	
-		if ($num > 0) {
-				
-			$action2 = GETPOST('action2');
-			$fileid = GETPOST('rowid');
-            $object_element = GETPOST('object_element');
-				
-			print '<tr>';
-			print '<td></td>';
-			print '<td colspan="6">';
-			$title=$langs->trans("FileVersion(s)");
-				
-			print '<div class="titre">'.$title.'</div>';
-			print '<table class="border" summary="listofdocumentstable" width="100%">';
-
-            include dol_buildpath('/elbmultiupload/tpl/files/table/thead.tpl.php');
-				
-			$i = 0;
-			$var = false;
-			while ($i < $num)
-			{
-				$obj = $this->db->fetch_object($resql);
-				$var=!$var;
-	
-				($action2 == 'editfile' &&  $fileid == $obj->fmrowid) ? $modef=true : $modef=false;
-	
-				//include dol_buildpath('/elbmultiupload/tpl/files/position/file_revision.tpl.php');
-
-                $subfile = true;
-
-                include dol_buildpath('/elbmultiupload/tpl/files/table/trow.tpl.php');
-			}
-			print "</table>\n";
-			print '</td>';
-			print '</tr>';
-		}
+		return ElbCommonManager::queryList($sql);
 	}
 
 	function fetchUploadedFiles($object_type=null,$object_id=null, $search_files=null)
@@ -212,9 +168,7 @@ class ELbFile
 
 		dol_syslog(get_class($this)."::fetchUploadedFiles sql=".$sql);
 
-		$fetch_files = ElbCommonManager::queryList($sql);
-
-		return $fetch_files;
+		return ElbCommonManager::queryList($sql);
     }
 
 	/**

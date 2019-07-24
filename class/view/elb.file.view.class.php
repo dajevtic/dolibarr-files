@@ -132,15 +132,9 @@ class ElbFileView
 
                 foreach ($file_with_rev_categ as $rev_categ => $my_arr)	{
 
-                    //if (!$counter) {
-                        $a_class = 'toggle-link expanded';
-                        $span_class = 'ui-icon ui-icon-triangle-1-se';
-                        $display = 'style="display: table-row-group;"';
-//                    } else {
-//                        $a_class = 'toggle-link';
-//                        $span_class = 'ui-icon ui-icon-triangle-1-e';
-//                        $display = ' style="display: none;"';
-//                    }
+                    $a_class = 'toggle-link expanded';
+                    $span_class = 'ui-icon ui-icon-triangle-1-se';
+                    $display = 'style="display: table-row-group;"';
 
                     print '<table class="border" width="100%">
 					<tr class="position-subtable">
@@ -176,7 +170,8 @@ class ElbFileView
 
                         include dol_buildpath('/elbmultiupload/tpl/files/table/trow.tpl.php');
 
-                        $elbFile->getFileVersions($obj->fmrowid, $toolbox);
+                        //$elbFile->getFileVersions($obj->fmrowid, $toolbox);
+                        self::renderAttachedSubfilesObjectFile($obj->fmrowid, $objectElement, $objectID, $toolbox);
                     }
 
                     print '</tbody>';
@@ -197,15 +192,11 @@ class ElbFileView
                 foreach ($file_without_rev_categ as $without_ref => $my_arr)	{
 
                     if ($showTableCollapsible) {
-                        //if (!$counter) {
-                            $a_class = 'toggle-link expanded';
-                            $span_class = 'ui-icon ui-icon-triangle-1-se';
-                            $display = 'style="display: table-row-group;"';
-//                        } else {
-//                            $a_class = 'toggle-link';
-//                            $span_class = 'ui-icon ui-icon-triangle-1-e';
-//                            $display = ' style="display: none;"';
-//                        }
+
+                        $a_class = 'toggle-link expanded';
+                        $span_class = 'ui-icon ui-icon-triangle-1-se';
+                        $display = 'style="display: table-row-group;"';
+
                         print '<table class="border" width="100%">
                         <tr class="position-subtable">
                         <td colspan="<?php echo $coldisplay ?>">
@@ -233,15 +224,14 @@ class ElbFileView
 
                     print '<tbody>';
 
-                    foreach ($my_arr as $key => $files_res_key)
-                    {
+                    foreach ($my_arr as $key => $files_res_key) {
                         $obj = $files_res_key;
 
                         ($action2 == 'editfile' &&  $fileid == $obj->fmrowid) ? $modef=true : $modef=false;
 
                         include dol_buildpath('/elbmultiupload/tpl/files/table/trow.tpl.php');
 
-                        $elbFile->getFileVersions($obj->fmrowid, $toolbox);
+                        self::renderAttachedSubfilesObjectFile($obj->fmrowid, $objectElement, $objectID, $toolbox);
                     }
 
                     print '</tbody>';
@@ -262,4 +252,44 @@ class ElbFileView
             }
         }
     }
+
+    static function renderAttachedSubfilesObjectFile($fileMapID, $objectElement, $objectID, $toolbox=1)
+    {
+        global $db, $langs;
+
+        $elbFile = new ELbFile($db);
+
+        $subFiles = $elbFile->getFileVersions($fileMapID);
+
+        if (is_array($subFiles) && count($subFiles)) {
+
+            $action2 = GETPOST('action2');
+            $fileid = GETPOST('rowid');
+            $object_element = $objectElement;
+
+            print '<tr>';
+            print '<td></td>';
+            print '<td colspan="6">';
+
+            $title=$langs->trans("FileVersion(s)");
+
+            print '<div class="titre">'.$title.'</div>';
+            print '<table class="border" summary="listofdocumentstable" width="100%">';
+
+            include dol_buildpath('/elbmultiupload/tpl/files/table/thead.tpl.php');
+
+            $i = 0;
+            $var = false;
+            foreach ($subFiles as $obj) {
+                $var=!$var;
+                ($action2 == 'editfile' &&  $fileid == $obj->fmrowid) ? $modef=true : $modef=false;
+                $subfile = true;
+                include dol_buildpath('/elbmultiupload/tpl/files/table/trow.tpl.php');
+            }
+            print "</table>\n";
+            print '</td>';
+            print '</tr>';
+        }
+    }
+
 }
