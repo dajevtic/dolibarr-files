@@ -75,15 +75,6 @@ print ELbFile::showMultiUploadButton($object->element, $object->id);
 if ($totalnr) {
     ElbFileView::renderAttachedFilesForObject($object->element, $object->id, $toolbox, $file_list_display);
 }
-
-// render uploaded files
-//if ($file_list_display == ElbFileGrouping::GROUP_FILES_BY_TAG) {
-//	$elbfile->getUploadedFiles($object->element, $object->id, $toolbox, $tag_map, $search_files, $restictDeleteFile);
-//} elseif (in_array($file_list_display, array(ElbFileGrouping::GROUP_FILES_DEFAULT, ElbFileGrouping::GROUP_FILES_BY_REV))) {
-//	$fetch_files = $elbfile->fetchUploadedFiles($object->element,$object->id, $search_files);
-//    $elbfile->renderFilesByRevision($fetch_files, $toolbox, $restictDeleteFile);
-//}
-print "<br>";
 ?>
 
 <script type="text/javascript">
