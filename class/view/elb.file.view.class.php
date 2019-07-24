@@ -174,7 +174,7 @@ class ElbFileView
 
                         ($action2 == 'editfile' &&  $fileid == $obj->fmrowid) ? $modef=true : $modef=false;
 
-                        include dol_buildpath('/elbmultiupload/tpl/files/position/file.tpl.php');
+                        include dol_buildpath('/elbmultiupload/tpl/files/table/trow.tpl.php');
 
                         $elbFile->getFileVersions($obj->fmrowid, $toolbox);
                     }
@@ -239,7 +239,7 @@ class ElbFileView
 
                         ($action2 == 'editfile' &&  $fileid == $obj->fmrowid) ? $modef=true : $modef=false;
 
-                        include dol_buildpath('/elbmultiupload/tpl/files/position/file.tpl.php');
+                        include dol_buildpath('/elbmultiupload/tpl/files/table/trow.tpl.php');
 
                         $elbFile->getFileVersions($obj->fmrowid, $toolbox);
                     }

@@ -129,7 +129,7 @@ class ELbFile
 
 	function getFileVersions($fileid, $toolbox)
     {
-		global $conf, $langs;
+		global $db, $conf, $langs;
 		
 		$sql = "SELECT f.rowid as frowid, f.name as fname, f.type as ftype, f.md5 as fmd5,";
 		$sql.= " fm.rowid as fmrowid, fm.fk_fileid as fmfk_fileid, fm.object_type as fmobject_type,";
@@ -173,7 +173,11 @@ class ELbFile
 	
 				($action2 == 'editfile' &&  $fileid == $obj->fmrowid) ? $modef=true : $modef=false;
 	
-				include dol_buildpath('/elbmultiupload/tpl/files/position/file_revision.tpl.php');
+				//include dol_buildpath('/elbmultiupload/tpl/files/position/file_revision.tpl.php');
+
+                $subfile = true;
+
+                include dol_buildpath('/elbmultiupload/tpl/files/table/trow.tpl.php');
 			}
 			print "</table>\n";
 			print '</td>';
