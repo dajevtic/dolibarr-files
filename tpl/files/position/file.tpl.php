@@ -1,5 +1,5 @@
 <?php
-global $elbfile, $conf, $toolbox, $modef;
+global $elbfile, $conf, $toolbox;
 ?>
 
 <tr <?php echo $bc[true] ?>>					

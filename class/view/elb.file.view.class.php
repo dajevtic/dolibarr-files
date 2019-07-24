@@ -93,7 +93,7 @@ class ElbFileView
                             foreach ($arr_assigned_fmaps as $assigned_fmap_id) {
                                 foreach ($fetch_all_files as $ind => $files) {
                                     if ($files->fmrowid == $assigned_fmap_id) {
-                                        $file_with_rev_categ[$tag_name][] = $ind;
+                                        $file_with_rev_categ[$tag_name][] = $files;
                                     }
                                 }
                             }
