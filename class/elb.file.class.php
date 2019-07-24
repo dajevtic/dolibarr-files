@@ -161,19 +161,8 @@ class ELbFile
 				
 			print '<div class="titre">'.$title.'</div>';
 			print '<table class="border" summary="listofdocumentstable" width="100%">';
-			print '<tr class="liste_titre malign" width="100%">';
-			print '<td width="30" align="center">'.$langs->trans("Nr").'</td>';
-			print '<td>'.$langs->trans("File").'</td>';
-			print '<td>'.$langs->trans("Description").'</td>';
-			print '<td>'.$langs->trans("Revision").'</td>';
-			print '<td>'.$langs->trans("Size").'</td>';
-			print '<td width="110">'.$langs->trans("Modified").'</td>';
-			print '<td>'.$langs->trans("User").'</td>';
-			if ($toolbox){
-				print '<td align="right">';
-				print '</td>';
-			}
-			print '</tr>';
+
+            include dol_buildpath('/elbmultiupload/tpl/files/table/thead.tpl.php');
 				
 			$i = 0;
 			$var = false;

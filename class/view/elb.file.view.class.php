@@ -24,7 +24,7 @@ class ElbFileView
         return $out;
     }
 
-    static function renderAttachedFilesForObject($objectElement, $objectID, $toolbox=1, $sortFilesMethod=null, $objectFilesCategories=[])
+    static function renderAttachedFilesForObject($objectElement, $objectID, $toolbox=1, $sortFilesMethod=null)
     {
         global $db, $langs;
         $elbFile = new ELbFile($db);
@@ -164,20 +164,8 @@ class ElbFileView
 						<tr>
 							<td class="nobottom" colspan="2">';
                     print '<table class="border listofdocumentstable" summary="listofdocumentstable" width="100%">';
-                    print '<thead>';
-                    print '<tr class="liste_titre malign" width="100%">';
-                    print '<td width="30" align="center" class="td-file-nr">'.$langs->trans("Nr").'</td>';
-                    print '<td class="td-file-name">'.$langs->trans("File").'</td>';
-                    print '<td class="td-file-desc">'.$langs->trans("Description").'</td>';
-                    print '<td class="td-file-rev">'.$langs->trans("Revision").'</td>';
-                    print '<td class="td-file-size">'.$langs->trans("Size").'</td>';
-                    print '<td width="110" class="td-file-modif">'.$langs->trans("Modified").'</td>';
-                    print '<td class="td-file-user">'.$langs->trans("User").'</td>';
-                    if ($toolbox){
-                        print '<td class="td-file-toolbox"></td>';
-                    }
-                    print '</tr>';
-                    print '</thead>';
+
+                    include dol_buildpath('/elbmultiupload/tpl/files/table/thead.tpl.php');
 
                     print '<tbody>';
 
@@ -240,20 +228,8 @@ class ElbFileView
                     }
 
                     print '<table class="border listofdocumentstable" summary="listofdocumentstable" width="100%">';
-                    print '<thead>';
-                    print '<tr class="liste_titre malign" width="100%">';
-                    print '<td width="30" align="center" class="td-file-nr">'.$langs->trans("Nr").'</td>';
-                    print '<td class="td-file-name">'.$langs->trans("File").'</td>';
-                    print '<td class="td-file-desc">'.$langs->trans("Description").'</td>';
-                    print '<td class="td-file-rev">'.$langs->trans("Revision").'</td>';
-                    print '<td class="td-file-size">'.$langs->trans("Size").'</td>';
-                    print '<td width="110" class="td-file-modif">'.$langs->trans("Modified").'</td>';
-                    print '<td class="td-file-user">'.$langs->trans("User").'</td>';
-                    if ($toolbox){
-                        print '<td class="td-file-toolbox"></td>';
-                    }
-                    print '</tr>';
-                    print '</thead>';
+
+                    include dol_buildpath('/elbmultiupload/tpl/files/table/thead.tpl.php');
 
                     print '<tbody>';
 
