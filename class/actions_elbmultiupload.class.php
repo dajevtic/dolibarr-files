@@ -353,15 +353,23 @@ class ActionsElbmultiupload
 		$ecmFiles = $parameters['ecmFiles'];
 		$elbfilemap = new ELbFileMapping($this->db);
 		$res = $elbfilemap->fetchFromEcmfilesPath($ecmFiles->filename);
-		if($res > 0) {
+		$additionalParams = array();
+		if ($res > 0) {
 			$tags = json_decode($elbfilemap->tags);
-			if(is_array($tags) && count($tags)>0) {
-				$additionalParams = array(
-					"literal.elb_tag" => $tags,
-				);
-				$hookmanager->resArray['additionalParams'] = $additionalParams;
-				return 1;
+			if (is_array($tags) && count($tags) > 0) {
+				$additionalParams["literal.elb_tag"] = $tags;
 			}
+		}
+		if (strlen($elbfilemap->description) > 0) {
+			$additionalParams["literal.elb_file_desc"] = $elbfilemap->description;
+		}
+		if (strlen($elbfilemap->revision) > 0) {
+			$additionalParams["literal.elb_revision"] = $elbfilemap->revision;
+		}
+		$additionalParams["literal.elb_file_active"] = $elbfilemap->active;
+		if (is_array($additionalParams) && count($additionalParams) > 0) {
+			$hookmanager->resArray['additionalParams'] = $additionalParams;
+			return 1;
 		}
 
 		return 0;
@@ -391,25 +399,51 @@ class ActionsElbmultiupload
 
 	function solrSearchAdditionalColumnHeader($parameters, &$object, &$action, $hookmanager) {
 		global $langs;
+		$headers = array();
 		$s = '<td>';
 		$s.= $langs->trans('Tags');
 		$s.= '</td>';
-		$hookmanager->resArray['solrSearchAdditionalColumnHeader'] = $s;
+		$headers[] = $s;
+		$s = '<td>';
+		$s.= $langs->trans('Description');
+		$s.= '</td>';
+		$headers[] = $s;
+		$s = '<td>';
+		$s.= $langs->trans('Revision');
+		$s.= '</td>';
+		$headers[] = $s;
+		$hookmanager->resArray['headers'] = $headers;
 		return 1;
 	}
 
 	function solrSearchAdditionalColumnSearch($parameters, &$object, &$action, $hookmanager) {
+		$columns = array();
+    	//Tags
 		$s = '<th>';
 		$s.= '</th>';
-		$hookmanager->resArray['solrSearchAdditionalColumnSearch'] = $s;
+		$columns[] = $s;
+		//Description
+		$search_desc = GETPOST('search_desc');
+		$s= '<th align="left">';
+		$s.= '<input class="flat" size="10" name="search_desc" value="'.$search_desc.'"/>';
+		$s.= '</th>';
+		$columns[] = $s;
+		//Revision
+		$search_rev = GETPOST('search_rev');
+		$s= '<th align="left">';
+		$s.= '<input class="flat" size="5" name="search_rev" value="'.$search_rev.'"/>';
+		$s.= '</th>';
+		$columns[] = $s;
+		$hookmanager->resArray['columns'] = $columns;
 		return 1;
 	}
 
-	function solrSearchAdditionalColumn($parameters, &$object, &$action, $hookmanager) {
+	function solrSearchAdditionalColumnData($parameters, &$object, &$action, $hookmanager) {
 		global $langs;
 		require_once DOL_DOCUMENT_ROOT . '/elbmultiupload/class/elb.file.category.class.php';
 		require_once DOL_DOCUMENT_ROOT . '/elbmultiupload/class/elb.common.manager.class.php';
 		require_once DOL_DOCUMENT_ROOT . '/elbmultiupload/class/elb.html.form.class.php';
+		$data = array();
 		$file = $parameters['file'];
 		static $all_tags;
 		if(empty($all_tags)) {
@@ -417,41 +451,69 @@ class ActionsElbmultiupload
 		}
 		$tags = $file['index_data']['elb_tag'];
 		$form=new ElbForm($this->db);
+		//Tags
 		$s = '<td>';
 		if (is_array($tags) && count($tags)) {
 			$s.= "[".implode(", ", $tags)."]";
 		}
 		$s.= '</td>';
-		$hookmanager->resArray['solrSearchAdditionalColumn'] = $s;
+		$data[] = $s;
+		//Description
+		$s= '<td>';
+		$s.= $file['index_data']['elb_file_desc'];
+		$s.= '</td>';
+		$data[] = $s;
+		//Revision
+		$s= '<td>';
+		$s.= $file['index_data']['elb_revision'];
+		$s.= '</td>';
+		$data[] = $s;
+		$hookmanager->resArray['data'] = $data;
 		return 1;
 	}
 
 	function solrExecuteAdditionalSearch($parameters, &$object, &$action, $hookmanager) {
 		$search_tags = $_REQUEST['search_tags'];
+		$query_parts = array();
 		if(count($search_tags)>0) {
 			$tags_array=array();
 			foreach($search_tags as $tag) {
 				$tags_array[]='"'.$tag.'"';
 			}
 			$tag_query="(".implode(" OR ", $tags_array). ")";
-			$query_parts=array("elb_tag:".$tag_query);
+			$query_parts[] = "elb_tag:".$tag_query;
+		}
+		$search_desc = GETPOST('search_desc');
+		if(strlen($search_desc)>0) {
+			$query_parts[] = "elb_file_desc:".$search_desc;
+		}
+		$search_rev = GETPOST('search_rev');
+		if(strlen($search_rev)>0) {
+			$query_parts[] = "elb_revision:".$search_rev;
+		}
+
+		if(count($query_parts)>0) {
 			$hookmanager->resArray['query_parts'] = $query_parts;
 			return 1;
 		}
+
 		return 0;
 	}
 
 	function solrSearchUrlParams($parameters, &$object, &$action, $hookmanager) {
     	$param = $parameters['param'];
 		$search_tags = $_REQUEST['search_tags'];
+		$search_desc = GETPOST('search_desc');
+		$search_rev = GETPOST('search_rev');
 		if(count($search_tags)>0) {
 			foreach($search_tags as $tag) {
 				$param.="&search_tags[]=".$tag;
 			}
-			$hookmanager->resArray['param'] = $param;
-			return 1;
 		}
-    	return 0;
+		$param.="&search_desc=".$search_desc;
+		$param.="&search_rev=".$search_rev;
+		$hookmanager->resArray['param'] = $param;
+		return 1;
 	}
 
 }
