@@ -1,7 +1,5 @@
 <?php
-//use ELBClass\solr\ElbSolrUtil;
-
-/* Copyright (C) 2019-... LiveMediaGroup - Milos Petkovic <milos.petkovic@livemediagroup.de>
+/* Copyright (C) 2019-2019 Elb Solutions - Milos Petkovic <milos.petkovic@elb-solutions.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,21 +24,41 @@
 class ElbFileSession
 {
 
+    /**
+     * Check up if grouping files method is stored in the session
+     *
+     * @return bool
+     */
     static function isSetGroupFiles()
     {
         return isset($_SESSION[ElbFileGrouping::GROUP_FILES_PARAM]);
     }
 
+    /**
+     * Set grouping files method in the session
+     *
+     * @param   string|null     $setGroupingMethod
+     * @return  void
+     */
     static function setGroupFilesMethod($setGroupingMethod=null)
     {
         $_SESSION[ElbFileGrouping::GROUP_FILES_PARAM] = $setGroupingMethod;
     }
 
+    /**
+     * Get grouping files method from the session
+     *
+     * @return mixed
+     */
     static function getGroupFilesMethod()
     {
         return $_SESSION[ElbFileGrouping::GROUP_FILES_PARAM];
     }
 
+    /**
+     * Unset grouping files method from the session
+     * @return void
+     */
     static function unsetGroupFilesMethod()
     {
         unset($_SESSION[ElbFileGrouping::GROUP_FILES_PARAM]);

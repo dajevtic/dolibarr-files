@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2019-... LiveMediaGroup - Milos Petkovic <milos.petkovic@livemediagroup.de>
+/* Copyright (C) 2019-2019 Elb Solutions - Milos Petkovic <milos.petkovic@elb-solutions.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -273,7 +273,6 @@ class ActionsElbmultiupload
 
 	function getObjectLink($parameters, &$object, &$action, $hookmanager)
 	{
-
 		require_once DOL_DOCUMENT_ROOT . '/elbmultiupload/class/elb.file_mapping.class.php';
 
 		global $conf, $db;
@@ -400,7 +399,8 @@ class ActionsElbmultiupload
 		return 0;
 	}
 
-	function solrSearchAdditionalColumnHeader($parameters, &$object, &$action, $hookmanager) {
+	function solrSearchAdditionalColumnHeader($parameters, &$object, &$action, $hookmanager)
+    {
 		global $langs, $conf;
 		$headers = array();
 		if ($conf->global->ELB_ALLOW_CATEGORIES_FOR_FILES) {
@@ -421,7 +421,8 @@ class ActionsElbmultiupload
 		return 1;
 	}
 
-	function solrSearchAdditionalColumnSearch($parameters, &$object, &$action, $hookmanager) {
+	function solrSearchAdditionalColumnSearch($parameters, &$object, &$action, $hookmanager)
+    {
     	global $conf;
 		$columns = array();
 		if ($conf->global->ELB_ALLOW_CATEGORIES_FOR_FILES) {
@@ -446,7 +447,8 @@ class ActionsElbmultiupload
 		return 1;
 	}
 
-	function solrSearchAdditionalColumnData($parameters, &$object, &$action, $hookmanager) {
+	function solrSearchAdditionalColumnData($parameters, &$object, &$action, $hookmanager)
+    {
 		global $langs, $conf;
 		require_once DOL_DOCUMENT_ROOT . '/elbmultiupload/class/elb.file.category.class.php';
 		require_once DOL_DOCUMENT_ROOT . '/elbmultiupload/class/elb.common.manager.class.php';
@@ -481,7 +483,8 @@ class ActionsElbmultiupload
 		return 1;
 	}
 
-	function solrExecuteAdditionalSearch($parameters, &$object, &$action, $hookmanager) {
+	function solrExecuteAdditionalSearch($parameters, &$object, &$action, $hookmanager)
+    {
     	global $conf;
 		$query_parts = array();
 		if ($conf->global->ELB_ALLOW_CATEGORIES_FOR_FILES) {
@@ -512,7 +515,8 @@ class ActionsElbmultiupload
 		return 0;
 	}
 
-	function solrSearchUrlParams($parameters, &$object, &$action, $hookmanager) {
+	function solrSearchUrlParams($parameters, &$object, &$action, $hookmanager)
+    {
     	global $conf;
     	$param = $parameters['param'];
 		$search_desc = GETPOST('search_desc');

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2019-... LiveMediaGroup - Milos Petkovic <milos.petkovic@livemediagroup.de>
+/* Copyright (C) 2019-2019 Elb Solutions - Milos Petkovic <milos.petkovic@elb-solutions.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 /**
  * \file    htdocs/elbmultiupload/admin/setup.php
  * \ingroup elbmultiupload
- * \brief   modElbmultiupload setup page.
+ * \brief   Elbmultiupload setup page.
  */
 
 // Load Dolibarr environment
@@ -52,8 +52,9 @@ $action = GETPOST('action', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 $arrayofparameters=array(
-    'MYMODULE_MYPARAM1'=>array('css'=>'minwidth200','enabled'=>1),
-    'MYMODULE_MYPARAM2'=>array('css'=>'minwidth500','enabled'=>1)
+    'ELB_UPLOAD_FILES_BUFFER'=>array('css'=>'minwidth200','enabled'=>1),
+    'ELB_UPLOAD_FILES_DIRECTORY'=>array('css'=>'minwidth500','enabled'=>1),
+    'ELB_ALLOW_CATEGORIES_FOR_FILES'=>array('css'=>'minwidth500','enabled'=>1)
 );
 
 

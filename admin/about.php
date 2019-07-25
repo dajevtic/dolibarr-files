@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2019-... LiveMediaGroup - Milos Petkovic <milos.petkovic@livemediagroup.de>
+/* Copyright (C) 2019-2019 Elb Solutions - Milos Petkovic <milos.petkovic@elb-solutions.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
  */
 
 /**
- * \file    htdocs/elbmultiupload/template/admin/about.php
+ * \file    htdocs/elbmultiupload/admin/about.php
  * \ingroup elbmultiupload
- * \brief   About page of module modElbmultiupload.
+ * \brief   About page of module Elbmultiupload
  */
 
 // Load Dolibarr environment
@@ -73,7 +73,7 @@ $linkback = '<a href="'.($backtopage?$backtopage:DOL_URL_ROOT.'/admin/modules.ph
 print load_fiche_titre($langs->trans($page_name), $linkback, 'object_elbmultiupload@elbmultiupload');
 
 // Configuration header
-$head = mymoduleAdminPrepareHead();
+$head = elbmultiuploadAdminPrepareHead();
 dol_fiche_head($head, 'about', '', 0, 'elbmultiupload@elbmultiupload');
 
 dol_include_once('/elbmultiupload/core/modules/modElbmultiupload.class.php');

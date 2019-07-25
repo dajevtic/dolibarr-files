@@ -27,24 +27,26 @@ ModuleMyModuleDesc = Elb Multiupload module enables multiupload file functionali
 #
 MyModuleSetup = Elb Multiupload setup
 Settings = Settings
-MyModuleSetupPage = MyModule setup page
-MYMODULE_MYPARAM1 = My param 1
-MYMODULE_MYPARAM1Tooltip = My param 1 tooltip
-MYMODULE_MYPARAM2=My param 2
-MYMODULE_MYPARAM2Tooltip=My param 2 tooltip
+MyModuleSetupPage = Elbmultiupload setup page
+ELB_UPLOAD_FILES_BUFFER = Name of buffer directory for files uploading
+ELB_UPLOAD_FILES_BUFFERTooltip = e.g. uploadbuffer
+ELB_UPLOAD_FILES_DIRECTORY = Subdirectory in DOL_DATA_ROOT where we store uploaded files
+ELB_UPLOAD_FILES_DIRECTORYTooltip = e.g. uploadedfiles
+ELB_ALLOW_CATEGORIES_FOR_FILES = Additional files categorization
+ELB_ALLOW_CATEGORIES_FOR_FILESTooltip = Value 1 enables, value 0 disables functionality for files categorization
 
 
 #
 # About page
 #
 About = About
-MyModuleAbout = About MyModule
-MyModuleAboutPage = MyModule about page
+MyModuleAbout = About Elbmultiupload
+MyModuleAboutPage = Elbmultiupload about page
 
 #
 # Sample page
 #
-MyPageName = My page name
+MyPageName = Elbmultiupload
 
 #
 # Sample widget

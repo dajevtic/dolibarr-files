@@ -63,8 +63,8 @@ class modElbmultiupload extends DolibarrModules
         // Used only if file README.md and README-LL.md not found.
         $this->descriptionlong = "Module adds upload additional files tab/functionality for each object in the system";
 
-        $this->editor_name = 'LiveMediaGroup';
-        $this->editor_url = 'http://www.livemediagroup.de';
+        $this->editor_name = 'ELB Solutions';
+        $this->editor_url = 'https://www.elb-solutions.com';
 
         // Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
         $this->version = '1.0';
@@ -98,7 +98,7 @@ class modElbmultiupload extends DolibarrModules
 
         // Data directories to create when module is enabled.
         // Example: this->dirs = array("/mymodule/temp","/mymodule/subdir");
-        $this->dirs = array("/elbmultiupload/temp");
+        $this->dirs = array("");
 
         // Config pages. Put here list of php page, stored into mymodule/admin directory, to use to setup module.
         $this->config_page_url = array("setup.php@elbmultiupload");

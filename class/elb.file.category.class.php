@@ -1,7 +1,5 @@
 <?php
-//use ELBClass\solr\ElbSolrUtil;
-
-/* Copyright (C) 2019-... LiveMediaGroup - Milos Petkovic <milos.petkovic@livemediagroup.de>
+/* Copyright (C) 2019-2019 Elb Solutions - Milos Petkovic <milos.petkovic@elb-solutions.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +16,7 @@
  */
 
 /**
- *	\file       htdocs/elbmultiupload/class/elb.file.categoryclass.php
+ *	\file       htdocs/elbmultiupload/class/elb.file.category.class.php
  *	\ingroup    elbmultiupload
  *	\brief      Manager for categories of files
  */
@@ -27,6 +25,11 @@ class ElbFileCategory
 {
     const TYPE_ELB_FILE = 10;
 
+    /**
+     * Method returns all distinct categories of elb file type
+     *
+     * @return array
+     */
     public static function getFileTags()
     {
         $sql="SELECT distinct(c.label) from ".MAIN_DB_PREFIX."categorie c WHERE c.type=".self::TYPE_ELB_FILE." ORDER BY c.label";

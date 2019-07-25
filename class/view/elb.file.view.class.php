@@ -1,4 +1,19 @@
 <?php
+/* Copyright (C) 2019-2019 Elb Solutions - Milos Petkovic <milos.petkovic@elb-solutions.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 class ElbFileView
 {
@@ -24,6 +39,15 @@ class ElbFileView
         return $out;
     }
 
+    /**
+     * Method renders all attached files to an object
+     *
+     * @param   string      $objectElement      Object's element (e.g. 'propal', 'commande'...)
+     * @param   int         $objectID           ID of object
+     * @param   int         $toolbox            Flag if edit/delete buttons for files should be viewable
+     * @param   string|null $sortFilesMethod    Sorting methods for files
+     * @return  void
+     */
     static function renderAttachedFilesForObject($objectElement, $objectID, $toolbox=1, $sortFilesMethod=null)
     {
         global $db, $langs;
@@ -171,7 +195,7 @@ class ElbFileView
                         include dol_buildpath('/elbmultiupload/tpl/files/table/trow.tpl.php');
 
                         //$elbFile->getFileVersions($obj->fmrowid, $toolbox);
-                        self::renderAttachedSubfilesObjectFile($obj->fmrowid, $objectElement, $objectID, $toolbox);
+                        self::renderAttachedSubfilesObjectFile($obj->fmrowid, $objectElement, $toolbox);
                     }
 
                     print '</tbody>';
@@ -231,7 +255,7 @@ class ElbFileView
 
                         include dol_buildpath('/elbmultiupload/tpl/files/table/trow.tpl.php');
 
-                        self::renderAttachedSubfilesObjectFile($obj->fmrowid, $objectElement, $objectID, $toolbox);
+                        self::renderAttachedSubfilesObjectFile($obj->fmrowid, $objectElement, $toolbox);
                     }
 
                     print '</tbody>';
@@ -253,7 +277,15 @@ class ElbFileView
         }
     }
 
-    static function renderAttachedSubfilesObjectFile($fileMapID, $objectElement, $objectID, $toolbox=1)
+    /**
+     * Method renders sub files of a file
+     *
+     * @param   int       $fileMapID          ID of file mapping
+     * @param   string    $objectElement      Object's element
+     * @param   int       $toolbox            Flag if edit/delete buttons for files should be viewable
+     * @return  void
+     */
+    static function renderAttachedSubfilesObjectFile($fileMapID, $objectElement, $toolbox=1)
     {
         global $db, $langs;
 

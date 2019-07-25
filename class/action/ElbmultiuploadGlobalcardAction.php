@@ -1,6 +1,5 @@
 <?php
-
-/* Copyright (C) 2019-... LiveMediaGroup - Milos Petkovic <milos.petkovic@livemediagroup.de>
+/* Copyright (C) 2019-2019 Elb Solutions - Milos Petkovic <milos.petkovic@elb-solutions.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +19,13 @@ include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 
 class ElbmultiuploadGlobalcardAction
 {
-    static function rename_file($object, $params)
+    /**
+     * Method renames file name
+     *
+     * @return array
+     * @throws Exception
+     */
+    static function rename_file()
     {
         if(!defined("DO_AJAX_ACTION")) exit;
 
@@ -58,7 +63,7 @@ class ElbmultiuploadGlobalcardAction
 
         $newFile = new ELbFile($db);
         $newFile->fetch($file_id);
-        if($oldFile != $newFile) {
+        if($oldFile !== $newFile) {
             $fm = new ELbFileMapping($db);
             $fm->fetchByFileID($file_id);
         }
