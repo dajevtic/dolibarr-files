@@ -1,7 +1,26 @@
 <?php
+/* Copyright (C) 2019-2019 Elb Solutions - Milos Petkovic <milos.petkovic@elb-solutions.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 class ElbForm extends Form
 {
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
     /**
      * Constructor
@@ -10,7 +29,7 @@ class ElbForm extends Form
      */
     public function __construct($db)
     {
-        $this->db = $db;
+        parent::__construct($db);
     }
 
     /**
@@ -45,7 +64,7 @@ class ElbForm extends Form
         // Add code for jquery to use multiselect
         if (! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT'))
         {
-            $out.="\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
+            $out.="\n".'<!-- JS CODE TO ENABLE  for id '.$htmlname.' -->
 						<script type="text/javascript">'."\n";
             if ($addjscombo == 1)
             {
@@ -53,8 +72,8 @@ class ElbForm extends Form
                 $out.=	'function formatResult(record) {'."\n";
                 if ($elemtype == 'category')
                 {
-                    $out.='	//return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> <a href="'.DOL_URL_ROOT.'/categories/viewcat.php?type=0&id=\'+record.id+\'">\'+record.text+\'</a></span>\';
-									  	return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> \'+record.text+\'</span>\';';
+                    $out.='	//return \'<span><img alt="" src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> <a href="'.DOL_URL_ROOT.'/categories/viewcat.php?type=0&id=\'+record.id+\'">\'+record.text+\'</a></span>\';
+									  	return \'<span><img alt="" src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> \'+record.text+\'</span>\';';
                 }
                 else
                 {
@@ -64,8 +83,8 @@ class ElbForm extends Form
                 $out.=	'function formatSelection(record) {'."\n";
                 if ($elemtype == 'category')
                 {
-                    $out.='	//return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> <a href="'.DOL_URL_ROOT.'/categories/viewcat.php?type=0&id=\'+record.id+\'">\'+record.text+\'</a></span>\';
-									  	return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> \'+record.text+\'</span>\';';
+                    $out.='	//return \'<span><img alt="" src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> <a href="'.DOL_URL_ROOT.'/categories/viewcat.php?type=0&id=\'+record.id+\'">\'+record.text+\'</a></span>\';
+									  	return \'<span><img alt="" src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> \'+record.text+\'</span>\';';
                 }
                 else
                 {

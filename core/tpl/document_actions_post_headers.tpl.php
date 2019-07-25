@@ -41,7 +41,7 @@ $file_list_display = ElbFileSession::getGroupFilesMethod();
 $formfile=new FormFile($db);
 
 // show multiupload button
-print ELbFile::showMultiUploadButton($object->element, $object->id);
+print ElbFileView::showMultiUploadButton($object->element, $object->id);
 
 ?>
 
@@ -85,9 +85,8 @@ if ($totalnr) {
 	});
 </script>
 
-<?php 
-
-// ELB - add ajax modal dialog
+<?php
+// ajax modal dialog
 if(!empty($conf->elbmultiupload->enabled)) {
     elbmultiupload_renderAjaxPopup();
 }
