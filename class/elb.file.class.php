@@ -717,4 +717,28 @@ class ELbFile extends CommonObject
 	    }
     }
 
+    /**
+     * Get original file name from file's full path on the file system
+     *
+     * @param   string      $fileFullPath       File's absolute path
+     * @return  string                          Original file name
+     * @throws  Exception
+     */
+    static function getDocumentFilename($fileFullPath)
+    {
+        global $db;
+
+        $filename = basename($fileFullPath);
+        if ($_GET['modulepart'] == 'elbmultiupload' && !empty($_GET['fmapid'])) {
+            $elb_fmap = new ELbFileMapping($db);
+            $elb_fmap->fetch($_GET['fmapid']);
+            $elb_fk_file = new ELbFile($db);
+            $elb_fk_file->fetch($elb_fmap->fk_fileid);
+            if (!empty($elb_fk_file->name)) {
+                $filename = $elb_fk_file->name;
+            }
+        }
+        return $filename;
+    }
+
 }
