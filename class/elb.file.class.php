@@ -702,7 +702,8 @@ class ELbFile extends CommonObject
 	 * @param ELbFile $elbFile instance of uploaded file
 	 * @return bool|EcmFiles false if not found, otherwise EcmFiles instance
 	 */
-    public function getEcmfileFromUploadedFile() {
+    public function getEcmfileFromUploadedFile()
+    {
 	    include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 	    $file_path = $this->getFullServerPathForFile();
 	    $rel_file_path = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $file_path);

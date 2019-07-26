@@ -269,3 +269,27 @@ else header('Cache-Control: no-cache');
     float: right;
 }
 
+.td-file-nr {
+    width: 40px;
+}
+.td-file-desc {
+    width: 200px;
+}
+.td-file-rev {
+    width: 100px;
+}
+.td-file-size {
+    width: 100px;
+}
+.td-file-modif {
+    width: 150px;
+}
+.td-file-user {
+    width: 80px;
+}
+.td-file-toolbox {
+    width: 100px;
+}
+.object-attached-files td {
+    vertical-align: top !important;
+}

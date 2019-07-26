@@ -73,7 +73,9 @@ print ElbFileView::showMultiUploadButton($object->element, $object->id);
 
 // render uploaded files
 if ($totalnr) {
+    print '<div class="object-attached-files">';
     ElbFileView::renderAttachedFilesForObject($object->element, $object->id, $toolbox, $file_list_display);
+    print '<div>';
 }
 ?>
 
