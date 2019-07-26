@@ -518,11 +518,10 @@ class ELbFileMapping extends CommonObject
      *
      * @param   null|string   $object_type        Object's element for fetching uploaded files
      * @param   null|int      $object_id          Object's ID for fetching uploaded files
-     * @param   null          $search_files       @TODO - remove?!
      * @return  array|bool
      * @throws  Exception
      */
-    function fetchUploadedFiles($object_type=null,$object_id=null, $search_files=null)
+    function fetchUploadedFiles($object_type=null,$object_id=null)
     {
         $sql = "SELECT f.rowid as frowid, f.name as fname, f.type as ftype, f.md5 as fmd5,";
         $sql.= " fm.rowid as fmrowid, fm.fk_fileid as fmfk_fileid, fm.object_type as fmobject_type,";
@@ -536,14 +535,6 @@ class ELbFileMapping extends CommonObject
         }
         if(!empty($object_id)) {
             $sql.= " AND fm.object_id = ".$this->db->escape($object_id);
-        }
-        if(isset($search_files)) {
-            if(count($search_files)==0) {
-                $list="0";
-            } else {
-                $list=implode(",", $search_files);
-            }
-            $sql.= " AND fm.rowid IN (".$list.")";
         }
         $sql.= " ORDER BY fm.rowid DESC";
 
