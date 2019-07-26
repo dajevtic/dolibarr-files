@@ -1,7 +1,5 @@
 <?php
-//use ELBClass\solr\ElbSolrUtil;
-
-/* Copyright (C) 2019-... LiveMediaGroup - Milos Petkovic <milos.petkovic@livemediagroup.de>
+/* Copyright (C) 2019-2019 Elb Solutions - Milos Petkovic <milos.petkovic@elb-solutions.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +16,7 @@
  * or see http://www.gnu.org/
  */
 
-
 global $db, $conf, $toolbox;
-$elbfile = new ELbFile($db);
 
 $langs->load("link");
 if (empty($relativepathwithnofile)) $relativepathwithnofile='';
@@ -41,21 +37,9 @@ $file_list_display = ElbFileSession::getGroupFilesMethod();
 $formfile=new FormFile($db);
 
 // show multiupload button
-print ElbFileView::showMultiUploadButton($object->element, $object->id);
+ElbFileView::showMultiUploadButton($object->element, $object->id);
 
 ?>
-
-<style>
-	.select2-container .select2-selection--multiple {
-		min-height: 24px;
-	}
-	.select2-container--default.select2-container--focus .select2-selection--multiple {
-		border: solid 1px rgba(0,0,0,.3);
-	}
-	.select2-container--default .select2-selection--multiple .select2-selection__choice {
-		margin-top:3px;
-	}
-</style>
 
 <?php if ($totalnr) { ?>
     <form id="file-list-display-form" action="" method="get" >
