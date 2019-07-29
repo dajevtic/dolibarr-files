@@ -344,7 +344,21 @@ class ActionsElbmultiupload
 				} else if ($modulepart == 'holiday') {
 					include_once DOL_DOCUMENT_ROOT . '/holiday/class/holiday.class.php';
 					$object_instance = new Holiday($db);
-				}
+				} else if ($modulepart == 'loan') {
+                    require_once DOL_DOCUMENT_ROOT . '/loan/class/loan.class.php';
+                    $object_instance = new Loan($db);
+                } else if ($modulepart == 'don') {
+                    require_once DOL_DOCUMENT_ROOT . '/don/class/don.class.php';
+                    $object_instance = new Don($db);
+                } else if ($modulepart == 'facture') {
+                    require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+                    $object_instance = new Facture($db);
+                } else if ($modulepart == 'project') {
+                    require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+                    $object_instance = new Project($db);
+                }
+
+                print $relativefile.' ';
 
 				$hookmanager->object_instance = $object_instance;
 				$hookmanager->object_id = $object_id;
