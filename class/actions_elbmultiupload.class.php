@@ -358,8 +358,6 @@ class ActionsElbmultiupload
                     $object_instance = new Project($db);
                 }
 
-                print $relativefile.' ';
-
 				$hookmanager->object_instance = $object_instance;
 				$hookmanager->object_id = $object_id;
 				$hookmanager->object_ref = null;
