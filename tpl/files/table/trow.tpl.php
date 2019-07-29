@@ -10,7 +10,7 @@ $lineid = GETPOST('lineid');
 $file_relpath = $conf->global->ELB_UPLOAD_FILES_DIRECTORY.'/'.$obj->frowid.'.'.$obj->ftype;
 
 // absolute path to the file on the file system
-$filepath=DOL_DATA_ROOT.'/elbmultiupload/'.$conf->global->ELB_UPLOAD_FILES_DIRECTORY.'/'.$obj->frowid.'.'.$obj->ftype;
+$filepath=DOL_DATA_ROOT.'/elbmultiupload/'.$file_relpath;
 ?>
 
 <tr <?php echo $bc[true] ?>>

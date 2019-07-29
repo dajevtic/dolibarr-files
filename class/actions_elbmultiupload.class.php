@@ -270,7 +270,16 @@ class ActionsElbmultiupload
         }
     }
 
-
+    /**
+     * Get link to the object by module name and file's relative path
+     *
+     * @param $parameters
+     * @param $object
+     * @param $action
+     * @param $hookmanager
+     * @return int
+     * @throws Exception
+     */
 	function getObjectLink($parameters, &$object, &$action, $hookmanager)
 	{
 		require_once DOL_DOCUMENT_ROOT . '/elbmultiupload/class/elb.file_mapping.class.php';
@@ -347,6 +356,16 @@ class ActionsElbmultiupload
 		return 0;
 	}
 
+    /**
+     * Method adds additonal paramaters for solr indexing
+     *
+     * @param $parameters
+     * @param $object
+     * @param $action
+     * @param $hookmanager
+     * @return int
+     * @throws Exception
+     */
 	function getSolrIndexingAdditionalParams($parameters, &$object, &$action, $hookmanager)
 	{
 		$ecmFiles = $parameters['ecmFiles'];
@@ -374,6 +393,15 @@ class ActionsElbmultiupload
 		return 0;
 	}
 
+    /**
+     * Solr search by additional parameters
+     *
+     * @param $parameters
+     * @param $object
+     * @param $action
+     * @param $hookmanager
+     * @return int
+     */
 	function solrSearchAdditionalSearch($parameters, &$object, &$action, $hookmanager)
 	{
 		global $langs, $conf;
@@ -399,6 +427,15 @@ class ActionsElbmultiupload
 		return 0;
 	}
 
+    /**
+     * Method adds additional column to the solr search table
+     *
+     * @param $parameters
+     * @param $object
+     * @param $action
+     * @param $hookmanager
+     * @return int
+     */
 	function solrSearchAdditionalColumnHeader($parameters, &$object, &$action, $hookmanager)
     {
 		global $langs, $conf;
@@ -421,6 +458,15 @@ class ActionsElbmultiupload
 		return 1;
 	}
 
+    /**
+     * Method adds search inputs for additional columns to the solr search table
+     *
+     * @param $parameters
+     * @param $object
+     * @param $action
+     * @param $hookmanager
+     * @return int
+     */
 	function solrSearchAdditionalColumnSearch($parameters, &$object, &$action, $hookmanager)
     {
     	global $conf;
@@ -447,6 +493,15 @@ class ActionsElbmultiupload
 		return 1;
 	}
 
+    /**
+     * Method adds search by data from additional search parameters
+     *
+     * @param $parameters
+     * @param $object
+     * @param $action
+     * @param $hookmanager
+     * @return int
+     */
 	function solrSearchAdditionalColumnData($parameters, &$object, &$action, $hookmanager)
     {
 		global $langs, $conf;
@@ -483,6 +538,15 @@ class ActionsElbmultiupload
 		return 1;
 	}
 
+    /**
+     * Method executes solr search by additional params
+     *
+     * @param $parameters
+     * @param $object
+     * @param $action
+     * @param $hookmanager
+     * @return int
+     */
 	function solrExecuteAdditionalSearch($parameters, &$object, &$action, $hookmanager)
     {
     	global $conf;
@@ -515,6 +579,15 @@ class ActionsElbmultiupload
 		return 0;
 	}
 
+    /**
+     * Method adds additional search parameters to the solr
+     *
+     * @param $parameters
+     * @param $object
+     * @param $action
+     * @param $hookmanager
+     * @return int
+     */
 	function solrSearchUrlParams($parameters, &$object, &$action, $hookmanager)
     {
     	global $conf;

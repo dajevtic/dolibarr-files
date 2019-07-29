@@ -698,7 +698,6 @@ class ELbFile extends CommonObject
 	/**
 	 * Retrieves EcmFiles instance from uploaded file by calculating path based on Dolibarr settings
 	 *
-	 *
 	 * @param ELbFile $elbFile instance of uploaded file
 	 * @return bool|EcmFiles false if not found, otherwise EcmFiles instance
 	 */

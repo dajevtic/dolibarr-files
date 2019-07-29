@@ -64,7 +64,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 
 $form = new Form($db);
 
-$page_name = "ElbMultiUploadAbout";
+$page_name = "ElbmultiuploadAbout";
 llxHeader('', $langs->trans($page_name));
 
 // Subheader

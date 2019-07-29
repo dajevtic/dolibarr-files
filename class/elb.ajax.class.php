@@ -19,22 +19,44 @@ class ElbAjax
 {
     public $code = '';
 
+    /**
+     * Get post variable
+     *
+     * @param $name
+     * @return mixed
+     */
     public function getParam($name)
     {
         return $_POST['params'][$name];
     }
 
+    /**
+     * Store values sent by post form method to the array
+     *
+     * @return mixed|array
+     */
     public function getFormData()
     {
         parse_str($_POST['formData'], $formData);
         return $formData;
     }
 
+    /**
+     * Initialize code property for storing event notifications
+     *
+     * @return void
+     */
     public function start()
     {
         $this->code.='$(".jnotify-container").html("");';
     }
 
+    /**
+     * Remove characters from string needed for js response
+     *
+     * @param $content
+     * @return mixed
+     */
     public function escape($content)
     {
         $content = str_replace("\t", "", $content);
@@ -44,11 +66,21 @@ class ElbAjax
         return $content;
     }
 
+    /**
+     * Add info to the code property
+     *
+     * @param $code
+     */
     public function addCode($code)
     {
         $this->code.=$code;
     }
 
+    /**
+     * Return response after ajax call
+     *
+     * @return array
+     */
     public function getResponse()
     {
         return array(
@@ -57,6 +89,11 @@ class ElbAjax
         );
     }
 
+    /**
+     * Evalute js to show event messages
+     *
+     * @return void
+     */
     public function showMessages()
     {
         foreach($_SESSION['dol_events'] as $type => $msg_list) {
@@ -73,6 +110,11 @@ class ElbAjax
         unset($_SESSION['dol_events']);
     }
 
+    /**
+     * Encode json response
+     *
+     * @param $object
+     */
     public function outputJson($object)
     {
         ob_end_clean();
