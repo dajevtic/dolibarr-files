@@ -314,7 +314,7 @@ class ActionsElbmultiupload
 				} else if ($modulepart == 'supplier_proposal') {
 					include_once DOL_DOCUMENT_ROOT . '/supplier_proposal/class/supplier_proposal.class.php';
 					$object_instance = new SupplierProposal($db);
-				} else if ($modulepart == 'order') {
+				} else if ($modulepart == 'commande') {
 					include_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
 					$object_instance = new Commande($db);
 				} else if ($modulepart == 'order_supplier') {
