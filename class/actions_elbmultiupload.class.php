@@ -380,6 +380,10 @@ class ActionsElbmultiupload
      */
 	function getSolrIndexingAdditionalParams($parameters, &$object, &$action, $hookmanager)
 	{
+
+		if(!class_exists('ELbFileMapping')) {
+			return 0;
+		}
 		$ecmFiles = $parameters['ecmFiles'];
 		$elbfilemap = new ELbFileMapping($this->db);
 		$res = $elbfilemap->fetchFromEcmfilesPath($ecmFiles->filename);

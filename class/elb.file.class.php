@@ -657,9 +657,8 @@ class ELbFile extends CommonObject
      */
 	function deleteFile($fileID)
     {
-        $elbFile = new $this($this->db);
-        $elbFile->fetch($fileID);
-        $res = $elbFile->delete();
+	    $this->fetch($fileID);
+        $res = $this->delete();
         if (!($res > 0)) {
             return false;
         }
