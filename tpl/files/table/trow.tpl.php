@@ -23,7 +23,7 @@ $filepath=DOL_DATA_ROOT.'/elbmultiupload/'.$file_relpath;
     <td class="td-file-name">
 
         <?php
-        $href_download = DOL_URL_ROOT . '/document.php?modulepart=elbmultiupload&attachment=true&amp;file='.urlencode($file_relpath).'&amp;fmapid='.$obj->fmrowid;
+        $href_download = DOL_URL_ROOT . '/elbmultiupload/document.php?modulepart=elbmultiupload&attachment=true&amp;file='.urlencode($file_relpath).'&amp;fmapid='.$obj->fmrowid;
         echo '<span class="pushright">
                 <a href="'.$href_download.'">'.
             img_picto($langs->trans('DownloadFile'), 'elb-download-14x14.png@elbmultiupload') .'
@@ -51,7 +51,7 @@ $filepath=DOL_DATA_ROOT.'/elbmultiupload/'.$file_relpath;
         if ($modef) {
             echo $obj->fname;
         } else {
-            $href = DOL_URL_ROOT . '/document.php?modulepart=elbmultiupload&amp;file='.urlencode($file_relpath).'&amp;fmapid='.$obj->fmrowid;
+            $href = DOL_URL_ROOT . '/elbmultiupload/document.php?modulepart=elbmultiupload&amp;file='.urlencode($file_relpath).'&amp;fmapid='.$obj->fmrowid;
             ?>
             <a href="<?php echo $href ?>">
                 <?php

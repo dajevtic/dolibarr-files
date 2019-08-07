@@ -33,30 +33,4 @@ Names of those two folders are stored in Dolibarr's global variable and can be a
 If you need a categorization of files then enable it via elbmultiupload's module settings page.
 
 Module works from Dolibarr's 4 version until the last stable version (current version 9)
-
-## Tip
-
-Hence the module stores files by their ids on the file system there should be placed one small hack which should be added to the htdocs/document.php file.
-
-In case you need to download original file name then add these lines
-
-`if (!empty($conf->elbmultiupload->enabled)) {
-    require_once DOL_DOCUMENT_ROOT.'/elbmultiupload/class/elb.file.class.php';
-    require_once DOL_DOCUMENT_ROOT.'/elbmultiupload/class/elb.file_mapping.class.php';
-    if (isset($fullpath_original_file)) {
-        $filename = ELbFile::getDocumentFilename($fullpath_original_file);
-    } elseif (isset($original_file)) {
-        $filename = ELbFile::getDocumentFilename($original_file);
-    }
-}` 
-
-after the line
-
-`$filename = basename($fullpath_original_file);`
-
-in htdocs/document.php file.
-
-In case you use dolibarr's version less than 6.0 than the same code should be placed in the same file after the line
-
-`$filename = basename($original_file);`
  
