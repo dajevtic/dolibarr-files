@@ -187,7 +187,7 @@ class ELbFile extends CommonObject
 					$all_tags = ElbFileCategory::getFileTags();
 					foreach ($tags as $tag) {
 						if(!in_array($tag, $all_tags)) {
-							$sql="INSERT INTO ".MAIN_DB_PREFIX."categorie SET label='".$this->db->escape($tag)."', type=".ElbFileCategory::TYPE_ELB_FILE;
+							$sql="INSERT INTO ".MAIN_DB_PREFIX."categorie SET label='".$this->db->escape($tag)."', type=".ElbFileCategory::getFileCategoryID();
 							ElbCommonManager::execute($sql);
 						}
 					}

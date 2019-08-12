@@ -34,6 +34,8 @@ ELB_UPLOAD_FILES_DIRECTORY = Subdirectory in DOL_DATA_ROOT where we store upload
 ELB_UPLOAD_FILES_DIRECTORYTooltip = e.g. uploadedfiles
 ELB_ALLOW_CATEGORIES_FOR_FILES = Additional files categorization
 ELB_ALLOW_CATEGORIES_FOR_FILESTooltip = Value 1 enables, value 0 disables functionality for files categorization
+ELB_FILE_CATEGORY_TYPE = Category ID for additional files
+ELB_FILE_CATEGORY_TYPETooltip = Set up one integer value from 0 - 7
 
 
 #

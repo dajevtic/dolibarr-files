@@ -54,7 +54,8 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $arrayofparameters=array(
     'ELB_UPLOAD_FILES_BUFFER'=>array('css'=>'minwidth200','enabled'=>1),
     'ELB_UPLOAD_FILES_DIRECTORY'=>array('css'=>'minwidth500','enabled'=>1),
-    'ELB_ALLOW_CATEGORIES_FOR_FILES'=>array('css'=>'minwidth500','enabled'=>1)
+    'ELB_ALLOW_CATEGORIES_FOR_FILES'=>array('css'=>'minwidth500','enabled'=>1),
+    'ELB_FILE_CATEGORY_TYPE'=>array('css'=>'minwidth500','enabled'=>1)
 );
 
 

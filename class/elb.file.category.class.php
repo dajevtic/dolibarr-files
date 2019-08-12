@@ -23,8 +23,6 @@
 
 class ElbFileCategory
 {
-    const TYPE_ELB_FILE = 10;
-
     /**
      * Method returns all distinct categories of elb file type
      *
@@ -32,13 +30,24 @@ class ElbFileCategory
      */
     public static function getFileTags()
     {
-        $sql="SELECT distinct(c.label) from ".MAIN_DB_PREFIX."categorie c WHERE c.type=".self::TYPE_ELB_FILE." ORDER BY c.label";
+        $sql="SELECT distinct(c.label) from ".MAIN_DB_PREFIX."categorie c WHERE c.type=".self::getFileCategoryID()." ORDER BY c.label";
         $rows = ElbCommonManager::queryList($sql);
         $tags=array();
         foreach($rows as $row) {
             $tags[$row->label] = $row->label;
         }
         return $tags;
+    }
+
+    /**
+     * Return category ID for elb additional files
+     *
+     * @return mixed
+     */
+    static function getFileCategoryID()
+    {
+        global $conf;
+        return $conf->global->ELB_FILE_CATEGORY_TYPE;
     }
 
 }
