@@ -2,14 +2,6 @@
 
 Multiple files upload module, with revisioning and category functionality for files, for Dolibarr ERP.
 
-## Installation
-
-Module installs as a standard Dolibarr module by downloading and extracting in htdocs folder.
-
-Name of the module folder must be **elbmultiupload**.
-
-Enable module via admin interface (Modules/Application setup -> Other) section of modules pages.
-
 ## Description
 
 Elbmultiupload module adds a new tab "Additional files" for every module/object in Dolibarr ERP.
@@ -21,6 +13,14 @@ Uploaded files can be renamed, descriptioned, versioned, categorized, and a new 
 Subversion of a file can be activated as a current version. 
 
 User can group files by: default view, by revisions, or by file category (if categorization of files is enabled)
+
+## Installation
+
+Module installs as a standard Dolibarr module by downloading and extracting in htdocs folder.
+
+Name of the module folder must be **elbmultiupload**.
+
+Enable module via admin interface (Modules/Application setup -> Other) section of modules pages.
 
 ## Usage
 
