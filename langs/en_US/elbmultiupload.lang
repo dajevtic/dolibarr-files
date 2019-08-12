@@ -74,3 +74,4 @@ FileSuccessfullyUploaded=File successfully uploaded
 MissingObjectIDorRef=Missing object id or reference
 MissingObjectElementForCurrentObject=Missing object element for current object
 ReallyDelete=Really delete
+ErrorUploadingFile=Error uploading file

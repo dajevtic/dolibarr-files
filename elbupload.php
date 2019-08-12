@@ -98,4 +98,6 @@ if(isset($_FILES["elb_file"]))
         }
     }
     echo json_encode($ret);
+} else {
+    setEventMessage($langs->trans("ErrorUploadingFile"), 'errors');
 }
