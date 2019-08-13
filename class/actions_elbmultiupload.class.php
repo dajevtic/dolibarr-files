@@ -624,4 +624,35 @@ class ActionsElbmultiupload
 		return 1;
 	}
 
+	/**
+	 * Hook method that returns download link for other modules
+	 *
+	 * @param $parameters
+	 * @param $object
+	 * @param $action
+	 * @param $hookmanager
+	 * @return int
+	 */
+	function getObjectDownloadLink($parameters, &$object, &$action, $hookmanager) {
+		$modulepart = $parameters['modulepart'];
+		$forcedownload = $parameters['forcedownload'];
+		$filepath = $parameters['filepath'];
+		$entity = $parameters['entity'];
+		if($modulepart == 'elbmultiupload') {
+			$link = DOL_URL_ROOT . '/elbmultiupload/document.php?modulepart=' . $modulepart;
+			if ($forcedownload) {
+				$link .= '&attachment=1';
+			}
+			if (!empty($entity)) {
+				$link .= '&entity=' . $entity;
+			}
+			$link .= '&file=' . urlencode($filepath);
+			$pathinfo = pathinfo($filepath);
+			$link .= '&fmapid=' . $pathinfo['filename'];
+			$hookmanager->resArray['link'] = $link;
+			return 1;
+		}
+		return 0;
+	}
+
 }
