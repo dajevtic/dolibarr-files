@@ -61,60 +61,9 @@ if ($type) {
 
 print load_fiche_titre($title, $newcardbutton);
 
-print '<div class="fichecenter"><div class="fichethirdleft">';
-
 if (empty($type)) {
     die($langs->trans('SetUpCategoryIDInElbmultiuploadModule'));
 }
-
-print '<form method="post" action="index.php?type='.$type.'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="type" value="'.$type.'">';
-
-print '<table class="noborder nohover" width="100%">';
-print '<tr class="liste_titre">';
-print '<td colspan="3">'.$langs->trans("Search").'</td>';
-print '</tr>';
-print '<tr class="oddeven"><td>';
-print $langs->trans("Name").':</td><td><input class="flat inputsearch" type="text" name="catname" value="' . $catname . '"/></td><td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
-
-print '</table></form>';
-
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
-
-/*
- * Categories found
- */
-if ($catname || $id > 0)
-{
-    $cats = $categstatic->rechercher($id, $catname, $typetext);
-
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("FoundCats").'</td></tr>';
-
-    foreach ($cats as $cat)
-    {
-        print "\t".'<tr class="oddeven">'."\n";
-        print "\t\t<td>";
-        $categstatic->id=$cat->id;
-        $categstatic->ref=$cat->label;
-        $categstatic->label=$cat->label;
-        $categstatic->type=$cat->type;
-        $categstatic->color=$cat->color;
-        print '<span class="noborderoncategories" '.($categstatic->color?' style="background: #'.$categstatic->color.';"':' style="background: #aaa"').'>';
-        print $categstatic->getNomUrl(1,'');
-        print '</span>';
-        print "</td>\n";
-        print "\t\t<td>";
-        print dolGetFirstLineOfText($cat->description);
-        print "</td>\n";
-        print "\t</tr>\n";
-    }
-    print "</table>";
-}
-else print '&nbsp;';
-
-print '</div></div></div>';
 
 print '<div class="fichecenter"><br>';
 
