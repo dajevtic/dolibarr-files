@@ -112,27 +112,25 @@ class ElbFileView
 
                     if (is_array($tag_map)) {
 
+                        $fmapIDWithTag = [];
+
                         // populate categorized array
                         foreach ($tag_map as $tag_name => $arr_assigned_fmaps) {
                             foreach ($arr_assigned_fmaps as $assigned_fmap_id) {
                                 foreach ($fetch_all_files as $ind => $files) {
                                     if ($files->fmrowid == $assigned_fmap_id) {
                                         $file_with_rev_categ[$tag_name][] = $files;
+                                        if (!in_array($assigned_fmap_id, $fmapIDWithTag)) {
+                                            $fmapIDWithTag[] = $assigned_fmap_id;
+                                        }
                                     }
                                 }
                             }
                         }
-
-                        // populate uncategorized array
                         foreach ($fetch_all_files as $key => $resobject) {
-                            foreach ($file_with_rev_categ as $tagname => $my_arr) {
-                                foreach ($my_arr as $cindex => $res_key) {
-                                    if ($key == $res_key) {
-                                        continue 3;
-                                    }
-                                }
+                            if (!in_array($resobject->fmrowid, $fmapIDWithTag)) {
+                                $file_without_rev_categ['no_assigned_rev_categ'][] = $resobject;
                             }
-                            $file_without_rev_categ['no_assigned_rev_categ'][] = $resobject;
                         }
                     } else {
                         // populate array of files without revision
