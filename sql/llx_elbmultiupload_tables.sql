@@ -42,13 +42,3 @@ CREATE TABLE IF NOT EXISTS `llx_elb_file_mapping` (
 )
 COLLATE='utf8_general_ci'
 ENGINE=InnoDB;
-
-
-CREATE TABLE IF NOT EXISTS `llx_categorie_elb_file` (
-    `fk_categorie` INT(11) NOT NULL,
-    `fk_elb_file` INT(11) NOT NULL,
-    `import_key` VARCHAR(14) NULL DEFAULT NULL,
-    PRIMARY KEY (`fk_categorie`, `fk_elb_file`)
-)
-COLLATE='utf8_general_ci'
-ENGINE=InnoDB;

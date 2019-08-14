@@ -23,7 +23,3 @@
 -- ALTER TABLE llx_mymodule_myobject ADD CONSTRAINT llx_mymodule_myobject_fk_field FOREIGN KEY (fk_field) REFERENCES llx_mymodule_myotherobject(rowid);
 
 ALTER TABLE llx_elb_file_mapping ADD UNIQUE INDEX `uk_fk_fileid_object_type_object_id_clone_of_fmap_id_parent_file` (`fk_fileid`, `object_type`, `object_id`, `clone_of_fmap_id`, `parent_file`);
-
-ALTER TABLE llx_categorie_elb_file ADD INDEX `idx_categorie_elb_file_fk_categorie` (`fk_categorie`);
-
-ALTER TABLE llx_categorie_elb_file ADD INDEX `idx_categorie_elb_file_fk_elb_file` (`fk_elb_file`);
