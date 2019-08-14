@@ -335,6 +335,21 @@ class modElbmultiupload extends DolibarrModules
                                 'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
         END MODULEBUILDER LEFTMENU MYOBJECT */
 
+        // Machines - Left menu - first level
+        $this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=home',
+            'type'=>'left',
+            'titre'=>'CategoriesForFiles',
+            'mainmenu'=>'home',
+            'leftmenu'=>'home',
+            'url'=>'/elbmultiupload/categories/index.php',
+            'langs'=>'elbmultiupload@elbmultiupload',
+            'position'=>10,
+            'enabled'=>'$conf->elbmultiupload->enabled',
+            'perms'=>1,
+            'target'=>'',
+            'user'=>2,
+            'entity'=>0);
+
 
         // Exports
         $r=1;
